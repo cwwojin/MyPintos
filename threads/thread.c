@@ -28,11 +28,6 @@
    that are ready to run but not actually running. */
 static struct list ready_list;
 
-/* NEWCODE!!!*/
-//List of threads in SLEEP state
-static struct list asleep_list;
-/* END OF NEWCODE */
-
 /* Idle thread. */
 static struct thread *idle_thread;
 
@@ -114,9 +109,6 @@ thread_init (void) {
 	lock_init (&tid_lock);
 	list_init (&ready_list);
 	list_init (&destruction_req);
-	/* NEWCODE : init the new asleep_list */
-	list_init (&asleep_list);
-	/* END OF NEWCODE */
 
 	/* Set up a thread structure for the running thread. */
 	initial_thread = running_thread ();
