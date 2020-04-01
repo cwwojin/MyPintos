@@ -109,8 +109,8 @@ timer_sleep (int64_t ticks) {
 	struct thread *curr = thread_current ();
 	enum intr_level old_level;
 
-	ASSERT (!intr_context ());
-
+	//ASSERT (!intr_context ());
+	ASSERT (intr_get_level () == INTR_ON);
 	old_level = intr_disable ();
 	//set the wakeuptime of the thread.
 	curr->wakeuptime = start + ticks;
