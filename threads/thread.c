@@ -28,11 +28,9 @@
    that are ready to run but not actually running. */
 static struct list ready_list;
 
-/* NEWCODE!!!
-List of threads in new SLEEP state */
+/* NEWCODE!!!*/
+//List of threads in SLEEP state
 static struct list asleep_list;
-/* Earliest time to wake up a sleeping thread -> alarm time */
-static int64_t alarm_time;
 /* END OF NEWCODE */
 
 /* Idle thread. */
