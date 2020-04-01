@@ -109,14 +109,11 @@ timer_sleep (int64_t ticks) {
 	struct thread *curr = thread_current ();
 	enum intr_level old_level;
 
-	//ASSERT (!intr_context ());
-	ASSERT (intr_get_level () == INTR_ON);
+	ASSERT (!intr_context ());
+	//ASSERT (intr_get_level () == INTR_ON);
 	old_level = intr_disable ();
-	//set the wakeuptime of the thread.
 	curr->wakeuptime = start + ticks;
-	//push thread to asleep_list.
 	list_push_back (&asleep_list, &curr->elem);
-	//block thread.
 	thread_block();
 	intr_set_level (old_level);
 	/* ENDOFNEWCODE */
@@ -161,7 +158,7 @@ static void timer_alarm(void){
 	i = list_begin(&asleep_list);
 	while(i != list_end(&asleep_list)){
 		th = list_entry(i,struct thread, elem);
-		if(th->wakeuptime <= ticks){	//past wakeuptime.
+		if(ticks >= th->wakeuptime){	//past wakeuptime.
 			i = list_remove(i);
 			thread_unblock(th);
 		}
@@ -179,9 +176,6 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 	/* NEWCODE */
 	//Wake up any threads that are past "wakeuptime".
 	timer_alarm();
-	
-	//iterate through asleep_list, wake up any threads that are past "wakeuptime".
-	
 	/* ENDOFNEWCODE */
 	thread_tick ();
 }
