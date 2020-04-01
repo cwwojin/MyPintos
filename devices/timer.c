@@ -29,6 +29,13 @@ static bool too_many_loops (unsigned loops);
 static void busy_wait (int64_t loops);
 static void real_time_sleep (int64_t num, int32_t denom);
 
+
+/* NEWCODE!!!*/
+//List of threads in SLEEP state
+static struct list asleep_list;
+/* END OF NEWCODE */
+
+
 /* Sets up the 8254 Programmable Interval Timer (PIT) to
    interrupt PIT_FREQ times per second, and registers the
    corresponding interrupt. */
@@ -43,6 +50,10 @@ timer_init (void) {
 	outb (0x40, count >> 8);
 
 	intr_register_ext (0x20, timer_interrupt, "8254 Timer");
+	
+	/* NEWCODE : init the new asleep_list */
+	list_init (&asleep_list);
+	/* END OF NEWCODE */
 }
 
 /* Calibrates loops_per_tick, used to implement brief delays. */
