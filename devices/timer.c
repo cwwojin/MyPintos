@@ -156,12 +156,14 @@ timer_print_stats (void) {
 /* Alarm function. */
 static void timer_alarm(void){
 	//iterate through asleep_list, wake up any threads that are past "wakeuptime".
+	struct thread* th;
 	struct list_elem* i;
 	i = list_begin(&asleep_list);
 	while(i != list_end(&asleep_list)){
-		if(list_entry(i,struct thread, elem)->wakeuptime <= ticks){	//past wakeuptime.
+		th = list_entry(i,struct thread, elem);
+		if(th->wakeuptime <= ticks){	//past wakeuptime.
 			i = list_remove(i);
-			thread_unblock(list_entry(i,struct thread, elem));
+			thread_unblock(th);
 		}
 		else{
 			i = list_next(i);
@@ -176,22 +178,10 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 	
 	/* NEWCODE */
 	//Wake up any threads that are past "wakeuptime".
-	//timer_alarm();
+	timer_alarm();
 	
 	//iterate through asleep_list, wake up any threads that are past "wakeuptime".
-	struct thread* th;
-	struct list_elem* i;
-	i = list_begin(&asleep_list);
-	while(i != list_end(&asleep_list)){
-		th = list_entry(i,struct thread, elem);
-		if(th->wakeuptime <= ticks){	//past wakeuptime.
-			i = list_remove(i);
-			thread_unblock(th);
-		}
-		else{
-			i = list_next(i);
-		}
-	}
+	
 	/* ENDOFNEWCODE */
 	thread_tick ();
 }
