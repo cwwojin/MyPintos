@@ -151,17 +151,7 @@ timer_print_stats (void) {
 	printf ("Timer: %"PRId64" ticks\n", timer_ticks ());
 }
 
-/* Timer interrupt handler. */
-static void
-timer_interrupt (struct intr_frame *args UNUSED) {
-	ticks++;
-	
-	/* NEWCODE */
-	//Wake up any threads that are past "wakeuptime".
-	timer_alarm();
-	/* ENDOFNEWCODE */
-	thread_tick ();
-}
+
 
 /* Alarm function. */
 static void timer_alarm(){
@@ -177,6 +167,18 @@ static void timer_alarm(){
 			i = list_next(i);
 		}
 	}
+}
+
+/* Timer interrupt handler. */
+static void
+timer_interrupt (struct intr_frame *args UNUSED) {
+	ticks++;
+	
+	/* NEWCODE */
+	//Wake up any threads that are past "wakeuptime".
+	timer_alarm();
+	/* ENDOFNEWCODE */
+	thread_tick ();
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
