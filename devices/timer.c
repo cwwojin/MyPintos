@@ -144,7 +144,28 @@ timer_print_stats (void) {
 static void
 timer_interrupt (struct intr_frame *args UNUSED) {
 	ticks++;
+	
+	/* NEWCODE */
+	//Wake up any threads that are past "wakeuptime".
+	timer_alarm();
+	/* ENDOFNEWCODE */
 	thread_tick ();
+}
+
+/* Alarm function. */
+static void timer_alarm(){
+	//iterate through asleep_list, wake up any threads that are past "wakeuptime".
+	struct list_elem* i;
+	i = list_begin(&asleep_list);
+	while(i != list_end(&asleep_list)){
+		if(list_entry(i,struct thread, elem)->wakeuptime <= ticks){	//past wakeuptime.
+			i = list_remove(i);
+			thread_unblock(list_entry(i,struct thread, elem));
+		}
+		else{
+			i = list_next(i);
+		}
+	}
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
