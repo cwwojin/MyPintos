@@ -92,9 +92,28 @@ void
 timer_sleep (int64_t ticks) {
 	int64_t start = timer_ticks ();
 
-	ASSERT (intr_get_level () == INTR_ON);
+	//ASSERT (intr_get_level () == INTR_ON);
+	/* NEWCODE */
+	//Same as thread_yield(), but put thread in asleep_list.
+	struct thread *curr = thread_current ();
+	enum intr_level old_level;
+
+	ASSERT (!intr_context ());
+
+	old_level = intr_disable ();
+	//set the wakeuptime of the thread.
+	curr->wakeuptime = start + ticks;
+	//push thread to asleep_list.
+	list_push_back (&asleep_list, &curr->elem);
+	//block thread.
+	thread_block();
+	intr_set_level (old_level);
+	/* ENDOFNEWCODE */
+	
+	/*
 	while (timer_elapsed (start) < ticks)
 		thread_yield ();
+	*/
 }
 
 /* Suspends execution for approximately MS milliseconds. */
