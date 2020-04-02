@@ -336,7 +336,7 @@ thread_set_priority (int new_priority) {
 	thread_current ()->priority = new_priority;
 	
 	/* NEWCODE */
-	if(new_priority > thread_get_priority()) thread_yield();
+	if(new_priority < thread_get_priority()) thread_yield();
 	/* ENDOFNEWCODE */
 }
 
