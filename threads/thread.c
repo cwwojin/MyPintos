@@ -161,6 +161,19 @@ thread_print_stats (void) {
 			idle_ticks, kernel_ticks, user_ticks);
 }
 
+
+/* NEWCODE */
+//a function for comparing 2 threads' priorities.
+static bool compare_pri(struct list_elem* left, struct list_elem* right, void aux UNUSED){
+	struct thread* leftT = list_entry(left, struct thread, elem);
+	struct thread* rightT = list_entry(right, struct thread, elem);
+	
+	return leftT->priority > rightT->priority;
+}
+/* ENDOFNEWCODE */
+
+
+
 /* Creates a new kernel thread named NAME with the given initial
    PRIORITY, which executes FUNCTION passing AUX as the argument,
    and adds it to the ready queue.  Returns the thread identifier
@@ -206,6 +219,11 @@ thread_create (const char *name, int priority,
 
 	/* Add to run queue. */
 	thread_unblock (t);
+	
+	/* NEWCODE */
+	//reschedule if new thread is higher priority than current one
+	if(priority > thread_get_priority()) thread_yield();
+	/* ENDOFNEWCODE */
 
 	return tid;
 }
@@ -240,7 +258,8 @@ thread_unblock (struct thread *t) {
 
 	old_level = intr_disable ();
 	ASSERT (t->status == THREAD_BLOCKED);
-	list_push_back (&ready_list, &t->elem);
+	//list_push_back (&ready_list, &t->elem);
+	list_insert_ordered (&ready_list, &curr->elem, compare_pri, NULL);
 	t->status = THREAD_READY;
 	intr_set_level (old_level);
 }
@@ -302,8 +321,11 @@ thread_yield (void) {
 	ASSERT (!intr_context ());
 
 	old_level = intr_disable ();
-	if (curr != idle_thread)
-		list_push_back (&ready_list, &curr->elem);
+	//Change push_back to insert_ordered.
+	if (curr != idle_thread){
+		list_insert_ordered (&ready_list, &curr->elem, compare_pri, NULL);
+		//list_push_back (&ready_list, &curr->elem);
+	}
 	do_schedule (THREAD_READY);
 	intr_set_level (old_level);
 }
@@ -312,6 +334,10 @@ thread_yield (void) {
 void
 thread_set_priority (int new_priority) {
 	thread_current ()->priority = new_priority;
+	
+	/* NEWCODE */
+	if(new_priority > thread_get_priority()) thread_yield();
+	/* ENDOFNEWCODE */
 }
 
 /* Returns the current thread's priority. */
