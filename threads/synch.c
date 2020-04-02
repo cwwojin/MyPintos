@@ -114,6 +114,11 @@ sema_up (struct semaphore *sema) {
 					struct thread, elem));
 	sema->value++;
 	intr_set_level (old_level);
+	
+	/* NEWCODE */
+	//always yield & reschedule for priority.
+	thread_yield();
+	/* ENDOFNEWCODE */
 }
 
 static void sema_test_helper (void *sema_);
