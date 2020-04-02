@@ -134,9 +134,7 @@ sema_up (struct semaphore *sema) {
 	intr_set_level (old_level);
 	
 	/* NEWCODE */
-	//always yield & reschedule for priority.
 	//thread_yield();
-	schedule();
 	/* ENDOFNEWCODE */
 }
 
