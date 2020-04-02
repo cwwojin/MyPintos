@@ -29,6 +29,13 @@ static bool too_many_loops (unsigned loops);
 static void busy_wait (int64_t loops);
 static void real_time_sleep (int64_t num, int32_t denom);
 
+
+/* NEWCODE!!!*/
+//List of threads in SLEEP state
+static struct list asleep_list;
+/* END OF NEWCODE */
+
+
 /* Sets up the 8254 Programmable Interval Timer (PIT) to
    interrupt PIT_FREQ times per second, and registers the
    corresponding interrupt. */
@@ -43,6 +50,10 @@ timer_init (void) {
 	outb (0x40, count >> 8);
 
 	intr_register_ext (0x20, timer_interrupt, "8254 Timer");
+	
+	/* NEWCODE : init the new asleep_list */
+	list_init (&asleep_list);
+	/* END OF NEWCODE */
 }
 
 /* Calibrates loops_per_tick, used to implement brief delays. */
@@ -92,9 +103,25 @@ void
 timer_sleep (int64_t ticks) {
 	int64_t start = timer_ticks ();
 
-	ASSERT (intr_get_level () == INTR_ON);
+	//ASSERT (intr_get_level () == INTR_ON);
+	/* NEWCODE */
+	//Same as thread_yield(), but put thread in asleep_list.
+	struct thread *curr = thread_current ();
+	enum intr_level old_level;
+
+	ASSERT (!intr_context ());
+	//ASSERT (intr_get_level () == INTR_ON);
+	old_level = intr_disable ();
+	curr->alarm_ticks = start + ticks;
+	list_push_back (&asleep_list, &curr->elem);
+	thread_block();
+	intr_set_level (old_level);
+	/* ENDOFNEWCODE */
+	
+	/*
 	while (timer_elapsed (start) < ticks)
 		thread_yield ();
+	*/
 }
 
 /* Suspends execution for approximately MS milliseconds. */
@@ -121,10 +148,34 @@ timer_print_stats (void) {
 	printf ("Timer: %"PRId64" ticks\n", timer_ticks ());
 }
 
+
+
+/* Alarm function. */
+static void timer_alarm(void){
+	//iterate through asleep_list, wake up any threads that are past "alarm time".
+	struct thread* th;
+	struct list_elem* i;
+	i = list_begin(&asleep_list);
+	while(i != list_end(&asleep_list)){
+		th = list_entry(i,struct thread, elem);
+		if(ticks >= th->alarm_ticks){	//past alarm time.
+			i = list_remove(i);
+			thread_unblock(th);
+		}
+		else{
+			i = list_next(i);
+		}
+	}
+}
+
 /* Timer interrupt handler. */
 static void
 timer_interrupt (struct intr_frame *args UNUSED) {
 	ticks++;
+	/* NEWCODE */
+	//call alarm function.
+	timer_alarm();
+	/* ENDOFNEWCODE */
 	thread_tick ();
 }
 

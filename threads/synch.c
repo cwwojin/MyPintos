@@ -49,6 +49,18 @@ sema_init (struct semaphore *sema, unsigned value) {
 	list_init (&sema->waiters);
 }
 
+/* NEWCODE */
+//a function for comparing 2 threads' priorities.
+static bool compare_pri(const struct list_elem* left, const struct list_elem* right , void* aux UNUSED){
+	struct thread* leftT = list_entry(left, struct thread, elem);
+	struct thread* rightT = list_entry(right, struct thread, elem);
+	
+	return leftT->priority > rightT->priority;
+}
+/* ENDOFNEWCODE */
+
+
+
 /* Down or "P" operation on a semaphore.  Waits for SEMA's value
    to become positive and then atomically decrements it.
 
@@ -66,11 +78,20 @@ sema_down (struct semaphore *sema) {
 
 	old_level = intr_disable ();
 	while (sema->value == 0) {
-		list_push_back (&sema->waiters, &thread_current ()->elem);
+		//list_push_back (&sema->waiters, &thread_current ()->elem);
+		
+		/* NEWCODE */
+		//same as priority scheduling. use insert_ordered
+		list_insert_ordered(&sema->waiters,  &thread_current()->elem, compare_pri, NULL);
+		//printf("inserted\n");
+		/* ENDOFNEWCODE */
+		
 		thread_block ();
 	}
 	sema->value--;
 	intr_set_level (old_level);
+	
+	//thread_yield();
 }
 
 /* Down or "P" operation on a semaphore, but only if the
@@ -104,16 +125,27 @@ sema_try_down (struct semaphore *sema) {
    This function may be called from an interrupt handler. */
 void
 sema_up (struct semaphore *sema) {
+	//struct thread* t;
+	
 	enum intr_level old_level;
 
 	ASSERT (sema != NULL);
 
 	old_level = intr_disable ();
-	if (!list_empty (&sema->waiters))
-		thread_unblock (list_entry (list_pop_front (&sema->waiters),
-					struct thread, elem));
+	
+	if (!list_empty (&sema->waiters)){
+		//list_sort (&sema->waiters, compare_pri, NULL);
+		//thread_unblock (list_entry (list_pop_front (&sema->waiters), struct thread, elem));
+		struct thread* t;
+		t = list_entry (list_pop_front (&sema->waiters), struct thread, elem);
+		thread_unblock (t);
+		//if(t->priority > thread_get_priority()) thread_yield();
+	}
 	sema->value++;
 	intr_set_level (old_level);
+	
+	//thread_yield();
+	
 }
 
 static void sema_test_helper (void *sema_);
