@@ -261,7 +261,8 @@ thread_unblock (struct thread *t) {
 	//list_push_back (&ready_list, &t->elem);
 	list_insert_ordered (&ready_list, &t->elem, compare_pri, NULL);
 	t->status = THREAD_READY;
-	do_schedule (THREAD_READY);
+	thread_yield();
+	//do_schedule (THREAD_READY);
 	intr_set_level (old_level);
 }
 
