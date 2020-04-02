@@ -164,7 +164,7 @@ thread_print_stats (void) {
 
 /* NEWCODE */
 //a function for comparing 2 threads' priorities.
-static bool compare_pri(const struct list_elem* left, const struct list_elem* right , void* UNUSED){
+static bool compare_pri(const struct list_elem* left, const struct list_elem* right , void* aux UNUSED){
 	struct thread* leftT = list_entry(left, struct thread, elem);
 	struct thread* rightT = list_entry(right, struct thread, elem);
 	
