@@ -49,6 +49,18 @@ sema_init (struct semaphore *sema, unsigned value) {
 	list_init (&sema->waiters);
 }
 
+/* NEWCODE */
+//a function for comparing 2 threads' priorities.
+static bool compare_pri(const struct list_elem* left, const struct list_elem* right , void* aux UNUSED){
+	struct thread* leftT = list_entry(left, struct thread, elem);
+	struct thread* rightT = list_entry(right, struct thread, elem);
+	
+	return leftT->priority > rightT->priority;
+}
+/* ENDOFNEWCODE */
+
+
+
 /* Down or "P" operation on a semaphore.  Waits for SEMA's value
    to become positive and then atomically decrements it.
 
@@ -66,7 +78,13 @@ sema_down (struct semaphore *sema) {
 
 	old_level = intr_disable ();
 	while (sema->value == 0) {
-		list_push_back (&sema->waiters, &thread_current ()->elem);
+		/* NEWCODE */
+		//same as priority scheduling. use insert_ordered
+		//&ready_list, &curr->elem, compare_pri, NULL
+		list_insert_ordered(&sema->waiters,  &thread_current ()->elem, compare_pri, NULL);
+		/* ENDOFNEWCODE */
+		
+		//list_push_back (&sema->waiters, &thread_current ()->elem);
 		thread_block ();
 	}
 	sema->value--;
@@ -117,7 +135,7 @@ sema_up (struct semaphore *sema) {
 	
 	/* NEWCODE */
 	//always yield & reschedule for priority.
-	thread_yield();
+	//thread_yield();
 	/* ENDOFNEWCODE */
 }
 
