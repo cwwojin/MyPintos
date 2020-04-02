@@ -131,11 +131,11 @@ sema_up (struct semaphore *sema) {
 		thread_unblock (list_entry (list_pop_front (&sema->waiters),
 					struct thread, elem));
 	sema->value++;
-	thread_yield();
 	intr_set_level (old_level);
 	
 	/* NEWCODE */
 	//thread_yield();
+	list_sort (&sema->waiters, compare_pri, NULL);
 	/* ENDOFNEWCODE */
 }
 
