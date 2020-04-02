@@ -83,7 +83,7 @@ sema_down (struct semaphore *sema) {
 		/* NEWCODE */
 		//same as priority scheduling. use insert_ordered
 		list_insert_ordered(&sema->waiters,  &thread_current()->elem, compare_pri, NULL);
-		printf("inserted\n");
+		//printf("inserted\n");
 		/* ENDOFNEWCODE */
 		
 		thread_block ();
@@ -131,10 +131,15 @@ sema_up (struct semaphore *sema) {
 	
 	if (!list_empty (&sema->waiters)){
 		//list_sort (&sema->waiters, compare_pri, NULL);
-		thread_unblock (list_entry (list_pop_front (&sema->waiters), struct thread, elem));
+		//thread_unblock (list_entry (list_pop_front (&sema->waiters), struct thread, elem));
+		struct thread* t;
+		t = list_entry (list_pop_front (&sema->waiters), struct thread, elem);
+		thread_unblock (t);
 	}
 	sema->value++;
 	intr_set_level (old_level);
+	
+	if(t->priority > thread_get_priority()) thread_yield();
 }
 
 static void sema_test_helper (void *sema_);
