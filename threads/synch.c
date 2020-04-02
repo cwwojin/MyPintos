@@ -123,7 +123,7 @@ sema_try_down (struct semaphore *sema) {
    This function may be called from an interrupt handler. */
 void
 sema_up (struct semaphore *sema) {
-	struct thread* t;
+	//struct thread* t;
 	
 	enum intr_level old_level;
 
@@ -134,6 +134,7 @@ sema_up (struct semaphore *sema) {
 	if (!list_empty (&sema->waiters)){
 		//list_sort (&sema->waiters, compare_pri, NULL);
 		//thread_unblock (list_entry (list_pop_front (&sema->waiters), struct thread, elem));
+		struct thread* t;
 		t = list_entry (list_pop_front (&sema->waiters), struct thread, elem);
 		thread_unblock (t);
 		if(t->priority > thread_get_priority()) thread_yield();
