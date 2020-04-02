@@ -333,10 +333,11 @@ thread_yield (void) {
 /* Sets the current thread's priority to NEW_PRIORITY. */
 void
 thread_set_priority (int new_priority) {
+	int old_priority = thread_get_priority();
 	thread_current ()->priority = new_priority;
 	
 	/* NEWCODE */
-	if(new_priority < thread_get_priority()) thread_yield();
+	if(new_priority < old_priority) thread_yield();
 	/* ENDOFNEWCODE */
 }
 
