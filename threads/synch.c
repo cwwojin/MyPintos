@@ -201,6 +201,25 @@ lock_init (struct lock *lock) {
 	lock->old_priority = PRI_MIN;
 }
 
+
+/* NEWCODE */
+//recursive function for (nested) priority donation.
+static void donate_priority(struct lock* lock){
+	struct thread* t = thread_current();
+	struct thread* holder = lock->holder;
+	
+	if(t->priority > holder->priority){
+		//donate priority if current thread's is larger.
+		holder->priority = t->priority;
+	}
+	//nested donation.
+	if (holder->gate != NULL) {	//holder is also waiting on a lock.
+		donate_priority(holder->gate);
+	}
+}
+/* ENDOFNEWCODE */
+
+
 /* Acquires LOCK, sleeping until it becomes available if
    necessary.  The lock must not already be held by the current
    thread.
@@ -214,9 +233,26 @@ lock_acquire (struct lock *lock) {
 	ASSERT (lock != NULL);
 	ASSERT (!intr_context ());
 	ASSERT (!lock_held_by_current_thread (lock));
-
+	
+	/* NEWCODE */
+	struct thread* current;
+	current = thread_current();
+	//1. donate priority.
+	donate_priority(lock);
+	//2. set the "gate"(holder) value of this thread.
+	current->gate = lock->holder;
+	//3. wait for release.
 	sema_down (&lock->semaphore);
-	lock->holder = thread_current ();
+	current->gate = NULL;
+	lock->holder = current;
+	//4. save the new holder's original priority.
+	lock->old_priority = current->priority;
+	
+	
+	/* ENDOFNEWCODE */
+
+	//sema_down (&lock->semaphore);
+	//lock->holder = thread_current ();
 }
 
 /* Tries to acquires LOCK and returns true if successful or false
@@ -248,9 +284,13 @@ void
 lock_release (struct lock *lock) {
 	ASSERT (lock != NULL);
 	ASSERT (lock_held_by_current_thread (lock));
-
+	
+	//reset the donation.
+	lock->holder->priority = lock->old_priority;
+	
 	lock->holder = NULL;
 	sema_up (&lock->semaphore);
+	
 }
 
 /* Returns true if the current thread holds LOCK, false
