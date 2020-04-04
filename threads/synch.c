@@ -239,8 +239,8 @@ lock_acquire (struct lock *lock) {
 	current = thread_current();
 	//1. donate priority.
 	donate_priority(lock);
-	//2. set the "gate"(holder) value of this thread.
-	current->gate = lock->holder;
+	//2. set the "gate" value of this thread.
+	current->gate = lock;
 	//3. wait for release.
 	sema_down (&lock->semaphore);
 	current->gate = NULL;
