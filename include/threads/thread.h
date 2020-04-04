@@ -89,6 +89,8 @@ struct thread {
 	int priority;                       /* Priority. */
 	
 	int64_t alarm_ticks;	//wakeup time(in ticks) for alarm clock.
+	
+	struct lock gate;	//the lock that this thread is waiting for.
 
 	/* Shared between thread.c and synch.c. */
 	struct list_elem elem;              /* List element. */
