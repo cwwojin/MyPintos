@@ -25,6 +25,8 @@ struct lock {
 	//int old_priority;
 };
 
+void reset_priority(void);
+
 void lock_init (struct lock *);
 void lock_acquire (struct lock *);
 bool lock_try_acquire (struct lock *);
