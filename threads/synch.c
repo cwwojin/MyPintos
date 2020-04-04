@@ -198,23 +198,25 @@ lock_init (struct lock *lock) {
 	lock->holder = NULL;
 	sema_init (&lock->semaphore, 1);
 	
-	lock->old_priority = PRI_MIN;
+	//lock->old_priority = PRI_MIN;
 }
 
 
 /* NEWCODE */
 //recursive function for (nested) priority donation.
-static void donate_priority(struct lock* lock){
+static void donate_priority(void){
 	struct thread* t = thread_current();
-	struct thread* holder = lock->holder;
-	
-	if(t->priority > holder->priority){
-		//donate priority if current thread's is larger.
-		holder->priority = t->priority;
-	}
-	//nested donation.
-	if (holder->gate != NULL) {	//holder is also waiting on a lock.
-		donate_priority(holder->gate);
+	struct lock* waitinglock = t->gate;
+
+	while(waitinglock != NULL){
+		if(t->priority > waitinglock->holder->priority){
+			//donate.
+			waitinglock->holder->priority = t->priority;
+			waitinglock = waitinglock->holder->gate;
+		}
+		else{
+			break;
+		}
 	}
 }
 /* ENDOFNEWCODE */
@@ -237,18 +239,19 @@ lock_acquire (struct lock *lock) {
 	/* NEWCODE */
 	struct thread* current;
 	current = thread_current();
-	//1. donate priority.
-	donate_priority(lock);
-	//2. set the "gate" value of this thread.
-	current->gate = lock;
-	//3. wait for release.
+	
+	if(lock->holder != NULL){
+		//1. set the "gate" value of this thread.
+		current->gate = lock;
+		//2. put thread to donation list. (in Priority order)
+		list_insert_ordered (&(lock->holder->donation_list), &current->elem, compare_pri, NULL);
+		//3. call donate_priority
+		donate_priority();
+	}
+	//4. wait for release.
 	sema_down (&lock->semaphore);
 	current->gate = NULL;
 	lock->holder = current;
-	//4. save the new holder's original priority.
-	lock->old_priority = current->priority;
-	
-	
 	/* ENDOFNEWCODE */
 
 	//sema_down (&lock->semaphore);
@@ -274,6 +277,29 @@ lock_try_acquire (struct lock *lock) {
 	return success;
 }
 
+static void remove_from_donations(struct lock* lock){
+	struct thread* current = thread_current();
+	//iterate through current thread's donation list
+	struct list_elem* e;
+	for (e = list_begin (&(current->donation_list)); e != list_end (&(current->donation_list)); e = list_next(e)) {
+ 		struct thread *ethread = list_entry(e, struct thread, elem);
+		if(lock = ethread->gate){
+			list_remove(e);
+		}
+	}
+	
+}
+
+static void reset_priority(void){
+	//compare current priority with the MAX priority from the donation list.
+	struct thread* current = thread_current();
+	struct thread* maxthread = list_entry (list_pop_front (&(current->donation_list)), struct thread, elem);
+	current->priority = current->ori_priority;
+	if(current->priority < maxthread->priority){
+		current->priority = maxthread->priority;
+	}
+}
+
 /* Releases LOCK, which must be owned by the current thread.
    This is lock_release function.
 
@@ -285,10 +311,12 @@ lock_release (struct lock *lock) {
 	ASSERT (lock != NULL);
 	ASSERT (lock_held_by_current_thread (lock));
 	
-	//reset the donation.
-	lock->holder->priority = lock->old_priority;
-	
 	lock->holder = NULL;
+	
+	//new functions.
+	remove_from_donations(lock);
+	reset_priority();
+	
 	sema_up (&lock->semaphore);
 	
 }
