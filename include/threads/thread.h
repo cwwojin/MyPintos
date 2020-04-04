@@ -5,7 +5,6 @@
 #include <list.h>
 #include <stdint.h>
 #include "threads/interrupt.h"
-#include "threads/synch.h"
 
 /* States in a thread's life cycle. */
 enum thread_status {
@@ -91,7 +90,7 @@ struct thread {
 	
 	int64_t alarm_ticks;	//wakeup time(in ticks) for alarm clock.
 	
-	struct lock* gate;	//the lock that this thread is waiting for.
+	//struct lock* gate;	//the lock that this thread is waiting for.
 
 	/* Shared between thread.c and synch.c. */
 	struct list_elem elem;              /* List element. */
