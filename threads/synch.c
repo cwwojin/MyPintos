@@ -289,7 +289,7 @@ static void remove_from_donations(struct lock* lock){
 			e = list_remove(e);
 			//break;
 		}
-		if(e == list_end (&(current->donation_list)) break;
+		if(e == list_end (&(current->donation_list))) break;
 		
 		e = list_next(e);
 	}
