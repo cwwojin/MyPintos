@@ -339,8 +339,8 @@ static void remove_from_donations(struct lock* lock){
 void reset_priority(void){
 	//compare current priority with the MAX priority from the donation list.
 	
-	enum intr_level old_level;
-	old_level = intr_disable ();
+	//enum intr_level old_level;
+	//old_level = intr_disable ();
 	
 	struct thread* current = thread_current();
 	current->priority = current->ori_priority;
@@ -355,7 +355,7 @@ void reset_priority(void){
 			}
 		}
 	}
-	intr_set_level (old_level);
+	//intr_set_level (old_level);
 }
 
 
