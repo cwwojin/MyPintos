@@ -341,7 +341,7 @@ thread_set_priority (int new_priority) {
 	thread_current()->ori_priority = new_priority;
 	
 	//donations!!
-	reset_priority();
+	//reset_priority();
 	
 	/* NEWCODE */
 	if(thread_current()->priority < old_priority) thread_yield();
