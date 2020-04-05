@@ -237,7 +237,7 @@ lock_acquire (struct lock *lock) {
 	
 	struct thread* current;
 	current = thread_current();
-	
+	/*
 	if(lock->holder != NULL){
 		//1. set the "gate" value of this thread.
 		current->gate = lock;
@@ -246,6 +246,7 @@ lock_acquire (struct lock *lock) {
 		//3. call donate_priority
 		donate_priority();
 	}
+	*/
 	//4. wait for release.
 	sema_down (&lock->semaphore);
 	current->gate = NULL;
@@ -315,8 +316,8 @@ lock_release (struct lock *lock) {
 	lock->holder = NULL;
 	
 	//new functions.
-	remove_from_donations(lock);
-	reset_priority();
+	//remove_from_donations(lock);
+	//reset_priority();
 	
 	sema_up (&lock->semaphore);
 	
