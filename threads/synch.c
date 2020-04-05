@@ -244,7 +244,7 @@ lock_acquire (struct lock *lock) {
 		//1. set the "gate" value of this thread.
 		current->gate = lock;
 		//2. put thread to donation list. (in Priority order)
-		list_insert_ordered (&(lock->holder->donation_list), &current->elem, compare_pri, NULL);
+		//list_insert_ordered (&(lock->holder->donation_list), &current->elem, compare_pri, NULL);
 		//3. call donate_priority
 		donate_priority();
 	}
@@ -284,13 +284,13 @@ static void remove_from_donations(struct lock* lock){
 	//struct list_elem* delete = NULL;
 	if(list_empty(&(current->donation_list))) return;
 	e = list_begin(&(current->donation_list));
-	while(e->next != NULL){
+	while(e != list_end(&(current->donation_list))){
 		struct thread *ethread = list_entry(e, struct thread, elem);
 		if(lock == ethread->gate){
 			e = list_remove(e);
 		}
 		else{
-			e = e->next;
+			e = list_next(e);
 		}
 	}
 }
@@ -325,7 +325,7 @@ lock_release (struct lock *lock) {
 	lock->holder = NULL;
 	
 	//new functions.
-	//remove_from_donations(lock);
+	remove_from_donations(lock);
 	reset_priority();
 	
 	sema_up (&lock->semaphore);
@@ -341,7 +341,7 @@ lock_held_by_current_thread (const struct lock *lock) {
 
 	return lock->holder == thread_current ();
 }
-
+
 /* One semaphore in a list. */
 struct semaphore_elem {
 	struct list_elem elem;              /* List element. */
