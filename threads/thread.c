@@ -383,6 +383,12 @@ thread_get_recent_cpu (void) {
 	return 0;
 }
 
+void mlfqs_priority(struct thread *t);
+void mlfqs_recent_cpu(struct thread *t);
+void mlfqs_load_avg(void);
+void mlfqs_increment(void);
+void mlfqs_recalc(void);
+
 /* Idle thread.  Executes when no other thread is ready to run.
 
    The idle thread is initially put on the ready list by
@@ -451,6 +457,10 @@ init_thread (struct thread *t, const char *name, int priority) {
 	t->gate = NULL;
 	list_init(&(t->donation_list));
 	t->ori_priority = priority;
+	
+	//for mlfqs.
+	t->nice = 0;
+	t->recent_cpu = 0;
 }
 
 /* Chooses and returns the next thread to be scheduled.  Should
