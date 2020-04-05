@@ -254,8 +254,8 @@ lock_acquire (struct lock *lock) {
 	current->gate = NULL;
 	lock->holder = current;
 
-	sema_down (&lock->semaphore);
-	lock->holder = thread_current ();
+	//sema_down (&lock->semaphore);
+	//lock->holder = thread_current ();
 }
 
 /* Tries to acquires LOCK and returns true if successful or false
@@ -325,7 +325,7 @@ lock_release (struct lock *lock) {
 	lock->holder = NULL;
 	
 	//new functions.
-	//remove_from_donations(lock);
+	remove_from_donations(lock);
 	reset_priority();
 	
 	sema_up (&lock->semaphore);
