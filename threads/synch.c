@@ -242,7 +242,7 @@ lock_acquire (struct lock *lock) {
 		//1. set the "gate" value of this thread.
 		current->gate = lock;
 		//2. put thread to donation list. (in Priority order)
-		list_insert_ordered (&(lock->holder->donation_list), &current->donation_elem, compare_pri, NULL);
+		list_insert_ordered (&(lock->holder->donation_list), &current->elem, compare_pri, NULL);
 		//3. call donate_priority
 		donate_priority();
 	}
@@ -281,7 +281,7 @@ static void remove_from_donations(struct lock* lock){
 	struct list_elem* e;
 	if(list_empty(&(current->donation_list))) return;
 	for (e = list_begin (&(current->donation_list)); e != list_end (&(current->donation_list)); e = list_next(e)) {
- 		struct thread *ethread = list_entry(e, struct thread, donation_elem);
+ 		struct thread *ethread = list_entry(e, struct thread, elem);
 		if(lock = ethread->gate){
 			list_remove(e);
 		}
@@ -293,7 +293,7 @@ static void remove_from_donations(struct lock* lock){
 void reset_priority(void){
 	//compare current priority with the MAX priority from the donation list.
 	struct thread* current = thread_current();
-	struct thread* maxthread = list_entry (list_pop_front (&(current->donation_list)), struct thread, donation_elem);
+	struct thread* maxthread = list_entry (list_pop_front (&(current->donation_list)), struct thread, elem);
 	current->priority = current->ori_priority;
 	if(current->priority < maxthread->priority){
 		current->priority = maxthread->priority;
