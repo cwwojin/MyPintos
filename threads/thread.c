@@ -265,7 +265,7 @@ thread_unblock (struct thread *t) {
 	//if(t->priority > thread_get_priority()) thread_yield();
 	
 	intr_set_level (old_level);
-	if(t->priority > thread_get_priority()) thread_yield();
+	//if(t->priority > thread_get_priority()) thread_yield();
 }
 
 /* Returns the name of the running thread. */
