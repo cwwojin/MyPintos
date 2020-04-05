@@ -94,8 +94,7 @@ struct thread {
 	/* For Priority Donation */
 	int ori_priority;	//original priority.
 	struct lock* gate;	//the lock that this thread is waiting for.
-	struct list donation_list;	//list of threads that donated.
-	//struct list_elem donation_elem;
+	
 	
 
 	/* Shared between thread.c and synch.c. */
@@ -109,6 +108,11 @@ struct thread {
 	/* Owned by thread.c. */
 	struct intr_frame tf;               /* Information for switching */
 	unsigned magic;                     /* Detects stack overflow. */
+	
+	
+	
+	struct list donation_list;	//list of threads that donated.
+	//struct list_elem donation_elem;
 };
 
 /* If false (default), use round-robin scheduler.
