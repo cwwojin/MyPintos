@@ -208,6 +208,8 @@ static void donate_priority(void){
 	struct thread* t = thread_current();
 	struct lock* waitinglock = t->gate;
 	
+	old_level = intr_disable ();
+	
 	if(waitinglock == NULL) return;
 	if(t->priority > waitinglock->holder->priority){
 		printf("am going to insert.\n");
@@ -226,6 +228,8 @@ static void donate_priority(void){
 			break;
 		}
 	}
+	
+	intr_set_level (old_level);
 }
 
 
