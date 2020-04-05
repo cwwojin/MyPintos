@@ -94,8 +94,8 @@ struct thread {
 	/* For Priority Donation */
 	int ori_priority;	//original priority.
 	struct lock* gate;	//the lock that this thread is waiting for.
-	struct list donation_list;	//list of threads that donated.
-	struct list_elem donation_elem;
+	//struct list donation_list;	//list of threads that donated.
+	//struct list_elem donation_elem;
 	
 
 	/* Shared between thread.c and synch.c. */
