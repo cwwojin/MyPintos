@@ -263,7 +263,8 @@ thread_unblock (struct thread *t) {
 	t->status = THREAD_READY;
 	
 	//if(t->priority > thread_get_priority()) thread_yield();
-	
+	if (thread_current() != idle_thread && thread_current()->priority < t->priority)
+    		thread_yield();
 	intr_set_level (old_level);
 	//if(t->priority > thread_get_priority()) thread_yield();
 }
