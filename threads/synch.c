@@ -280,36 +280,18 @@ static void remove_from_donations(struct lock* lock){
 	struct thread* current = thread_current();
 	//iterate through current thread's donation list
 	struct list_elem* e;
+	struct list_elem* delete;
 	if(list_empty(&(current->donation_list))) return;
 	
-	e = list_begin (&(current->donation_list));
-	while(!list_empty(&(current->donation_list))){
-		struct thread *ethread = list_entry(e, struct thread, elem);
-		if(lock == ethread->gate){
-			e = list_remove(e);
-			break;
-		}
-		if(e == list_end (&(current->donation_list))) break;
-		
-		e = list_next(e);
-	}
-	
-	
-	/*
 	for (e = list_begin (&(current->donation_list)); e != list_end (&(current->donation_list)); e = list_next(e)) {
-		if(e == list_end (&(current->donation_list))){
-			printf("Is tail.\n");
-		}
-		else{
-			printf("Is not tail.\n");
-		}
  		struct thread *ethread = list_entry(e, struct thread, elem);
 		if(lock == ethread->gate){
-			list_remove(e);
+			delete = e;
 			break;
 		}
 	}
-	*/
+	if(delete != NULL) list_remove(delete);
+	
 	
 }
 
