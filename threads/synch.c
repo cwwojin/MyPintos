@@ -207,7 +207,7 @@ lock_init (struct lock *lock) {
 static void donate_priority(void){
 	struct thread* t = thread_current();
 	struct lock* waitinglock = t->gate;
-	
+	enum intr_level old_level;
 	old_level = intr_disable ();
 	
 	if(waitinglock == NULL) return;
