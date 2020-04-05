@@ -406,7 +406,7 @@ cond_wait (struct condition *cond, struct lock *lock) {
 	sema_init (&waiter.semaphore, 0);
 	//list_push_back (&cond->waiters, &waiter.elem);
 	
-	list_insert_ordered(&cond->waiters, &waiter.elem, compare_sema_pri, NULL)
+	list_insert_ordered(&cond->waiters, &waiter.elem, compare_sema_pri, NULL);
 	
 	lock_release (lock);
 	sema_down (&waiter.semaphore);
