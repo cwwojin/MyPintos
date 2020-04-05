@@ -82,7 +82,7 @@ sema_down (struct semaphore *sema) {
 		
 		/* NEWCODE */
 		//same as priority scheduling. use insert_ordered
-		list_insert_ordered(&sema->waiters,  &thread_current()->elem, compare_pri, NULL);
+		//list_insert_ordered(&sema->waiters,  &thread_current()->elem, compare_pri, NULL);
 		/* ENDOFNEWCODE */
 		
 		thread_block ();
