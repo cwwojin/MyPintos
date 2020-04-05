@@ -212,10 +212,10 @@ static void donate_priority(void){
 	
 	if(waitinglock == NULL) return;
 	if(t->priority > waitinglock->holder->priority){
-		printf("am going to insert.\n");
-		//list_insert_ordered (&(waitinglock->holder->donation_list), &t->elem, compare_pri, NULL);
-		list_push_back(&waitinglock->holder->donation_list, &t->elem);
-		printf("inserted successfully.\n");
+		//printf("am going to insert.\n");
+		list_insert_ordered (&(waitinglock->holder->donation_list), &t->elem, compare_pri, NULL);
+		//list_push_back(&waitinglock->holder->donation_list, &t->elem);
+		//printf("inserted successfully.\n");
 	}
 	
 	while(waitinglock != NULL){
@@ -293,7 +293,10 @@ static void remove_from_donations(struct lock* lock){
 	struct thread* current = thread_current();
 	//iterate through current thread's donation list
 	struct list_elem* e;
-	//struct list_elem* delete = NULL;
+	
+	enum intr_level old_level;
+	old_level = intr_disable ();
+	
 	if(list_empty(&(current->donation_list))) return;
 	e = list_begin(&(current->donation_list));
 	struct thread *ethread = list_entry(e, struct thread, elem);
@@ -312,6 +315,7 @@ static void remove_from_donations(struct lock* lock){
 		}
 	}
 	*/
+	intr_set_level (old_level);
 }
 
 
