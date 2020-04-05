@@ -282,6 +282,19 @@ static void remove_from_donations(struct lock* lock){
 	struct list_elem* e;
 	if(list_empty(&(current->donation_list))) return;
 	
+	e = list_begin (&(current->donation_list));
+	while(e != list_end (&(current->donation_list)){
+		struct thread *ethread = list_entry(e, struct thread, elem);
+		if(lock == ethread->gate){
+			e = list_remove(e);
+			break;
+		}
+		if(e == list_end (&(current->donation_list)) break;
+		e = list_next(e);
+	}
+	
+	
+	/*
 	for (e = list_begin (&(current->donation_list)); e != list_end (&(current->donation_list)); e = list_next(e)) {
 		if(e == list_end (&(current->donation_list))){
 			printf("Is tail.\n");
@@ -295,6 +308,7 @@ static void remove_from_donations(struct lock* lock){
 			break;
 		}
 	}
+	*/
 	
 }
 
