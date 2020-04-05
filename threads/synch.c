@@ -210,7 +210,9 @@ static void donate_priority(void){
 	
 	if(waitinglock == NULL) return;
 	if(t->priority > waitinglock->holder->priority){
+		printf("am going to insert.\n");
 		list_insert_ordered (&(waitinglock->holder->donation_list), &t->elem, compare_pri, NULL);
+		printf("inserted successfully.\n");
 	}
 	
 	while(waitinglock != NULL){
