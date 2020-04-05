@@ -197,8 +197,6 @@ lock_init (struct lock *lock) {
 
 	lock->holder = NULL;
 	sema_init (&lock->semaphore, 1);
-	
-	//lock->old_priority = PRI_MIN;
 }
 
 
@@ -236,7 +234,7 @@ lock_acquire (struct lock *lock) {
 	ASSERT (!intr_context ());
 	ASSERT (!lock_held_by_current_thread (lock));
 	
-	/* NEWCODE */
+	/* 
 	struct thread* current;
 	current = thread_current();
 	
@@ -252,10 +250,10 @@ lock_acquire (struct lock *lock) {
 	sema_down (&lock->semaphore);
 	current->gate = NULL;
 	lock->holder = current;
-	/* ENDOFNEWCODE */
+	 */
 
-	//sema_down (&lock->semaphore);
-	//lock->holder = thread_current ();
+	sema_down (&lock->semaphore);
+	lock->holder = thread_current ();
 }
 
 /* Tries to acquires LOCK and returns true if successful or false
@@ -276,7 +274,7 @@ lock_try_acquire (struct lock *lock) {
 		lock->holder = thread_current ();
 	return success;
 }
-
+/*
 static void remove_from_donations(struct lock* lock){
 	struct thread* current = thread_current();
 	//iterate through current thread's donation list
@@ -290,7 +288,8 @@ static void remove_from_donations(struct lock* lock){
 	}
 	
 }
-
+*/
+/*
 void reset_priority(void){
 	//compare current priority with the MAX priority from the donation list.
 	struct thread* current = thread_current();
@@ -300,6 +299,7 @@ void reset_priority(void){
 		current->priority = maxthread->priority;
 	}
 }
+*/
 
 /* Releases LOCK, which must be owned by the current thread.
    This is lock_release function.
@@ -315,8 +315,8 @@ lock_release (struct lock *lock) {
 	lock->holder = NULL;
 	
 	//new functions.
-	remove_from_donations(lock);
-	reset_priority();
+	//remove_from_donations(lock);
+	//reset_priority();
 	
 	sema_up (&lock->semaphore);
 	
