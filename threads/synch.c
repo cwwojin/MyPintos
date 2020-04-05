@@ -209,7 +209,7 @@ static void donate_priority(void){
 	struct lock* waitinglock = t->gate;
 	enum intr_level old_level;
 	old_level = intr_disable ();
-	
+	/*
 	if(waitinglock == NULL) return;
 	if(t->priority > waitinglock->holder->priority){
 		//printf("am going to insert.\n");
@@ -217,6 +217,7 @@ static void donate_priority(void){
 		//list_push_back(&waitinglock->holder->donation_list, &t->elem);
 		//printf("inserted successfully.\n");
 	}
+	*/
 	
 	while(waitinglock != NULL){
 		if(t->priority > waitinglock->holder->priority){
@@ -338,6 +339,9 @@ static void remove_from_donations(struct lock* lock){
 void reset_priority(void){
 	//compare current priority with the MAX priority from the donation list.
 	
+	enum intr_level old_level;
+	old_level = intr_disable ();
+	
 	struct thread* current = thread_current();
 	current->priority = current->ori_priority;
 	if(list_empty(&current->donation_list)) return;
@@ -351,11 +355,7 @@ void reset_priority(void){
 			}
 		}
 	}
-	/*
-	if(current->priority < maxthread->priority){
-		current->priority = maxthread->priority;
-	}
-	*/
+	intr_set_level (old_level);
 }
 
 
