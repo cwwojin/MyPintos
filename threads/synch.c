@@ -283,13 +283,14 @@ static void remove_from_donations(struct lock* lock){
 	if(list_empty(&(current->donation_list))) return;
 	
 	e = list_begin (&(current->donation_list));
-	while(e != list_end (&(current->donation_list)){
+	while(1){
 		struct thread *ethread = list_entry(e, struct thread, elem);
 		if(lock == ethread->gate){
 			e = list_remove(e);
-			break;
+			//break;
 		}
 		if(e == list_end (&(current->donation_list)) break;
+		
 		e = list_next(e);
 	}
 	
