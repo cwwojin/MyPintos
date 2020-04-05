@@ -109,6 +109,9 @@ struct thread {
 	struct intr_frame tf;               /* Information for switching */
 	unsigned magic;                     /* Detects stack overflow. */
 	
+	//for mlfqs scheduler.
+	int nice;
+	int recent_cpu;
 	
 	
 	struct list donation_list;	//list of threads that donated.
