@@ -207,7 +207,12 @@ lock_init (struct lock *lock) {
 static void donate_priority(void){
 	struct thread* t = thread_current();
 	struct lock* waitinglock = t->gate;
-
+	
+	if(waitinglock == NULL) return;
+	if(t->priority > waitinglock->holder->priority){
+		list_insert_ordered (&(waitinglock->holder->donation_list), &t->elem, compare_pri, NULL);
+	}
+	
 	while(waitinglock != NULL){
 		if(t->priority > waitinglock->holder->priority){
 			//donate.
