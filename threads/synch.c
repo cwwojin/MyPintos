@@ -295,6 +295,7 @@ static void remove_from_donations(struct lock* lock){
 			e = list_remove(e);
 		}
 		else{
+			if(e->next == NULL) break;
 			e = list_next(e);
 		}
 	}
