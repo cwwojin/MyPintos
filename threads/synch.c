@@ -290,7 +290,7 @@ static void remove_from_donations(struct lock* lock){
 			e = list_remove(e);
 		}
 		else{
-			e = list_next(e);
+			e = e->next;
 		}
 	}
 }
