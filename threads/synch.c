@@ -249,12 +249,11 @@ lock_acquire (struct lock *lock) {
 	struct thread* current;
 	current = thread_current();
 	
-  /*
 	if(lock->holder != NULL){
 		//1. set the "gate" value of this thread.
 		current->gate = lock;
 		//2. put thread to donation list. (in Priority order)
-		//list_insert_ordered (&(lock->holder->donation_list), &current->elem, compare_pri, NULL);
+		list_insert_ordered (&(lock->holder->donation_list), &current->elem, compare_pri, NULL);
 		//3. call donate_priority
 		donate_priority();
 	}
@@ -263,7 +262,6 @@ lock_acquire (struct lock *lock) {
 	sema_down (&lock->semaphore);
 	current->gate = NULL;
 	lock->holder = current;
-  */
 
 	sema_down (&lock->semaphore);
 	lock->holder = thread_current ();
@@ -315,7 +313,7 @@ void reset_priority(void){
 	if(list_empty(&(current->donation_list))) return;
 	
 	struct thread* maxthread = list_entry (list_pop_front (&(current->donation_list)), struct thread, elem);
-	//current->priority = current->ori_priority;
+	
 	if(current->priority < maxthread->priority){
 		current->priority = maxthread->priority;
 	}
