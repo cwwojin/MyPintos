@@ -325,7 +325,7 @@ lock_release (struct lock *lock) {
 	lock->holder = NULL;
 	
 	//new functions.
-	remove_from_donations(lock);
+	//remove_from_donations(lock);
 	reset_priority();
 	
 	sema_up (&lock->semaphore);
