@@ -211,7 +211,7 @@ lock_init (struct lock *lock) {
 }
 
 
-/* 
+
 //recursive function for (nested) priority donation.
 static void donate_priority(void){
 	struct thread* t = thread_current();
@@ -228,7 +228,7 @@ static void donate_priority(void){
 		}
 	}
 }
-*/
+
 
 
 /* Acquires LOCK, sleeping until it becomes available if
@@ -334,8 +334,8 @@ lock_release (struct lock *lock) {
 	lock->holder = NULL;
 	
 	//new functions.
-	//remove_from_donations(lock);
-	//reset_priority();
+	remove_from_donations(lock);
+	reset_priority();
 	
 	sema_up (&lock->semaphore);
 	
