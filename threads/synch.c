@@ -355,8 +355,8 @@ static bool compare_sema_pri(const struct list_elem* left, const struct list_ele
 	struct semaphore_elem* sema_l = list_entry(left, struct semaphore_elem, elem);
 	struct semaphore_elem* sema_r = list_entry(right, struct semaphore_elem, elem);
 	
-	struct thread* th_l = list_entry (list_pop_front (&sema_l->semaphore.waiters), struct thread, elem);
-	struct thread* th_r = list_entry (list_pop_front (&sema_r->semaphore.waiters), struct thread, elem);
+	struct thread* th_l = list_entry (list_front (&sema_l->semaphore.waiters), struct thread, elem);
+	struct thread* th_r = list_entry (list_front (&sema_r->semaphore.waiters), struct thread, elem);
 	
 	//compare to semaphores' max priorities.
 	return th_l->priority > th_r->priority;
