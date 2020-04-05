@@ -284,7 +284,7 @@ static void remove_from_donations(struct lock* lock){
 	//struct list_elem* delete = NULL;
 	if(list_empty(&(current->donation_list))) return;
 	e = list_begin(&(current->donation_list));
-	while(is_head (elem) || is_interior (elem)){
+	while(is_head(e) || is_interior(e)){
 		struct thread *ethread = list_entry(e, struct thread, elem);
 		if(lock == ethread->gate){
 			e = list_remove(e);
