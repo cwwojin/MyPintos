@@ -253,7 +253,7 @@ lock_acquire (struct lock *lock) {
 		//1. set the "gate" value of this thread.
 		current->gate = lock;
 		//2. put thread to donation list. (in Priority order)
-		list_insert_ordered (&(lock->holder->donation_list), &current->elem, compare_pri, NULL);
+		//list_insert_ordered (&(lock->holder->donation_list), &current->elem, compare_pri, NULL);
 		//3. call donate_priority
 		donate_priority();
 	}
