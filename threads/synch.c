@@ -293,9 +293,13 @@ static void remove_from_donations(struct lock* lock){
 
 void reset_priority(void){
 	//compare current priority with the MAX priority from the donation list.
+	
 	struct thread* current = thread_current();
-	struct thread* maxthread = list_entry (list_pop_front (&(current->donation_list)), struct thread, elem);
 	current->priority = current->ori_priority;
+	if(list_empty(&(current->donation_list))) return;
+	
+	struct thread* maxthread = list_entry (list_pop_front (&(current->donation_list)), struct thread, elem);
+	//current->priority = current->ori_priority;
 	if(current->priority < maxthread->priority){
 		current->priority = maxthread->priority;
 	}
