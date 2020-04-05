@@ -294,8 +294,8 @@ static void remove_from_donations(struct lock* lock){
 	//iterate through current thread's donation list
 	struct list_elem* e;
 	
-	enum intr_level old_level;
-	old_level = intr_disable ();
+	//enum intr_level old_level;
+	//old_level = intr_disable ();
 	
 	if(list_empty(&(current->donation_list))) return;
 	e = list_begin(&(current->donation_list));
@@ -315,7 +315,7 @@ static void remove_from_donations(struct lock* lock){
 		}
 	}
 	*/
-	intr_set_level (old_level);
+	//intr_set_level (old_level);
 }
 
 
