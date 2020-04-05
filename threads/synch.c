@@ -138,18 +138,9 @@ sema_up (struct semaphore *sema) {
 		list_sort (&sema->waiters, compare_pri, NULL);
 		t = list_entry (list_pop_front (&sema->waiters), struct thread, elem);
 		thread_unblock (t);
-		/*
-		if(t->priority > thread_current()->priority){
-			thread_yield();
-		}
-		*/
 	}
 	//sema->value++;
 	intr_set_level (old_level);
-	
-	
-	//thread_yield();
-	
 }
 
 static void sema_test_helper (void *sema_);
@@ -334,7 +325,7 @@ lock_release (struct lock *lock) {
 	lock->holder = NULL;
 	
 	//new functions.
-	remove_from_donations(lock);
+	//remove_from_donations(lock);
 	reset_priority();
 	
 	sema_up (&lock->semaphore);
