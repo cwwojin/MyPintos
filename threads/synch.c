@@ -283,6 +283,8 @@ static void remove_from_donations(struct lock* lock){
 	if(list_empty(&(current->donation_list))) return;
 	
 	for (e = list_begin (&(current->donation_list)); e != list_end (&(current->donation_list)); e = list_next(e)) {
+		if(e == list_end (&(current->donation_list)))
+			printf("Is tail.\n");
  		struct thread *ethread = list_entry(e, struct thread, elem);
 		if(lock == ethread->gate){
 			list_remove(e);
