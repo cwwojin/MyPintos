@@ -289,6 +289,7 @@ static void remove_from_donations(struct lock* lock){
 			delete = e;
 			break;
 		}
+		if(list_empty(&(current->donation_list))) break;
 	}
 	if(delete != NULL) list_remove(delete);
 	
