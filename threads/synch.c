@@ -318,7 +318,7 @@ static void remove_from_donations(struct lock* lock){
 	if(lock == ethread->gate){
 		e = list_remove(e);
 	}
-	/*
+	
 	while(e != list_end(&(current->donation_list))){
 		struct thread *ethread = list_entry(e, struct thread, elem);
 		if(lock == ethread->gate){
@@ -329,7 +329,7 @@ static void remove_from_donations(struct lock* lock){
 			e = list_next(e);
 		}
 	}
-	*/
+	
 	//intr_set_level (old_level);
 }
 */
