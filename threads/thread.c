@@ -263,8 +263,10 @@ thread_unblock (struct thread *t) {
 	t->status = THREAD_READY;
 	
 	//if(t->priority > thread_get_priority()) thread_yield();
-	
+	if (thread_current() != idle_thread && thread_current()->priority < t->priority)
+    		thread_yield();
 	intr_set_level (old_level);
+	//if(t->priority > thread_get_priority()) thread_yield();
 }
 
 /* Returns the name of the running thread. */
@@ -337,10 +339,14 @@ thread_yield (void) {
 void
 thread_set_priority (int new_priority) {
 	int old_priority = thread_get_priority();
-	thread_current ()->priority = new_priority;
+	thread_current()->priority = new_priority;
+	thread_current()->ori_priority = new_priority;
+	
+	//donations!!
+	//reset_priority();
 	
 	/* NEWCODE */
-	if(new_priority < old_priority) thread_yield();
+	if(thread_current()->priority < old_priority) thread_yield();
 	/* ENDOFNEWCODE */
 }
 
@@ -439,8 +445,13 @@ init_thread (struct thread *t, const char *name, int priority) {
 	t->tf.rsp = (uint64_t) t + PGSIZE - sizeof (void *);
 	t->priority = priority;
 	t->magic = THREAD_MAGIC;
-	//initialize "gate".
-	//t->gate = NULL;
+  
+  /*
+  //initialize "gate".
+	t->gate = NULL;
+	list_init(&(t->donation_list));
+	t->ori_priority = priority;
+  */
 }
 
 /* Chooses and returns the next thread to be scheduled.  Should

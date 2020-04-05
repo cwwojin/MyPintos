@@ -5,6 +5,7 @@
 #include <list.h>
 #include <stdint.h>
 #include "threads/interrupt.h"
+#include "threads/synch.h"
 
 /* States in a thread's life cycle. */
 enum thread_status {
@@ -90,7 +91,11 @@ struct thread {
 	
 	int64_t alarm_ticks;	//wakeup time(in ticks) for alarm clock.
 	
-	//struct lock* gate;	//the lock that this thread is waiting for.
+	/* For Priority Donation */
+	int ori_priority;	//original priority.
+	struct lock* gate;	//the lock that this thread is waiting for.
+	
+	
 
 	/* Shared between thread.c and synch.c. */
 	struct list_elem elem;              /* List element. */
@@ -103,6 +108,11 @@ struct thread {
 	/* Owned by thread.c. */
 	struct intr_frame tf;               /* Information for switching */
 	unsigned magic;                     /* Detects stack overflow. */
+	
+	
+	
+	struct list donation_list;	//list of threads that donated.
+	//struct list_elem donation_elem;
 };
 
 /* If false (default), use round-robin scheduler.
