@@ -402,7 +402,7 @@ thread_get_recent_cpu (void) {
 	return 0;
 }
 
-/* 
+/**/
 void mlfqs_priority(struct thread *t){
 	//This is a function for calculating new priority, with recent_cpu & nice values.
 	//1. Check if t is idle_thread or not.
@@ -458,7 +458,7 @@ void mlfqs_recalc(void){
 	//ready -> all stored in ready_list
 	//blocked -> 
 }
-*/
+/**/
 
 /* Idle thread.  Executes when no other thread is ready to run.
 
