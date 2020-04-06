@@ -22,7 +22,7 @@
 #define LOAD_AVG_DEFAULT 0
 
 //this is the load_avg value!!
-int load_avg;
+int load_avg = LOAD_AVG_DEFAULT;
 
 
 
@@ -476,8 +476,27 @@ void mlfqs_recalc(void){
 	//This is a function to calculate ALL threads' recent_cpu & priority values.
 	//"All threads" = running / ready / blocked.
 	//running -> get thread_current()
+	struct thread* running = thread_current();
+	mlfqs_recent_cpu(running);
+	mlfqs_priority(running);
 	//ready -> all stored in ready_list
-	//blocked -> 
+	struct list_elem* i;
+	struct thread* th;
+	i = list_begin(&ready_list);
+	while(i != list_end(&ready_list)){
+		th = list_entry(i,struct thread, elem);
+		mlfqs_recent_cpu(th);
+		mlfqs_priority(th);
+		i = list_next(i);
+	}
+	//blocked -> all stored in block_list
+	i = list_begin(&block_list);
+	while(i != list_end(&block_list)){
+		th = list_entry(i,struct thread, elem);
+		mlfqs_recent_cpu(th);
+		mlfqs_priority(th);
+		i = list_next(i);
+	}
 }
 /**/
 
