@@ -297,7 +297,7 @@ thread_unblock (struct thread *t) {
 			break;
 		}
 		else{
-			list_push_front(&block_list, &th->block_elem);
+			list_push_back(&block_list, &th->block_elem);
 		}
 	}
 	//if(e != NULL) list_remove(e);
