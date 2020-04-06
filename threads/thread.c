@@ -434,6 +434,8 @@ void mlfqs_load_avg(void){
 	int right = div_fp(int_to_fp(ready_threads), int_to_fp(60));
 	//This is a FP number, not regular int!!
 	int new_load = add_fp(mult_fp(left, load_avg), right);
+	
+	load_avg = new_load;
 	//3. load_avg can't be (< 0)!!
 	ASSERT(load_avg >= 0);
 }
