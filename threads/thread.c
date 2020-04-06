@@ -397,11 +397,20 @@ thread_get_recent_cpu (void) {
 	return 0;
 }
 
-void mlfqs_priority(struct thread *t);
+/* New functions for mlfqs scheduler. */
+void mlfqs_priority(struct thread *t){
+	//This is a function for calculating new priority, with recent_cpu & nice values.
+	//1. Check if t is idle_thread or not.
+	if(t == idle_thread) return;
+	//2. Recalculate priority based on equation, use fixed point for recent_cpu.
+	t->priority = PRI_MAX - div_mixed(t->recent_cpu, 4) - (t->nice * 2);
+}
+
 void mlfqs_recent_cpu(struct thread *t);
 void mlfqs_load_avg(void);
 void mlfqs_increment(void);
 void mlfqs_recalc(void);
+/* End of new functions. */
 
 /* Idle thread.  Executes when no other thread is ready to run.
 
