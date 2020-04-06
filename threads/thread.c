@@ -403,12 +403,42 @@ void mlfqs_priority(struct thread *t){
 	//1. Check if t is idle_thread or not.
 	if(t == idle_thread) return;
 	//2. Recalculate priority based on equation, use fixed point for recent_cpu.
-	t->priority = PRI_MAX - div_mixed(t->recent_cpu, 4) - (t->nice * 2);
+	t->priority = PRI_MAX - fp_to_int_round(div_mixed(t->recent_cpu, 4)) - (t->nice * 2);
 }
 
-void mlfqs_recent_cpu(struct thread *t);
-void mlfqs_load_avg(void);
-void mlfqs_increment(void);
+void mlfqs_recent_cpu(struct thread *t){
+	//This is a function for calculating recent_cpu value.
+	//1. Check if t is idle_thread or not.
+	if(t == idle_thread) return;
+	//2. Calculate recent_cpu based on equation, use fixed point for load_avg & recent_cpu.
+	int load2 = mult_mixed(load_avg, 2);
+	int left = mult_fp(t->recent_cpu, div_fp(load2, add_mixed(load2, 1)));
+	//This should be a FP number, not regular int!!
+	int new_recent = add_fp(left, int_to_fp(t->nice));
+	t->recent_cpu = new_recent;
+}
+
+void mlfqs_load_avg(void){
+	//This is a function for calculating load_avg value.
+	//1. get "ready", which is (#. of running threads except idle_thread) + (#. of ready threads)
+	int ready_threads = (int) list_size(&ready_list);
+	struct thread* current = thread_current();
+	if(current != idle_thread){
+		ready_threads++;
+	}
+	//2. Calculate load_avg based on equation, use fixd point for load_avg.
+	int left = div_fp(int_to_fp(59), int_to_fp(60));
+	int right = div_fp(int_to_fp(ready_threads), int_to_fp(60));
+	//This is a FP number, not regular int!!
+	int new_load = add_fp(mult_fp(left, load_avg), right);
+	//3. load_avg can't be (< 0)!!
+	ASSERT(load_avg >= 0);
+}
+
+void mlfqs_increment(void){
+	
+}
+
 void mlfqs_recalc(void);
 /* End of new functions. */
 
