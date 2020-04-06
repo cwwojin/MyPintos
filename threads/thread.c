@@ -259,7 +259,7 @@ thread_block (void) {
 	ASSERT (intr_get_level () == INTR_OFF);
 	
 	//New Code : add thread to block_list.
-	list_push_back(&block_list, &thread_current()->elem);
+	list_push_back(&block_list, &thread_current()->block_elem);
 	
 	thread_current ()->status = THREAD_BLOCKED;
 	schedule ();
@@ -292,12 +292,12 @@ thread_unblock (struct thread *t) {
 	struct thread* th;
 	//i = list_begin(&block_list);
 	for(i = list_begin(&block_list); i != list_end(&block_list); i = list_remove(i)){
-		th = list_entry(i,struct thread, elem);
+		th = list_entry(i,struct thread, block_elem);
 		if(th == t){	//found the entry
 			break;
 		}
 		else{
-			list_push_front(&block_list, &th->elem);
+			list_push_front(&block_list, &th->block_elem);
 		}
 	}
 	//if(e != NULL) list_remove(e);
@@ -515,6 +515,7 @@ void mlfqs_recalc(void){
 		i = list_next(i);
 	}
 	//blocked -> all stored in block_list
+	/*
 	i = list_begin(&block_list);
 	while(i != list_end(&block_list)){
 		th = list_entry(i,struct thread, elem);
@@ -522,6 +523,7 @@ void mlfqs_recalc(void){
 		mlfqs_priority(th);
 		i = list_next(i);
 	}
+	*/
 }
 /**/
 
