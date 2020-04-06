@@ -4,7 +4,7 @@
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
-#include "threads/fixed_point.h"
+//#include "threads/fixed_point.h"
 #include "threads/interrupt.h"
 #include "threads/synch.h"
 

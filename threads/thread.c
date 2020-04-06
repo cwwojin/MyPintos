@@ -257,6 +257,10 @@ void
 thread_block (void) {
 	ASSERT (!intr_context ());
 	ASSERT (intr_get_level () == INTR_OFF);
+	
+	//New Code : add thread to block_list.
+	//list_push_back (&block_list, &thread_current()->elem);
+	
 	thread_current ()->status = THREAD_BLOCKED;
 	schedule ();
 }
@@ -281,11 +285,28 @@ thread_unblock (struct thread *t) {
 	list_insert_ordered (&ready_list, &t->elem, compare_pri, NULL);
 	t->status = THREAD_READY;
 	
-	//if(t->priority > thread_get_priority()) thread_yield();
+	/* New Code : Delete t from block_list. */
+	/*
+	struct list_elem* i;
+	struct thread* th;
+	i = list_begin(&block_list);
+	while(i != list_end(&block_list)){
+		th = list_entry(i,struct thread, elem);
+		if(th == t){	//found the entry
+			i = list_remove(i);
+			//break;
+		}
+		else{
+			i = list_next(i);
+		}
+	}
+	*/
+	/* ENDOFNEWCODE */
+	
+	
 	if (thread_current() != idle_thread && thread_current()->priority < t->priority)
     		thread_yield();
 	intr_set_level (old_level);
-	//if(t->priority > thread_get_priority()) thread_yield();
 }
 
 /* Returns the name of the running thread. */
@@ -402,7 +423,7 @@ thread_get_recent_cpu (void) {
 	return 0;
 }
 
-/* 
+/**/
 void mlfqs_priority(struct thread *t){
 	//This is a function for calculating new priority, with recent_cpu & nice values.
 	//1. Check if t is idle_thread or not.
@@ -458,7 +479,7 @@ void mlfqs_recalc(void){
 	//ready -> all stored in ready_list
 	//blocked -> 
 }
-*/
+/**/
 
 /* Idle thread.  Executes when no other thread is ready to run.
 
