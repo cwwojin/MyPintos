@@ -1,3 +1,4 @@
+#include "threads/fixed_point.h"
 #include "threads/thread.h"
 #include <debug.h>
 #include <stddef.h>
@@ -13,7 +14,6 @@
 #include "intrinsic.h"
 #ifdef USERPROG
 #include "userprog/process.h"
-#include "threads/fixed_point.h"
 #endif
 
 //defining default values for mlfqs scheduler.
