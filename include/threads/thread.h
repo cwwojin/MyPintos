@@ -93,8 +93,8 @@ struct thread {
 	int64_t alarm_ticks;	//wakeup time(in ticks) for alarm clock.
 	
 	/* For Priority Donation */
-	//int ori_priority;	//original priority.
-	//struct lock* gate;	//the lock that this thread is waiting for.
+	int ori_priority;	//original priority.
+	struct lock* gate;	//the lock that this thread is waiting for.
 	
 	
 
@@ -115,8 +115,7 @@ struct thread {
 	int recent_cpu;
 	
 	
-	//struct list donation_list;	//list of threads that donated.
-	//struct list_elem donation_elem;
+	struct list donation_list;	//list of threads that donated.
 };
 
 /* If false (default), use round-robin scheduler.
