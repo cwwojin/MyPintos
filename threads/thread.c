@@ -13,7 +13,18 @@
 #include "intrinsic.h"
 #ifdef USERPROG
 #include "userprog/process.h"
+#include "threads/fixed_point.h"
 #endif
+
+//defining default values for mlfqs scheduler.
+#define NICE_DEFAULT 0
+#define RECENT_CPU_DEFAULT 0
+#define LOAD_AVG_DEFAULT 0
+
+//this is the load_avg value!!
+int load_avg;
+
+
 
 /* Random value for struct thread's `magic' member.
    Used to detect stack overflow.  See the big comment at the top
@@ -125,6 +136,9 @@ thread_start (void) {
 	struct semaphore idle_started;
 	sema_init (&idle_started, 0);
 	thread_create ("idle", PRI_MIN, idle, &idle_started);
+	
+	//initialize load_avg value for mlfqs scheduler.
+	load_avg = LOAD_AVG_DEFAULT;
 
 	/* Start preemptive thread scheduling. */
 	intr_enable ();
@@ -459,8 +473,8 @@ init_thread (struct thread *t, const char *name, int priority) {
 	t->ori_priority = priority;
 	
 	//for mlfqs.
-	t->nice = 0;
-	t->recent_cpu = 0;
+	t->nice = NICE_DEFAULT;
+	t->recent_cpu = RECENT_CPU_DEFAULT;
 }
 
 /* Chooses and returns the next thread to be scheduled.  Should
