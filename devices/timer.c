@@ -177,6 +177,22 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 	timer_alarm();
 	/* ENDOFNEWCODE */
 	thread_tick ();
+	
+	/* NEWCODE FOR MLFQS SCHEDULER!!*/
+	/**/
+	//1.EVERY INTERRUPT -> increment recent_cpu.
+	mlfqs_increment();
+	//2.Every 4 ticks -> recalculate current thread priority.
+	if(ticks % 4 == 0){
+		mlfqs_priority(thread_current());
+	}
+	//3.Every second -> recalc!
+	if(ticks % TIMER_FREQ == 0){
+		mlfqs_load_avg();
+		mlfqs_recalc();
+	}
+	/**/
+	
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
