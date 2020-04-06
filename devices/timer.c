@@ -190,7 +190,7 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 		//3.Every second -> recalc!
 		if(ticks % TIMER_FREQ == 0){
 			mlfqs_load_avg();
-			mlfqs_recalc();
+			//mlfqs_recalc();
 		}
 	}
 	/**/
