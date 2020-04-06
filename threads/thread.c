@@ -258,6 +258,10 @@ thread_block (void) {
 	ASSERT (!intr_context ());
 	ASSERT (intr_get_level () == INTR_OFF);
 	thread_current ()->status = THREAD_BLOCKED;
+	
+	//New Code : add thread to block_list.
+	list_push_back (&block_list, &thread_current()->elem);
+	
 	schedule ();
 }
 
@@ -281,11 +285,26 @@ thread_unblock (struct thread *t) {
 	list_insert_ordered (&ready_list, &t->elem, compare_pri, NULL);
 	t->status = THREAD_READY;
 	
-	//if(t->priority > thread_get_priority()) thread_yield();
+	/* New Code : Delete t from block_list. */
+	struct list_elem* i;
+	struct thread* th;
+	i = list_begin(&block_list);
+	while(i != list_end(&block_list)){
+		th = list_entry(i,struct thread, elem);
+		if(th == t){	//found the entry
+			i = list_remove(i);
+			break;
+		}
+		else{
+			i = list_next(i);
+		}
+	}
+	/* ENDOFNEWCODE */
+	
+	
 	if (thread_current() != idle_thread && thread_current()->priority < t->priority)
     		thread_yield();
 	intr_set_level (old_level);
-	//if(t->priority > thread_get_priority()) thread_yield();
 }
 
 /* Returns the name of the running thread. */
