@@ -259,7 +259,7 @@ thread_block (void) {
 	ASSERT (intr_get_level () == INTR_OFF);
 	
 	//New Code : add thread to block_list.
-	list_push_back (&block_list, &thread_current()->elem);
+	//list_push_back (&block_list, &thread_current()->elem);
 	
 	thread_current ()->status = THREAD_BLOCKED;
 	schedule ();
@@ -419,20 +419,33 @@ thread_set_nice (int nice UNUSED) {
 int
 thread_get_nice (void) {
 	/* TODO: Your implementation goes here */
-	return 0;
+	enum intr_level old_level;
+	old_level = intr_disable ();
+	
+	int NICE = thread_current()->nice;
+	
+	intr_set_level (old_level);
+	return NICE;
 }
 
 /* Returns 100 times the system load average. */
 int
 thread_get_load_avg (void) {
 	/* TODO: Your implementation goes here */
-	return 0;
+	enum intr_level old_level;
+	old_level = intr_disable ();
+	
+	int LOAD_AVG = fp_to_int_round(mult_mixed(load_avg, 100));
+	
+	intr_set_level (old_level);
+	return LOAD_AVG;
 }
 
 /* Returns 100 times the current thread's recent_cpu value. */
 int
 thread_get_recent_cpu (void) {
 	/* TODO: Your implementation goes here */
+	
 	return 0;
 }
 
