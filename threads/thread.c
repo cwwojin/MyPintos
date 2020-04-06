@@ -259,7 +259,7 @@ thread_block (void) {
 	ASSERT (intr_get_level () == INTR_OFF);
 	
 	//New Code : add thread to block_list.
-	//list_push_back (&block_list, &thread_current()->elem);
+	list_push_back (&block_list, &thread_current()->elem);
 	
 	thread_current ()->status = THREAD_BLOCKED;
 	schedule ();
@@ -286,21 +286,23 @@ thread_unblock (struct thread *t) {
 	t->status = THREAD_READY;
 	
 	/* New Code : Delete t from block_list. */
-	/*
+	
 	struct list_elem* i;
+	struct list_elem* e = NULL;
 	struct thread* th;
 	i = list_begin(&block_list);
 	while(i != list_end(&block_list)){
 		th = list_entry(i,struct thread, elem);
 		if(th == t){	//found the entry
-			i = list_remove(i);
-			//break;
+			e = i;
+			break;
 		}
 		else{
 			i = list_next(i);
 		}
 	}
-	*/
+	if(e != NULL) list_remove(e);
+	
 	/* ENDOFNEWCODE */
 	
 	
@@ -400,6 +402,17 @@ thread_get_priority (void) {
 void
 thread_set_nice (int nice UNUSED) {
 	/* TODO: Your implementation goes here */
+	enum intr_level old_level;
+	old_level = intr_disable ();
+	
+	struct thread* current = thread_current();
+	current->nice = nice;
+	mlfqs_priority(current);
+	
+	if (thread_current() != idle_thread){
+		thread_yield();
+	}
+	intr_set_level (old_level);
 }
 
 /* Returns the current thread's nice value. */
