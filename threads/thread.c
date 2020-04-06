@@ -39,6 +39,9 @@ int load_avg;
    that are ready to run but not actually running. */
 static struct list ready_list;
 
+/* NEWCODE!! : List of BLOCKED threads. Add @ block(), remove @ unblock() */
+static struct list block_list;
+
 /* Idle thread. */
 static struct thread *idle_thread;
 
@@ -436,10 +439,21 @@ void mlfqs_load_avg(void){
 }
 
 void mlfqs_increment(void){
-	
+	//This is a function to increment recent_cpu value by 1.
+	struct thread* current = thread_current();
+	//1. Check if idle_thread.
+	if(current == idle_thread) return;
+	//2. Increment current thread's recent_cpu by 1. FP!!!
+	current->recent_cpu = add_mixed(current->recent_cpu, 1);
 }
 
-void mlfqs_recalc(void);
+void mlfqs_recalc(void){
+	//This is a function to calculate ALL threads' recent_cpu & priority values.
+	//"All threads" = running / ready / blocked.
+	//running -> get thread_current()
+	//ready -> all stored in ready_list
+	//blocked -> 
+}
 /* End of new functions. */
 
 /* Idle thread.  Executes when no other thread is ready to run.
