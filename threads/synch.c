@@ -268,10 +268,9 @@ lock_acquire (struct lock *lock) {
 	if(lock->holder != NULL){
 		//1. set the "gate" value of this thread.
 		current->gate = lock;
-		//2. put thread to donation list. (in Priority order)
-		//list_insert_ordered (&(lock->holder->donation_list), &current->elem, compare_pri, NULL);
-		//3. call donate_priority
-		donate_priority();
+		if(!thread_mlfqs){
+			donate_priority();
+		}
 	}
 	
 	//4. wait for release.
@@ -375,7 +374,9 @@ lock_release (struct lock *lock) {
 	//new functions.
 	//remove_from_donations(lock);
 	list_remove(&lock->elem);
-	reset_priority();
+	if(!thread_mlfqs){
+		reset_priority();
+	}
 	
 	sema_up (&lock->semaphore);
 	
