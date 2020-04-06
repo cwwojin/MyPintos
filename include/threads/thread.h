@@ -4,6 +4,7 @@
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
+#include "threads/fixed_point.h"
 #include "threads/interrupt.h"
 #include "threads/synch.h"
 
@@ -109,6 +110,9 @@ struct thread {
 	struct intr_frame tf;               /* Information for switching */
 	unsigned magic;                     /* Detects stack overflow. */
 	
+	//for mlfqs scheduler.
+	int nice;
+	int recent_cpu;
 	
 	
 	//struct list donation_list;	//list of threads that donated.
@@ -146,6 +150,13 @@ int thread_get_nice (void);
 void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
+
+//functions for mlfqs scheduler.
+void mlfqs_priority(struct thread* t);
+void mlfqs_recent_cpu(struct thread* t);
+void mlfqs_load_avg(void);
+void mlfqs_increment(void);
+void mlfqs_recalc(void);
 
 void do_iret (struct intr_frame *tf);
 

@@ -1,3 +1,4 @@
+#include "threads/fixed_point.h"
 #include "threads/thread.h"
 #include <debug.h>
 #include <stddef.h>
@@ -15,6 +16,16 @@
 #include "userprog/process.h"
 #endif
 
+//defining default values for mlfqs scheduler.
+#define NICE_DEFAULT 0
+#define RECENT_CPU_DEFAULT 0
+#define LOAD_AVG_DEFAULT 0
+
+//this is the load_avg value!!
+int load_avg;
+
+
+
 /* Random value for struct thread's `magic' member.
    Used to detect stack overflow.  See the big comment at the top
    of thread.h for details. */
@@ -27,6 +38,9 @@
 /* List of processes in THREAD_READY state, that is, processes
    that are ready to run but not actually running. */
 static struct list ready_list;
+
+/* NEWCODE!! : List of BLOCKED threads. Add @ block(), remove @ unblock() */
+static struct list block_list;
 
 /* Idle thread. */
 static struct thread *idle_thread;
@@ -109,6 +123,8 @@ thread_init (void) {
 	lock_init (&tid_lock);
 	list_init (&ready_list);
 	list_init (&destruction_req);
+	//New BLOCK_LIST.
+	list_init (&block_list);
 
 	/* Set up a thread structure for the running thread. */
 	initial_thread = running_thread ();
@@ -125,6 +141,9 @@ thread_start (void) {
 	struct semaphore idle_started;
 	sema_init (&idle_started, 0);
 	thread_create ("idle", PRI_MIN, idle, &idle_started);
+	
+	//initialize load_avg value for mlfqs scheduler.
+	load_avg = LOAD_AVG_DEFAULT;
 
 	/* Start preemptive thread scheduling. */
 	intr_enable ();
@@ -343,7 +362,7 @@ thread_set_priority (int new_priority) {
 	thread_current()->ori_priority = new_priority;
 	
 	//donations!!
-	//reset_priority();
+	reset_priority();
 	
 	/* NEWCODE */
 	if(thread_current()->priority < old_priority) thread_yield();
@@ -382,6 +401,64 @@ thread_get_recent_cpu (void) {
 	/* TODO: Your implementation goes here */
 	return 0;
 }
+
+/* 
+void mlfqs_priority(struct thread *t){
+	//This is a function for calculating new priority, with recent_cpu & nice values.
+	//1. Check if t is idle_thread or not.
+	if(t == idle_thread) return;
+	//2. Recalculate priority based on equation, use fixed point for recent_cpu.
+	t->priority = PRI_MAX - fp_to_int_round(div_mixed(t->recent_cpu, 4)) - (t->nice * 2);
+}
+
+void mlfqs_recent_cpu(struct thread *t){
+	//This is a function for calculating recent_cpu value.
+	//1. Check if t is idle_thread or not.
+	if(t == idle_thread) return;
+	//2. Calculate recent_cpu based on equation, use fixed point for load_avg & recent_cpu.
+	int load2 = mult_mixed(load_avg, 2);
+	int left = mult_fp(t->recent_cpu, div_fp(load2, add_mixed(load2, 1)));
+	//This should be a FP number, not regular int!!
+	int new_recent = add_fp(left, int_to_fp(t->nice));
+	t->recent_cpu = new_recent;
+}
+
+void mlfqs_load_avg(void){
+	//This is a function for calculating load_avg value.
+	//1. get "ready", which is (#. of running threads except idle_thread) + (#. of ready threads)
+	int ready_threads = (int) list_size(&ready_list);
+	struct thread* current = thread_current();
+	if(current != idle_thread){
+		ready_threads++;
+	}
+	//2. Calculate load_avg based on equation, use fixd point for load_avg.
+	int left = div_fp(int_to_fp(59), int_to_fp(60));
+	int right = div_fp(int_to_fp(ready_threads), int_to_fp(60));
+	//This is a FP number, not regular int!!
+	int new_load = add_fp(mult_fp(left, load_avg), right);
+	
+	load_avg = new_load;
+	//3. load_avg can't be (< 0)!!
+	ASSERT(load_avg >= 0);
+}
+
+void mlfqs_increment(void){
+	//This is a function to increment recent_cpu value by 1.
+	struct thread* current = thread_current();
+	//1. Check if idle_thread.
+	if(current == idle_thread) return;
+	//2. Increment current thread's recent_cpu by 1. FP!!!
+	current->recent_cpu = add_mixed(current->recent_cpu, 1);
+}
+
+void mlfqs_recalc(void){
+	//This is a function to calculate ALL threads' recent_cpu & priority values.
+	//"All threads" = running / ready / blocked.
+	//running -> get thread_current()
+	//ready -> all stored in ready_list
+	//blocked -> 
+}
+*/
 
 /* Idle thread.  Executes when no other thread is ready to run.
 
@@ -451,6 +528,10 @@ init_thread (struct thread *t, const char *name, int priority) {
 	t->gate = NULL;
 	list_init(&(t->donation_list));
 	t->ori_priority = priority;
+	
+	//for mlfqs.
+	t->nice = NICE_DEFAULT;
+	t->recent_cpu = RECENT_CPU_DEFAULT;
 }
 
 /* Chooses and returns the next thread to be scheduled.  Should

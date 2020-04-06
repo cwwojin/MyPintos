@@ -23,6 +23,7 @@ struct lock {
 	
 	//Holder's previous priority value before receiving donation.
 	//int old_priority;
+	struct list_elem elem;
 };
 
 void reset_priority(void);
