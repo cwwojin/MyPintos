@@ -293,7 +293,7 @@ thread_unblock (struct thread *t) {
 		th = list_entry(i,struct thread, elem);
 		if(th == t){	//found the entry
 			i = list_remove(i);
-			break;
+			//break;
 		}
 		else{
 			i = list_next(i);
