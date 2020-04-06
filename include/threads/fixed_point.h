@@ -10,7 +10,7 @@
 #define INT_MIN (-(1<< 31))
 */
 
-
+/*
 int int_to_fp(int n);
 int fp_to_int_round(int x);
 int fp_to_int(int x);
@@ -22,6 +22,7 @@ int mult_fp(int x, int y);
 int mult_mixed(int x,int y);  
 int div_fp(int x, int y); 
 int div_mixed(int x, int n);  
+*/
 
 int int_to_fp(int n){
 	return n * F;
