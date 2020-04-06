@@ -259,7 +259,7 @@ thread_block (void) {
 	ASSERT (intr_get_level () == INTR_OFF);
 	
 	//New Code : add thread to block_list.
-	//list_push_back (&block_list, &thread_current()->elem);
+	list_push_back(&block_list, &thread_current()->elem);
 	
 	thread_current ()->status = THREAD_BLOCKED;
 	schedule ();
@@ -286,23 +286,22 @@ thread_unblock (struct thread *t) {
 	t->status = THREAD_READY;
 	
 	/* New Code : Delete t from block_list. */
-	/*
+	
 	struct list_elem* i;
-	struct list_elem* e = NULL;
+	//struct list_elem* e = NULL;
 	struct thread* th;
-	i = list_begin(&block_list);
-	while(i != list_end(&block_list)){
+	//i = list_begin(&block_list);
+	for(i = list_begin(&block_list); i != list_end(&block_list); i = list_remove(i)){
 		th = list_entry(i,struct thread, elem);
 		if(th == t){	//found the entry
-			e = i;
 			break;
 		}
 		else{
-			i = list_next(i);
+			list_push_front(&block_list, th->elem);
 		}
 	}
-	if(e != NULL) list_remove(e);
-	*/
+	//if(e != NULL) list_remove(e);
+	
 	/* ENDOFNEWCODE */
 	
 	
