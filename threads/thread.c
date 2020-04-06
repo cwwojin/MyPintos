@@ -511,21 +511,18 @@ void mlfqs_recalc(void){
 	mlfqs_priority(running);
 	//ready -> all stored in ready_list
 	struct list_elem* i;
-	struct thread* th;
-	i = list_begin(&ready_list);
-	while(i != list_end(&ready_list)){
-		th = list_entry(i,struct thread, elem);
+	//struct thread* th;
+	for(i = list_begin(&ready_list); i != list_end(&ready_list); i = list_next(i)){
+		struct thread* th = list_entry(i, struct thread, elem);
 		mlfqs_recent_cpu(th);
 		mlfqs_priority(th);
-		i = list_next(i);
 	}
 	//blocked -> all stored in block_list
-	i = list_begin(&block_list);
-	while(i != list_end(&block_list)){
-		th = list_entry(i,struct thread, elem);
+	struct list_elem* e;
+	for(e = list_begin(&block_list); e != list_end(&block_list); e = list_next(e)){
+		struct thread* th = list_entry(e, struct thread, block_elem);
 		mlfqs_recent_cpu(th);
 		mlfqs_priority(th);
-		i = list_next(i);
 	}
 }
 /**/
