@@ -444,8 +444,13 @@ thread_get_load_avg (void) {
 int
 thread_get_recent_cpu (void) {
 	/* TODO: Your implementation goes here */
+	enum intr_level old_level;
+	old_level = intr_disable ();
 	
-	return 0;
+	int RECENT_CPU = fp_to_int_round(mult_mixed(thread_current()->recent_cpu, 100));
+	
+	intr_set_level (old_level);
+	return RECENT_CPU;
 }
 
 /**/
@@ -515,7 +520,6 @@ void mlfqs_recalc(void){
 		i = list_next(i);
 	}
 	//blocked -> all stored in block_list
-	/*
 	i = list_begin(&block_list);
 	while(i != list_end(&block_list)){
 		th = list_entry(i,struct thread, elem);
@@ -523,7 +527,6 @@ void mlfqs_recalc(void){
 		mlfqs_priority(th);
 		i = list_next(i);
 	}
-	*/
 }
 /**/
 
