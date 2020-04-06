@@ -286,7 +286,7 @@ thread_unblock (struct thread *t) {
 	t->status = THREAD_READY;
 	
 	/* New Code : Delete t from block_list. */
-	
+	/*
 	struct list_elem* i;
 	struct list_elem* e = NULL;
 	struct thread* th;
@@ -302,7 +302,7 @@ thread_unblock (struct thread *t) {
 		}
 	}
 	if(e != NULL) list_remove(e);
-	
+	*/
 	/* ENDOFNEWCODE */
 	
 	
