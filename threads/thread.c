@@ -123,6 +123,8 @@ thread_init (void) {
 	lock_init (&tid_lock);
 	list_init (&ready_list);
 	list_init (&destruction_req);
+	//New BLOCK_LIST.
+	list_init (&block_list);
 
 	/* Set up a thread structure for the running thread. */
 	initial_thread = running_thread ();
@@ -400,7 +402,7 @@ thread_get_recent_cpu (void) {
 	return 0;
 }
 
-/* New functions for mlfqs scheduler. */
+/* 
 void mlfqs_priority(struct thread *t){
 	//This is a function for calculating new priority, with recent_cpu & nice values.
 	//1. Check if t is idle_thread or not.
@@ -456,7 +458,7 @@ void mlfqs_recalc(void){
 	//ready -> all stored in ready_list
 	//blocked -> 
 }
-/* End of new functions. */
+*/
 
 /* Idle thread.  Executes when no other thread is ready to run.
 
