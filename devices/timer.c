@@ -179,7 +179,7 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 	thread_tick ();
 	
 	/* NEWCODE FOR MLFQS SCHEDULER!!*/
-	/**/
+	/*
 	if(thread_mlfqs){
 		//1.EVERY INTERRUPT -> increment recent_cpu.
 		//mlfqs_increment();
@@ -193,7 +193,7 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 			//mlfqs_recalc();
 		}
 	}
-	/**/
+	*/
 	
 }
 
