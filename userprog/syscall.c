@@ -42,7 +42,7 @@ syscall_init (void) {
 //this is a function for terminating a process with exit status "status". termination message will be printed @ process_exit().
 void exit(int status){
 	struct thread* current = thread_current();
-	current->status = status;
+	current->exit_status = status;
 	thread_exit();
 }
 
