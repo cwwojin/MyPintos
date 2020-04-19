@@ -215,6 +215,15 @@ process_exit (void) {
 	 * TODO: Implement process termination message (see
 	 * TODO: project2/process_termination.html).
 	 * TODO: We recommend you to implement process resource cleanup here. */
+	 
+	 /* NEWCODE */
+	 //1. Process resouce cleanup - Locks & allocated Memory.
+	 
+	 
+	 //2. Print termination message w/ exit status.
+	 printf ("%s: exit(%d)\n", curr->name, curr->status);
+	 /* ENDOFNEWCODE */
+	 
 
 	process_cleanup ();
 }
