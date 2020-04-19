@@ -221,7 +221,7 @@ process_exit (void) {
 	 
 	 
 	 //2. Print termination message w/ exit status.
-	 printf ("%s: exit(%d)\n", curr->name, curr->status);
+	 printf ("%s: exit(%d)\n", curr->name, curr->exit_status);
 	 /* ENDOFNEWCODE */
 	 
 
