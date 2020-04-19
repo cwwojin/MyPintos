@@ -70,6 +70,18 @@ void check_address(void* addr){
 void
 syscall_handler (struct intr_frame *f UNUSED) {
 	// TODO: Your implementation goes here.
+	struct thread* current = thread_current();
+	/* NEWCODE*/
+	int syscall_num;
+	//get address stored in stack pointer 'rsp'
+	check_address((void*)f->rsp);
+	syscall_num =  * (int*)vtop(pml4_get_page (current->pml4, f->rsp));
+	
+	
+	
+	
+	/* ENDOFNEWCODE */
+	
 	printf ("system call!\n");
 	thread_exit ();
 }
