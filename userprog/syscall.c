@@ -40,7 +40,18 @@ syscall_init (void) {
 /* NEWCODE */
 //this is a function for checking if pointer is "valid". If not, call a page fault.
 void check_address(void* addr){
-	
+	//case 1. NULL pointer.
+	if(addr == NULL){
+		
+	}
+	//case 2. addr is in kernal address space
+	if(is_kernel_vaddr(addr)){
+		
+	}
+	//case 3. UNMAPPED pointer. check if "addr"'s corresponding page exists in current thread's pml4.
+	if(pml4_get_page (thread_current()->pml4, addr) == NULL){
+		
+	}
 }
 /* ENDOFNEWCODE*/
 
