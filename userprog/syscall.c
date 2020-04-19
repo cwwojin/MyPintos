@@ -37,28 +37,7 @@ syscall_init (void) {
 			FLAG_IF | FLAG_TF | FLAG_DF | FLAG_IOPL | FLAG_AC | FLAG_NT);
 }
 
-/* Reads a byte at user virtual address UADDR.
- * UADDR must be below KERN_BASE.
- * Returns the byte value if successful, -1 if a segfault
- * occurred. */
-static int
-get_user (const uint8_t *uaddr) {
-    int result;
-    asm ("movl $1f, %0; movzbl %1, %0; 1:"
-         : "=&a" (result) : "m" (*uaddr));
-    return result;
-}
 
-/* Writes BYTE to user address UDST.
- * UDST must be below KERN_BASE.
- * Returns true if successful, false if a segfault occurred. */
-static bool
-put_user (uint8_t *udst, uint8_t byte) {
-    int error_code;
-    asm ("movl $1f, %0; movb %b2, %1; 1:"
-    : "=&a" (error_code), "=m" (*udst) : "q" (byte));
-    return error_code != -1;
-}
 
 /* NEWCODE */
 //this is a function for terminating a process with exit status "status". termination message will be printed @ process_exit().
@@ -85,6 +64,18 @@ void check_address(void* addr){
 		exit(-1);
 	}
 }
+
+//this is a function for reading in multiple bytes of data from user pointer. check validity of pointer each time.
+static void getmultiple_user(void* addr, void* dest, size_t size){
+	int32_t v;
+	size_t i;
+	for(i=0; i<size; i++){
+		//check validity of address.
+		check_address(addr+i);
+		v = (int) *(addr+i);
+		*(char*)(dest + i) = value & 0xff;
+	}
+}
 /* ENDOFNEWCODE*/
 
 
@@ -97,11 +88,72 @@ syscall_handler (struct intr_frame *f UNUSED) {
 	int syscall_num;
 	//get address stored in stack pointer 'rsp'
 	check_address((void*)f->rsp);
-	syscall_num =  * (int*)vtop(pml4_get_page (current->pml4, f->rsp));
-	
-	
-	
-	
+	getmultiple_user((void*)f->esp, &syscall_num, 4);
+	switch(syscall_num){
+		case SYS_HALT:
+		{
+			break;
+		}/* Halt the operating system. */
+		case SYS_EXIT:
+		{
+			break;
+		}/* Terminate this process. */
+		case SYS_FORK:
+		{
+			break;
+		}/* Clone current process. */
+		case SYS_EXEC:
+		{
+			break;
+		}/* Switch current process. */
+		case SYS_WAIT:
+		{
+			break;
+		}/* Wait for a child process to die. */
+		case SYS_CREATE:
+		{
+			break;
+		}/* Create a file. */
+		case SYS_REMOVE:
+		{
+			break;
+		}/* Delete a file. */
+		case SYS_OPEN:
+		{
+			break;
+		}/* Open a file. */
+		case SYS_FILESIZE:
+		{
+			break;
+		}/* Obtain a file's size. */
+		case SYS_READ:
+		{
+			break;
+		}/* Read from a file. */
+		case SYS_WRITE:
+		{
+			break;
+		}/* Write to a file. */
+		case SYS_SEEK:
+		{
+			break;
+		}/* Change position in a file. */
+		case SYS_TELL:
+		{
+			break;
+		}/* Report current position in a file. */
+		case SYS_CLOSE:
+		{
+			break;
+		}/* Close a file. */
+		
+		default:
+		{
+			printf("Invalid system call number : %d\n", syscall_num);
+			exit(-1);
+			break;
+		}
+	}
 	/* ENDOFNEWCODE */
 	
 	printf ("system call!\n");
