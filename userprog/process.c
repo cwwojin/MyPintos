@@ -217,7 +217,7 @@ process_exit (void) {
 	 * TODO: We recommend you to implement process resource cleanup here. */
 	 
 	 /* NEWCODE */
-	 //1. Process resouce cleanup - Locks & allocated Memory.
+	 //1. Process resouce cleanup - allocated Memory (file descriptors).
 	 
 	 
 	 //2. Print termination message w/ exit status.
