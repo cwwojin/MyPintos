@@ -37,7 +37,17 @@ syscall_init (void) {
 			FLAG_IF | FLAG_TF | FLAG_DF | FLAG_IOPL | FLAG_AC | FLAG_NT);
 }
 
+
 /* NEWCODE */
+//this is a function for terminating a process with exit status "status". termination message will be printed @ process_exit().
+void exit(int status){
+	struct thread* current = thread_current();
+	current->status = status;
+	thread_exit();
+}
+
+
+
 //this is a function for checking if pointer is "valid". If not, call a page fault.
 void check_address(void* addr){
 	//case 1. NULL pointer.
