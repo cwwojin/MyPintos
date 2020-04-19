@@ -42,15 +42,15 @@ syscall_init (void) {
 void check_address(void* addr){
 	//case 1. NULL pointer.
 	if(addr == NULL){
-		
+		exit(-1);
 	}
 	//case 2. addr is in kernal address space
 	if(is_kernel_vaddr(addr)){
-		
+		exit(-1);
 	}
 	//case 3. UNMAPPED pointer. check if "addr"'s corresponding page exists in current thread's pml4.
 	if(pml4_get_page (thread_current()->pml4, addr) == NULL){
-		
+		exit(-1);
 	}
 }
 /* ENDOFNEWCODE*/
