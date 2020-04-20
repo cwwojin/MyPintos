@@ -425,6 +425,23 @@ load (const char *file_name, struct intr_frame *if_) {
 
 	/* TODO: Your code goes here.
 	 * TODO: Implement argument passing (see project2/argument_passing.html). */
+	
+	/* NEWCODE */
+	//Argument parsing using strtok_r().
+	int argc;
+	char* ret_ptr;
+	char* next_ptr;
+	char command[128];
+	strcpy(command, file_name);
+	ret_ptr = strtok_r(command, " ", &next_ptr);
+	
+	while(ret_ptr){
+		//for each keyword.
+	
+	}
+	
+	
+	/* ENDOFNEWCODE */
 
 	success = true;
 
