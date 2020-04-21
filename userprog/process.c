@@ -325,6 +325,51 @@ static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
 		uint32_t read_bytes, uint32_t zero_bytes,
 		bool writable);
 
+static void setup_argument(const char *file_name, struct intr_frame *if_){
+	/* NEWCODE */
+	//Argument parsing using strtok_r(). stack pointer : if_->rsp
+	int i;
+	int argc = 0;
+	char* ret_ptr;
+	char* next_ptr;
+	char* command = strdup(file_name);
+	char* argv[128];
+	
+	ret_ptr = strtok_r(command, " ", &next_ptr);
+	while(ret_ptr){
+		//for each keyword.
+		argv[argc] = ret_ptr;
+		argc++;
+		ret_ptr = strtok_r(NULL, " ", &next_ptr);
+	}
+	char* argv_addr[argc];
+	//1. saving arguments onto stack in reverse order : argv[argc-1] -> argv[argc-2] -> ..
+	int length = 0;
+	for(i=argc-1; i >=0; i--){
+		length = strlen(argv[i]) + 1;
+		if_->rsp -= length;
+		memcpy((void*)if_->rsp, argv[i], length);
+		argv_addr[i] = (char*) if_->rsp;
+	}
+	//round to multiple of 8.
+	if_->rsp = (if_->rsp) & 0xfffffff8;
+	if_->rsp -= 8;
+	*((char**) if_->rsp) = 0;
+	for(i=argc-1; i >=0; i--){
+		if_->rsp -= 8;
+		*((char**) if_->rsp) = argv_addr[i];
+	}
+	if_->R.rsi = (uint64_t) if_->rsp;
+	if_->R.rdi = (uint64_t) argc;
+	//fake return address.
+	if_->rsp -= 8;
+	*((void**) if_->rsp) = 0;
+	//DEBUGGING.
+	//hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp, true);
+	/* ENDOFNEWCODE */
+}
+
+
 /* Loads an ELF executable from FILE_NAME into the current thread.
  * Stores the executable's entry point into *RIP
  * and its initial stack pointer into *RSP.
@@ -438,48 +483,7 @@ done:
 	return success;
 }
 
-static void setup_argument(const char *file_name, struct intr_frame *if_){
-	/* NEWCODE */
-	//Argument parsing using strtok_r(). stack pointer : if_->rsp
-	int argc = 0;
-	char* ret_ptr;
-	char* next_ptr;
-	char* command = strdup(file_name);
-	char* argv[128];
-	
-	ret_ptr = strtok_r(command, " ", &next_ptr);
-	while(ret_ptr){
-		//for each keyword.
-		argv[argc] = ret_ptr;
-		argc++;
-		ret_ptr = strtok_r(NULL, " ", &next_ptr);
-	}
-	char* argv_addr[argc];
-	//1. saving arguments onto stack in reverse order : argv[argc-1] -> argv[argc-2] -> ..
-	int length = 0;
-	for(i=argc-1; i >=0; i--){
-		length = strlen(argv[i]) + 1;
-		if_->rsp -= length;
-		memcpy((void*)if_->rsp, argv[i], length);
-		argv_addr[i] = (char*) if_->rsp;
-	}
-	//round to multiple of 8.
-	if_->rsp = (if_->rsp) & 0xfffffff8;
-	if_->rsp -= 8;
-	*((char**) if_->rsp) = 0;
-	for(i=argc-1; i >=0; i--){
-		if_->rsp -= 8;
-		*((char**) if_->rsp) = argv_addr[i];
-	}
-	if_->R.rsi = (uint64_t) if_->rsp;
-	if_->R.rdi = (uint64_t) argc;
-	//fake return address.
-	if_->rsp -= 8;
-	*((void**) if_->rsp) = 0;
-	//DEBUGGING.
-	//hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp, true);
-	/* ENDOFNEWCODE */
-}
+
 
 
 /* Checks whether PHDR describes a valid, loadable segment in
