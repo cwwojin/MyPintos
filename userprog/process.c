@@ -419,13 +419,26 @@ load (const char *file_name, struct intr_frame *if_) {
 	/* Set up stack. */
 	if (!setup_stack (if_))
 		goto done;
+		
+	/* Set up argument */
+	setup_argument(file_name, if_);
+	hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp, true);
 
 	/* Start address. */
 	if_->rip = ehdr.e_entry;
 
 	/* TODO: Your code goes here.
 	 * TODO: Implement argument passing (see project2/argument_passing.html). */
-	
+
+	success = true;
+
+done:
+	/* We arrive here whether the load is successful or not. */
+	file_close (file);
+	return success;
+}
+
+static void setup_argument(const char *file_name, struct intr_frame *if_){
 	/* NEWCODE */
 	//Argument parsing using strtok_r(). stack pointer : if_->rsp
 	int argc = 0;
@@ -464,15 +477,8 @@ load (const char *file_name, struct intr_frame *if_) {
 	if_->rsp -= 8;
 	*((void**) if_->rsp) = 0;
 	//DEBUGGING.
-	hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp, true);
+	//hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp, true);
 	/* ENDOFNEWCODE */
-
-	success = true;
-
-done:
-	/* We arrive here whether the load is successful or not. */
-	file_close (file);
-	return success;
 }
 
 
