@@ -333,7 +333,7 @@ static void setup_argument(const char *file_name, struct intr_frame *if_){
 	char* ret_ptr;
 	char* next_ptr;
 	char command[strlen(file_name)];
-	strcpy(command, file_name);
+	strlcpy(command, file_name);
 	char* argv[128];
 	
 	ret_ptr = strtok_r(command, " ", &next_ptr);
