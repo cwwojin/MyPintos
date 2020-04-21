@@ -443,13 +443,12 @@ load (const char *file_name, struct intr_frame *if_) {
 	}
 	char* argv_addr[argc];
 	//1. saving arguments onto stack in reverse order : argv[argc-1] -> argv[argc-2] -> ..
-	int i = 0;
 	int length = 0;
 	for(i=argc-1; i >=0; i--){
 		length = strlen(argv[i]) + 1;
 		if_->rsp -= length;
-		memcpy(if_->rsp, argv[i], len);
-		argv_addr[i] = if_->rsp;
+		memcpy((void*)if_->rsp, argv[i], length);
+		argv_addr[i] = (char*) if_->rsp;
 	}
 	//round to multiple of 8.
 	if_->rsp = (if_->rsp) & 0xfffffff8;
@@ -465,7 +464,7 @@ load (const char *file_name, struct intr_frame *if_) {
 	if_->rsp -= 8;
 	*((void**) if_->rsp) = 0;
 	//DEBUGGING.
-	hex_dump(if_->rsp, if_->rsp, KERN_BASE – if_->rsp, true);
+	hex_dump(if_->rsp, if_->rsp, KERN_BASE - if_->rsp, true);
 	/* ENDOFNEWCODE */
 
 	success = true;
