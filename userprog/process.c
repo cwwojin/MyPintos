@@ -441,14 +441,31 @@ load (const char *file_name, struct intr_frame *if_) {
 		argc++;
 		ret_ptr = strtok_r(NULL, " ", &next_ptr);
 	}
-	void* argv_addr[argc];
+	char* argv_addr[argc];
 	//1. saving arguments onto stack in reverse order : argv[argc-1] -> argv[argc-2] -> ..
-	
-	
-	
-	
-	
-	
+	int i = 0;
+	int length = 0;
+	for(i=argc-1; i >=0; i--){
+		length = strlen(argv[i]) + 1;
+		if_->rsp -= length;
+		memcpy(if_->rsp, argv[i], len);
+		argv_addr[i] = if_->rsp;
+	}
+	//round to multiple of 8.
+	if_->rsp = (if_->rsp) & 0xfffffff8;
+	if_->rsp -= 8;
+	*((char**) if_->rsp) = 0;
+	for(i=argc-1; i >=0; i--){
+		if_->rsp -= 8;
+		*((char**) if_->rsp) = argv_addr[i];
+	}
+	if_->R.rsi = (uint64_t) if_->rsp;
+	if_->R.rdi = (uint64_t) argc;
+	//fake return address.
+	if_->rsp -= 8;
+	*((void**) if_->rsp) = 0;
+	//DEBUGGING.
+	hex_dump(if_->rsp, if_->rsp, KERN_BASE – if_->rsp, true);
 	/* ENDOFNEWCODE */
 
 	success = true;
