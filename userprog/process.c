@@ -427,18 +427,26 @@ load (const char *file_name, struct intr_frame *if_) {
 	 * TODO: Implement argument passing (see project2/argument_passing.html). */
 	
 	/* NEWCODE */
-	//Argument parsing using strtok_r().
-	int argc;
+	//Argument parsing using strtok_r(). stack pointer : if_->rsp
+	int argc = 0;
 	char* ret_ptr;
 	char* next_ptr;
-	char command[128];
-	strcpy(command, file_name);
-	ret_ptr = strtok_r(command, " ", &next_ptr);
+	char* command = strdup(file_name);
+	char* argv[128];
 	
+	ret_ptr = strtok_r(command, " ", &next_ptr);
 	while(ret_ptr){
 		//for each keyword.
-	
+		argv[argc] = ret_ptr;
+		argc++;
+		ret_ptr = strtok_r(NULL, " ", &next_ptr);
 	}
+	void* argv_addr[argc];
+	//1. saving arguments onto stack in reverse order : argv[argc-1] -> argv[argc-2] -> ..
+	
+	
+	
+	
 	
 	
 	/* ENDOFNEWCODE */
