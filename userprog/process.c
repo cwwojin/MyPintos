@@ -464,7 +464,7 @@ load (const char *file_name, struct intr_frame *if_) {
 	if_->rsp -= 8;
 	*((void**) if_->rsp) = 0;
 	//DEBUGGING.
-	hex_dump(if_->rsp, if_->rsp, KERN_BASE - if_->rsp, true);
+	hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp, true);
 	/* ENDOFNEWCODE */
 
 	success = true;
