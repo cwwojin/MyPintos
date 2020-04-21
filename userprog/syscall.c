@@ -72,8 +72,8 @@ static void getmultiple_user(void* addr, void* dest, size_t size){
 	for(i=0; i<size; i++){
 		//check validity of address.
 		check_address(addr+i);
-		v = (int) *(addr+i);
-		*(char*)(dest + i) = value & 0xff;
+		v = *((int*) (addr+i));
+		*(char*)(dest + i) = v & 0xff;
 	}
 }
 /* ENDOFNEWCODE*/
@@ -88,7 +88,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 	int syscall_num;
 	//get address stored in stack pointer 'rsp'
 	check_address((void*)f->rsp);
-	getmultiple_user((void*)f->esp, &syscall_num, 4);
+	getmultiple_user((void*)f->rsp, &syscall_num, 4);
 	switch(syscall_num){
 		case SYS_HALT:
 		{
