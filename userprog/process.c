@@ -332,7 +332,8 @@ static void setup_argument(const char *file_name, struct intr_frame *if_){
 	int argc = 0;
 	char* ret_ptr;
 	char* next_ptr;
-	char* command = strdup(file_name);
+	char command[strlen(file_name)];
+	strcpy(command, file_name);
 	char* argv[128];
 	
 	ret_ptr = strtok_r(command, " ", &next_ptr);
