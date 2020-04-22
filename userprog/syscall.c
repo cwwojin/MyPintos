@@ -59,7 +59,7 @@ void exit(int status){
 }
 
 //this is a function for wait : Waits for a child process "pid" and retrieves the child's exit status.
-int wait (pid_t pid){
+int wait (tid_t pid){
 	return process_wait(pid);
 }
 
@@ -114,7 +114,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		{
 			//one argument, exit status.
 			int exit_status;
-			getmultiple_user((f->rsp) + 4, &exit_status, sizeof(int));
+			getmultiple_user((void*) (f->rsp + 4), &exit_status, sizeof(int));
 			
 			//call exit.
 			exit(exit_status);
@@ -132,8 +132,8 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		case SYS_WAIT:
 		{
 			//one argument. pid.
-			pid_t pid;
-			getmultiple_user((f->rsp) + 4, &pid, sizeof(pid_t));
+			tid_t pid;
+			getmultiple_user((void*) (f->rsp + 4), &pid, sizeof(tid_t));
 			
 			wait(pid);
 			NOT_REACHED();
