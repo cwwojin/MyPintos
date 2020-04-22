@@ -89,8 +89,6 @@ static void getmultiple_user(void* addr, void* dest, size_t size){
 	for(i=0; i<size; i++){
 		//check validity of address.
 		check_address(addr+i);
-		//v = *((int*) (addr+i));
-		//*(char*)(dest + i) = v & 0xff;
 	}
 	memcpy(dest, addr, size);
 }
@@ -104,9 +102,9 @@ syscall_handler (struct intr_frame *f UNUSED) {
 	struct thread* current = thread_current();
 	/* NEWCODE*/
 	int syscall_num;
-	//get address stored in stack pointer 'rsp'
+	//check validity of stack pointer.
 	check_address((void*)f->rsp);
-	//getmultiple_user((void*)f->rsp, &syscall_num, 4);
+	//get the system call number from "rax".
 	syscall_num = (int) f->R.rax;
 	printf("systemcall number : %d\n", syscall_num);
 	switch(syscall_num){
