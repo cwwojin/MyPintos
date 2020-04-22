@@ -224,10 +224,7 @@ process_exit (void) {
 	 
 	 
 	 //2. Print termination message w/ exit status.
-	 if(curr != kernel_thread()){
-	 	printf ("%s: exit(%d)\n", curr->name, curr->exit_status);
-	 }
-	 printf ("%s: exit(%d)\n", curr->name, curr->exit_status);
+	 //printf ("%s: exit(%d)\n", curr->name, curr->exit_status);
 	 /* ENDOFNEWCODE */
 	 
 
