@@ -378,7 +378,7 @@ static void setup_argument(const char *file_name, struct intr_frame *if_){
 	//fake return address.
 	if_->rsp -= 8;
 	*((void**) if_->rsp) = 0;
-	printf("rsp : %X\n", if_->rsp);
+	//printf("rsp : %X\n", if_->rsp);
 	/* ENDOFNEWCODE */
 }
 
