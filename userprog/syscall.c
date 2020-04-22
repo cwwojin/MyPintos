@@ -103,7 +103,8 @@ syscall_handler (struct intr_frame *f UNUSED) {
 	int syscall_num;
 	//get address stored in stack pointer 'rsp'
 	check_address((void*)f->rsp);
-	getmultiple_user((void*)f->rsp, &syscall_num, 4);
+	//getmultiple_user((void*)f->rsp, &syscall_num, 4);
+	syscall_num = (int) f->R.rax;
 	switch(syscall_num){
 		case SYS_HALT:
 		{
