@@ -164,6 +164,12 @@ int
 process_exec (void *f_name) {
 	char *file_name = f_name;
 	bool success;
+	
+	/* NEWCODE */
+	//tokenizing file name.
+	char* ret_ptr = strchr(file_name, ' ');
+	*ret_ptr = '\0'
+	/* ENDOFNEWCODE */
 
 	/* We cannot use the intr_frame in the thread structure.
 	 * This is because when current thread rescheduled,
@@ -384,10 +390,11 @@ load (const char *file_name, struct intr_frame *if_) {
 	off_t file_ofs;
 	bool success = false;
 	int i;
-	
+	/*
 	char* ret_ptr;
 	char* next_ptr;
 	char command[strlen(file_name)];
+	*/
 
 	/* Allocate and activate page directory. */
 	t->pml4 = pml4_create ();
@@ -396,9 +403,11 @@ load (const char *file_name, struct intr_frame *if_) {
 	process_activate (thread_current ());
 	
 	/* NEWCODE */
+	/*
 	//tokenize File name.
 	strlcpy(command, file_name, strlen(file_name));
 	ret_ptr = strtok_r(command, " ", &next_ptr);
+	*/
 	/* ENDOFNEWCODE */
 
 	/* Open executable file. */
@@ -478,6 +487,7 @@ load (const char *file_name, struct intr_frame *if_) {
 		goto done;
 		
 	/* Set up argument */
+	*(file_name + strlen(file_name)) = ' ';
 	setup_argument(file_name, if_);
 	//hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp, true);
 
