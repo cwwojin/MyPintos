@@ -381,6 +381,10 @@ load (const char *file_name, struct intr_frame *if_) {
 	off_t file_ofs;
 	bool success = false;
 	int i;
+	
+	char* ret_ptr;
+	char* next_ptr;
+	char command[strlen(file_name)];
 
 	/* Allocate and activate page directory. */
 	t->pml4 = pml4_create ();
@@ -390,11 +394,8 @@ load (const char *file_name, struct intr_frame *if_) {
 	
 	/* NEWCODE */
 	//tokenize File name.
-	char* ret_ptr;
-	char* next_ptr;
-	char command[strlen(file_name)];
 	strlcpy(command, file_name, strlen(file_name));
-	ret_ptr = strtok_r(file_name, " ", &next_ptr);
+	ret_ptr = strtok_r(command, " ", &next_ptr);
 	/* ENDOFNEWCODE */
 
 	/* Open executable file. */
