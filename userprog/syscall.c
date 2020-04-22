@@ -180,6 +180,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		{
 			printf("Invalid system call number : %d\n", syscall_num);
 			exit(-1);
+			power_off();
 			NOT_REACHED();
 			break;
 		}
