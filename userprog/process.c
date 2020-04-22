@@ -492,9 +492,10 @@ load (char *file_name, struct intr_frame *if_) {
 		goto done;
 		
 	/* Set up argument */
+	printf("%s, %d\n", file_name, strlen(file_name));
 	*(file_name + strlen(file_name)) = ' ';
 	setup_argument(file_name, if_);
-	hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp - 1, true);
+	hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp, true);
 
 	/* Start address. */
 	if_->rip = ehdr.e_entry;
