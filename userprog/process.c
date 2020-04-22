@@ -365,8 +365,6 @@ static void setup_argument(const char *file_name, struct intr_frame *if_){
 	//fake return address.
 	if_->rsp -= 8;
 	*((void**) if_->rsp) = 0;
-	//DEBUGGING.
-	//hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp, true);
 	/* ENDOFNEWCODE */
 }
 
@@ -389,9 +387,18 @@ load (const char *file_name, struct intr_frame *if_) {
 	if (t->pml4 == NULL)
 		goto done;
 	process_activate (thread_current ());
+	
+	/* NEWCODE */
+	//tokenize File name.
+	char* ret_ptr;
+	char* next_ptr;
+	char command[strlen(file_name)];
+	strlcpy(command, file_name, strlen(file_name));
+	ret_ptr = strtok_r(file_name, " ", &next_ptr);
+	/* ENDOFNEWCODE */
 
 	/* Open executable file. */
-	file = filesys_open (file_name);
+	file = filesys_open (ret_ptr);
 	if (file == NULL) {
 		printf ("load: %s: open failed\n", file_name);
 		goto done;
