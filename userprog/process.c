@@ -497,6 +497,7 @@ load (char *file_name, struct intr_frame *if_) {
 	/* Set up argument */
 	printf("%s, %d\n", file_name, strlen(file_name));
 	*(file_name + strlen(file_name)) = ' ';
+	printf("after : %s\n", file_name);
 	setup_argument(file_name, if_);
 	hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp, true);
 
