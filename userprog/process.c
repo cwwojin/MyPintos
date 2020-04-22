@@ -167,8 +167,10 @@ process_exec (void *f_name) {
 	
 	/* NEWCODE */
 	//tokenizing file name.
+	printf("%s -> ", file_name);
 	char* ret_ptr;
 	file_name = strtok_r(file_name, " ", &ret_ptr);
+	printf("%s\n", file_name);
 	//*ret_ptr = '\0';
 	/* ENDOFNEWCODE */
 
