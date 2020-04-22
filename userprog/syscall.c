@@ -9,6 +9,8 @@
 #include "intrinsic.h"
 
 #include "threads/synch.h"
+#include "filesys/filesys.h"
+#include "filesys/file.h"
 
 void syscall_entry (void);
 void syscall_handler (struct intr_frame *);
@@ -65,6 +67,34 @@ void exit(int status){
 int wait (tid_t pid){
 	return process_wait(pid);
 }
+
+//FILESYS - create : create a file with given name & size.
+bool create(const char *file, unsigned initial_size){
+	//USE : bool filesys_create (const char *name, off_t initial_size)
+	bool result;
+	check_address((void*) file);
+	
+	//use a lock when accessing filesystem.
+	lock_acquire(&filesys_lock);
+	result = filesys_create(file, initial_size);
+	lock_release(&filesys_lock);
+	
+	return result;
+}
+
+//FILESYS - remove : remove a given file.
+bool remove(const char* file){
+	//USE : bool filesys_remove (const char *name)
+	bool result;
+	check_address((void*) file);
+	
+	lock_acquire(&filesys_lock);
+	result = filesys_remove(file);
+	lock_release(&filesys_lock);
+	
+	return result;
+}
+
 
 //this is a function for checking if pointer is "valid". If not, call a page fault.
 void check_address(void* addr){
@@ -144,10 +174,23 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		}/* Wait for a child process to die. */
 		case SYS_CREATE:
 		{
+			//2 arguments. file, initial_size.
+			char* file;
+			unsigned initial_size;
+			bool result;
+			
+			result = create(file, initial_size);
+			//return value -> rax.
+			f->R.rax = result;
 			break;
 		}/* Create a file. */
 		case SYS_REMOVE:
 		{
+			char* file;
+			bool result;
+			
+			result = remove(file);
+			f->R.rax = result;
 			break;
 		}/* Delete a file. */
 		case SYS_OPEN:
