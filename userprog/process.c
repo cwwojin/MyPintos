@@ -167,11 +167,8 @@ process_exec (void *f_name) {
 	
 	/* NEWCODE */
 	//tokenizing file name.
-	printf("%s -> ", file_name);
 	char* ret_ptr;
 	file_name = strtok_r(file_name, " ", &ret_ptr);
-	printf("%s\n", file_name);
-	//*ret_ptr = '\0';
 	/* ENDOFNEWCODE */
 
 	/* We cannot use the intr_frame in the thread structure.
@@ -349,13 +346,12 @@ static void setup_argument(const char *file_name, struct intr_frame *if_){
 	char* next_ptr;
 	char command[128];
 	strlcpy(command, file_name, 128);
-	printf("%s\n", command);
 	char* argv[128];
 	
 	ret_ptr = strtok_r(command, " ", &next_ptr);
 	while(ret_ptr){
 		//for each keyword.
-		printf("%s\n", ret_ptr);
+		//printf("%s\n", ret_ptr);
 		argv[argc] = ret_ptr;
 		argc++;
 		ret_ptr = strtok_r(NULL, " ", &next_ptr);
@@ -382,6 +378,7 @@ static void setup_argument(const char *file_name, struct intr_frame *if_){
 	//fake return address.
 	if_->rsp -= 8;
 	*((void**) if_->rsp) = 0;
+	printf("rsp : %X\n", if_->rsp);
 	/* ENDOFNEWCODE */
 }
 
@@ -495,9 +492,7 @@ load (char *file_name, struct intr_frame *if_) {
 		goto done;
 		
 	/* Set up argument */
-	printf("%s, %d\n", file_name, strlen(file_name));
 	*(file_name + strlen(file_name)) = ' ';
-	printf("after : %s\n", file_name);
 	setup_argument(file_name, if_);
 	hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp, true);
 
