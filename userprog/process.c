@@ -168,7 +168,7 @@ process_exec (void *f_name) {
 	/* NEWCODE */
 	//tokenizing file name.
 	char* ret_ptr = strchr(file_name, ' ');
-	*ret_ptr = '\0'
+	*ret_ptr = '\0';
 	/* ENDOFNEWCODE */
 
 	/* We cannot use the intr_frame in the thread structure.
