@@ -55,6 +55,9 @@ void exit(int status){
 	}
 	struct thread* current = thread_current();
 	current->exit_status = status;
+	
+	//print termination message here.
+	printf ("%s: exit(%d)\n", current->name, current->exit_status);
 	thread_exit();
 }
 
@@ -182,7 +185,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		{
 			printf("Invalid system call number : %d\n", syscall_num);
 			exit(-1);
-			power_off();
+			//power_off();
 			NOT_REACHED();
 			break;
 		}
