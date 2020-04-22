@@ -105,6 +105,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 	check_address((void*)f->rsp);
 	//getmultiple_user((void*)f->rsp, &syscall_num, 4);
 	syscall_num = (int) f->R.rax;
+	printf("systemcall number : %d\n", syscall_num);
 	switch(syscall_num){
 		case SYS_HALT:
 		{
