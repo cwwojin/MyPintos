@@ -141,13 +141,15 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		case SYS_HALT:
 		{
 			power_off();
+			NOT_REACHED();
 			break;
 		}/* Halt the operating system. */
 		case SYS_EXIT:
 		{
 			//one argument, exit status.
 			int exit_status;
-			getmultiple_user((void*) (f->rsp + 4), &exit_status, sizeof(int));
+			//getmultiple_user((void*) (f->rsp + 4), &exit_status, sizeof(int));
+			exit_status = (int) f->R.rdi;
 			
 			//call exit.
 			exit(exit_status);
@@ -166,10 +168,12 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		{
 			//one argument. pid.
 			tid_t pid;
-			getmultiple_user((void*) (f->rsp + 4), &pid, sizeof(tid_t));
+			int result;
+			//getmultiple_user((void*) (f->rsp + 4), &pid, sizeof(tid_t));
+			pid = f->R.rdi;
 			
-			wait(pid);
-			NOT_REACHED();
+			result = wait(pid);
+			f->R.rax = (uint64_t) result;
 			break;
 		}/* Wait for a child process to die. */
 		case SYS_CREATE:
@@ -178,19 +182,23 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			char* file;
 			unsigned initial_size;
 			bool result;
+			//f->R.rdi;
+			//f->R.rsi;
 			
 			result = create(file, initial_size);
 			//return value -> rax.
-			f->R.rax = result;
+			f->R.rax = (uint64_t) result;
 			break;
 		}/* Create a file. */
 		case SYS_REMOVE:
 		{
+			//one argument. file.
 			char* file;
 			bool result;
+			//f->R.rdi;
 			
 			result = remove(file);
-			f->R.rax = result;
+			f->R.rax = (uint64_t) result;
 			break;
 		}/* Delete a file. */
 		case SYS_OPEN:
