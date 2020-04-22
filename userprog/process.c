@@ -213,8 +213,9 @@ process_wait (tid_t child_tid UNUSED) {
 	 * XXX:       implementing the process_wait. */
 	/*
 	while(1){
-	}
-	*/
+		
+	}*/
+	
 	
 	return -1;
 }
@@ -492,7 +493,7 @@ load (char *file_name, struct intr_frame *if_) {
 	/* Set up argument */
 	*(file_name + strlen(file_name)) = ' ';
 	setup_argument(file_name, if_);
-	//hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp, true);
+	hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp, true);
 
 	/* Start address. */
 	if_->rip = ehdr.e_entry;
