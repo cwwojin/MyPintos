@@ -345,13 +345,14 @@ static void setup_argument(const char *file_name, struct intr_frame *if_){
 	int argc = 0;
 	char* ret_ptr;
 	char* next_ptr;
-	char command[strlen(file_name)];
+	char command[128];
 	strlcpy(command, file_name, strlen(file_name));
 	char* argv[128];
 	
 	ret_ptr = strtok_r(command, " ", &next_ptr);
 	while(ret_ptr){
 		//for each keyword.
+		printf("%s\n", ret_ptr);
 		argv[argc] = ret_ptr;
 		argc++;
 		ret_ptr = strtok_r(NULL, " ", &next_ptr);
@@ -493,7 +494,7 @@ load (char *file_name, struct intr_frame *if_) {
 	/* Set up argument */
 	*(file_name + strlen(file_name)) = ' ';
 	setup_argument(file_name, if_);
-	hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp, true);
+	hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp - 1, true);
 
 	/* Start address. */
 	if_->rip = ehdr.e_entry;
