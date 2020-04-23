@@ -111,7 +111,7 @@ void remove_child_process(struct thread* cp){
 			break;
 		}
 		else{
-			list_push_back(&current->fd_table, &fid->elem);
+			list_push_back(&current->child_list, &child->child_elem);
 		}
 	}
 }
