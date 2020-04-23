@@ -136,6 +136,37 @@ int filesize(int fd){
 	return result;
 }
 
+//FILESYS - read : read SIZE bytes from file FD into BUFFER. Return number of bytes read, -1 if fail.
+int read (int fd, void *buffer, unsigned size){
+	//USE : off_t file_read (struct file *file, void *buffer, off_t size)
+	//validate memory from buffer ~ buffer + size - 1.
+	unsigned i;
+	for(i=0; i< size; i++){
+		//check validity of address.
+		check_address((void*) (buffer + i));
+	}
+	int result;
+	struct file* target;
+	
+	lock_acquire(&filesys_lock);
+	if(fd == 0){
+		//fd = 0, so get input from keyboard using input_getc()
+		for(i=0; i< size; i++){
+			memcpy(buffer + i, input_getc());
+		}
+	}
+	target = process_get_file(fd);
+	if(target == NULL){
+		lock_release(&filesys_lock);
+		return -1;
+	}
+	result = file_read();
+	
+	
+	
+	
+}
+
 
 
 //this is a function for checking if pointer is "valid". If not, call a page fault.
@@ -156,7 +187,6 @@ void check_address(void* addr){
 
 //this is a function for reading in multiple bytes of data from user pointer. check validity of pointer each time.
 static void getmultiple_user(void* addr, void* dest, size_t size){
-	int32_t v;
 	size_t i;
 	for(i=0; i<size; i++){
 		//check validity of address.
