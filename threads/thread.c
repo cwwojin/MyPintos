@@ -211,6 +211,7 @@ tid_t
 thread_create (const char *name, int priority,
 		thread_func *function, void *aux) {
 	struct thread *t;
+	struct thread* current = thread_current();
 	tid_t tid;
 
 	ASSERT (function != NULL);
@@ -234,7 +235,19 @@ thread_create (const char *name, int priority,
 	t->tf.ss = SEL_KDSEG;
 	t->tf.cs = SEL_KCSEG;
 	t->tf.eflags = FLAG_IF;
-
+	
+	
+#ifdef USERPROG
+	/* NEWCODE for process hierarchy. */
+	t->parent = current;
+	t->flag = -1;
+	t->exited = false;
+	sema_init(&t->exit_sema, 0);
+	sema_init(&t->load_sema, 0);
+	//add t to current thread's child_list.
+	list_push_back(&current->child_list, &t->child_elem);
+#endif
+	
 	/* Add to run queue. */
 	thread_unblock (t);
 	
@@ -604,6 +617,7 @@ init_thread (struct thread *t, const char *name, int priority) {
 	//for userprog.
 	list_init(&t->fd_table);
 	t->max_fd = 2;
+	list_init(&t->child_list);
 #endif
 	
 }
