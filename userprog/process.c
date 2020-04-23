@@ -28,7 +28,29 @@ static void initd (void *f_name);
 static void __do_fork (void *);
 
 /* NEWCODE : additional functions for file descriptors. */
+int process_add_file(struct file* file){
+	//insert file to thread's fd table.
+	struct thread* current = thread_current();
+	struct fd file_desc;
+	
+	file_desc.file = file;
+	file_desc.fd_num = current->max_fd;
+	list_push_back(&current->fd_table, &file_desc->elem);
+	current->max_fd ++;
+	
+	return file_desc.fd_num;
+}
 
+struct file* process_get_file(int fd){
+	//get a file given the fd number.
+	struct thread* current = thread_current();
+	struct list_elem* e;
+	//search through fd table.
+	for (e = list_begin (&current->fd_table); e != list_end (&current->fd_table); e = list_next (e)){
+		
+	}
+	
+}
 /* ENDOFNEWCODE */
 
 
