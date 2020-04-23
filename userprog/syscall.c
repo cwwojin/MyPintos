@@ -215,6 +215,17 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		}/* Read from a file. */
 		case SYS_WRITE:
 		{
+			//3 arguments. fd, buffer, size
+			int fd;
+			void *buffer;
+			unsigned size;
+			fd = (int) f->R.rdi;
+			buffer = (void*) f->R.rsi;
+			size = (unsigned) f->R.rdx;
+			
+			printf("fd:%rdi = %d, buffer:%rsi = %d, size:%rdx = %d\n", fd, buffer, size);
+			
+			
 			break;
 		}/* Write to a file. */
 		case SYS_SEEK:
