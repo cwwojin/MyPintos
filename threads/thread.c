@@ -599,6 +599,13 @@ init_thread (struct thread *t, const char *name, int priority) {
 	//for mlfqs.
 	t->nice = NICE_DEFAULT;
 	t->recent_cpu = RECENT_CPU_DEFAULT;
+	
+#ifdef USERPROG
+	//for userprog.
+	list_init(&t->fd_table);
+	t->max_fd = 2;
+#endif
+	
 }
 
 /* Chooses and returns the next thread to be scheduled.  Should
