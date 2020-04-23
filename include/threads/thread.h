@@ -98,6 +98,7 @@ struct thread {
 	/* For Priority Donation */
 	int ori_priority;	//original priority.
 	struct lock* gate;	//the lock that this thread is waiting for.
+	struct list donation_list;	//list of threads that donated.
 	
 	
 
@@ -108,6 +109,7 @@ struct thread {
 	/* Owned by userprog/process.c. */
 	uint64_t *pml4;                     /* Page map level 4 */
 	int exit_status;		/* Exit Status */
+	struct list fd_table;		/* File Descriptor Table */
 #endif
 #ifdef VM
 	/* Table for whole virtual memory owned by thread. */
@@ -123,8 +125,6 @@ struct thread {
 	int recent_cpu;
 	struct list_elem block_elem;
 	
-	
-	struct list donation_list;	//list of threads that donated.
 };
 
 /* If false (default), use round-robin scheduler.
