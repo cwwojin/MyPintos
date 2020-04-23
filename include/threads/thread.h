@@ -108,9 +108,17 @@ struct thread {
 #ifdef USERPROG
 	/* Owned by userprog/process.c. */
 	uint64_t *pml4;                     /* Page map level 4 */
-	int exit_status;		/* Exit Status */
 	struct list fd_table;		/* File Descriptor Table */
 	int max_fd;
+	struct thread* parent;		/* Pointer to the parent */
+	struct list child_list;		/* List of children */
+	struct list_elem child_elem;
+	bool exited;
+	int exit_status;		/* Exit Status */
+	bool loaded;
+	struct semaphore exit_sema;	/* Semaphore */
+	struct semaphore load_sema;
+	
 #endif
 #ifdef VM
 	/* Table for whole virtual memory owned by thread. */
