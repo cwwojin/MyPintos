@@ -45,11 +45,36 @@ struct file* process_get_file(int fd){
 	//get a file given the fd number.
 	struct thread* current = thread_current();
 	struct list_elem* e;
+	struct file* resultfile = NULL;
+	
 	//search through fd table.
 	for (e = list_begin (&current->fd_table); e != list_end (&current->fd_table); e = list_next (e)){
-		
+		struct fd* fid = list_entry(e, struct fd, elem);
+		if(fid->fd_num == fd){
+			resultfile = fid->file;
+			break;
+		}
 	}
 	
+	return resultfile;
+}
+
+void process_close_file(int fd){
+	//USE : void file_close (struct file *file)
+	struct thread* current = thread_current();
+	struct list_elem* e;
+	
+	for (e = list_begin (&current->fd_table); e != list_end (&current->fd_table); e = list_remove (e)){
+		struct fd* fid = list_entry(e, struct fd, elem);
+		if(fid->fd_num == fd){
+			file_close(fid->file);
+			//remove this entry E from the list.
+			break;
+		}
+		else{
+			list_push_back(&current->fd_table, fid->elem);
+		}
+	}
 }
 /* ENDOFNEWCODE */
 
@@ -249,19 +274,22 @@ process_wait (tid_t child_tid UNUSED) {
 /* Exit the process. This function is called by thread_exit (). */
 void
 process_exit (void) {
-	struct thread *curr = thread_current ();
+	struct thread *current = thread_current ();
 	/* TODO: Your code goes here.
 	 * TODO: Implement process termination message (see
 	 * TODO: project2/process_termination.html).
 	 * TODO: We recommend you to implement process resource cleanup here. */
 	 
-	 /* NEWCODE */
-	 //1. Process resouce cleanup - allocated Memory (file descriptors).
-	 
-	 
-	 //2. Print termination message w/ exit status.
-	 //printf ("%s: exit(%d)\n", curr->name, curr->exit_status);
-	 /* ENDOFNEWCODE */
+	/* NEWCODE */
+	//Process resouce cleanup - allocated file descriptors.
+	struct list_elem* e;
+	
+	for (e = list_begin (&current->fd_table); e != list_end (&current->fd_table); e = list_remove (e)){
+		struct fd* fid = list_entry(e, struct fd, elem);
+		file_close(fid->file);
+		current->max_fd --;
+	}
+	/* ENDOFNEWCODE */
 	 
 
 	process_cleanup ();
