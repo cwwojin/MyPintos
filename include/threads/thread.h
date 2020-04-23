@@ -115,7 +115,7 @@ struct thread {
 	struct list_elem child_elem;
 	bool exited;
 	int exit_status;		/* Exit Status */
-	bool loaded;
+	int flag;
 	struct semaphore exit_sema;	/* Semaphore */
 	struct semaphore load_sema;
 	
