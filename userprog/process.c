@@ -78,6 +78,43 @@ void process_close_file(int fd){
 		}
 	}
 }
+
+/* Additional functions for Process Hierarchy. */
+struct thread* get_child_process(int pid){
+	//look for a process with tid_t "pid". if none, return NULL.
+	struct thread* current = thread_current();
+	struct thread* result = NULL;
+	struct list_elem* e;
+	
+	//search through child list.
+	for (e = list_begin (&current->child_list); e != list_end (&current->child_list); e = list_next (e)){
+		struct thread* child = list_entry(e, struct thread, child_elem);
+		if(child->tid == pid){
+			result = child;
+			break;
+		}
+	}
+	
+	return result;
+}
+
+void remove_child_process(struct thread* cp){
+	//remove "cp" from child list, and free memory.
+	struct thread* current = thread_current();
+	struct list_elem* e;
+	
+	for (e = list_begin (&current->child_list); e != list_end (&current->child_list); e = list_remove (e)){
+		struct thread* child = list_entry(e, struct thread, child_elem);
+		if(child == cp){
+			palloc_free_page(child);
+			//remove this entry E from the list.
+			break;
+		}
+		else{
+			list_push_back(&current->fd_table, &fid->elem);
+		}
+	}
+}
 /* ENDOFNEWCODE */
 
 
