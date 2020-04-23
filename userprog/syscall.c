@@ -201,6 +201,13 @@ int write (int fd, const void *buffer, unsigned size){
 	return result;
 }
 
+//exec : change current process to the executable @ cmd_line.
+int exec(const char* cmd_line){
+	int result;
+	result = process_exec((void*) cmd_line);
+	if(result == -1) exit(-1);
+	return result;
+}
 
 
 //this is a function for checking if pointer is "valid". If not, call a page fault.
@@ -266,6 +273,12 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		}/* Clone current process. */
 		case SYS_EXEC:
 		{
+			//one argument, cmd_line.
+			char* cmd_line;
+			cmd_line = (char*) f->R.rdi;
+			
+			exec(cmd_line);
+			NOT_REACHED();
 			break;
 		}/* Switch current process. */
 		case SYS_WAIT:
@@ -273,7 +286,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			//one argument. pid.
 			tid_t pid;
 			int result;
-			pid = f->R.rdi;
+			pid = (int) f->R.rdi;
 			
 			result = wait(pid);
 			f->R.rax = (uint64_t) result;
