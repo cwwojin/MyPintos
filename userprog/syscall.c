@@ -336,7 +336,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			fd = (int) f->R.rdi;
 			buffer = (void*) f->R.rsi;
 			size = (unsigned) f->R.rdx;
-			printf("READ -> fd: rdi = %d, buffer: rsi = %d, size: rdx = %d\n", fd, buffer, size);
+			//printf("READ -> fd: rdi = %d, buffer: rsi = %d, size: rdx = %d\n", fd, buffer, size);
 			
 			result = read(fd, buffer, size);
 			f->R.rax = (uint64_t) result;
@@ -352,7 +352,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			fd = (int) f->R.rdi;
 			buffer = (void*) f->R.rsi;
 			size = (unsigned) f->R.rdx;
-			printf("WRITE -> fd: rdi = %d, buffer: rsi = %d, size: rdx = %d\n", fd, buffer, size);
+			//printf("WRITE -> fd: rdi = %d, buffer: rsi = %d, size: rdx = %d\n", fd, buffer, size);
 			
 			result = write(fd, buffer, size);
 			f->R.rax = (uint64_t) result;
@@ -375,13 +375,10 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		{
 			printf("Invalid system call number : %d\n", syscall_num);
 			exit(-1);
-			//power_off();
-			NOT_REACHED();
 			break;
 		}
 	}
 	/* ENDOFNEWCODE */
-	
-	printf ("system call!\n");
+	//printf ("system call!\n");
 	//thread_exit ();
 }
