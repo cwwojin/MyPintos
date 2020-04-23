@@ -8,6 +8,7 @@
 #include "threads/flags.h"
 #include "intrinsic.h"
 
+#include <string.h>
 #include "threads/synch.h"
 #include "filesys/filesys.h"
 #include "filesys/file.h"
