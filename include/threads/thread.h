@@ -110,6 +110,7 @@ struct thread {
 	uint64_t *pml4;                     /* Page map level 4 */
 	int exit_status;		/* Exit Status */
 	struct list fd_table;		/* File Descriptor Table */
+	int max_fd;
 #endif
 #ifdef VM
 	/* Table for whole virtual memory owned by thread. */
