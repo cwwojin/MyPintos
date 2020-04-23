@@ -148,9 +148,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		{
 			//one argument, exit status.
 			int exit_status;
-			//getmultiple_user((void*) (f->rsp + 4), &exit_status, sizeof(int));
 			exit_status = (int) f->R.rdi;
-			
 			//call exit.
 			exit(exit_status);
 			NOT_REACHED();
@@ -169,7 +167,6 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			//one argument. pid.
 			tid_t pid;
 			int result;
-			//getmultiple_user((void*) (f->rsp + 4), &pid, sizeof(tid_t));
 			pid = f->R.rdi;
 			
 			result = wait(pid);
@@ -182,8 +179,8 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			char* file;
 			unsigned initial_size;
 			bool result;
-			//f->R.rdi;
-			//f->R.rsi;
+			file = (char*) f->R.rdi;
+			initial_size = (unsigned) f->R.rsi;
 			
 			result = create(file, initial_size);
 			//return value -> rax.
@@ -195,7 +192,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			//one argument. file.
 			char* file;
 			bool result;
-			//f->R.rdi;
+			file = (char*) f->R.rdi;
 			
 			result = remove(file);
 			f->R.rax = (uint64_t) result;
@@ -222,8 +219,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			fd = (int) f->R.rdi;
 			buffer = (void*) f->R.rsi;
 			size = (unsigned) f->R.rdx;
-			
-			printf("fd:%rdi = %d, buffer:%rsi = %d, size:%rdx = %d\n", fd, buffer, size);
+			printf("fd: rdi = %d, buffer: rsi = %d, size: rdx = %d\n", fd, buffer, size);
 			
 			
 			break;
