@@ -96,6 +96,25 @@ bool remove(const char* file){
 	return result;
 }
 
+//FILESYS - open : open a file. return the file descriptor. (-1) if file doesn't exist.
+int open(const char* file){
+	//USE : struct file* filesys_open (const char *name)
+	int result;
+	struct file* target;
+	check_address((void*) file);
+	
+	lock_acquire(&filesys_lock);
+	target = filesys_open(file);
+	lock_release(&filesys_lock);
+	if(target == NULL) return -1;
+	
+	result = process_add_file(target);
+	return result;
+}
+
+//FILESYS
+
+
 
 //this is a function for checking if pointer is "valid". If not, call a page fault.
 void check_address(void* addr){
@@ -201,6 +220,13 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		}/* Delete a file. */
 		case SYS_OPEN:
 		{
+			//one argument. file.
+			char* file;
+			int result;
+			file = (char*) f->R.rdi;
+			
+			result = open(file);
+			f->R.rax = (uint64_t) result;
 			break;
 		}/* Open a file. */
 		case SYS_FILESIZE:
