@@ -31,14 +31,15 @@ static void __do_fork (void *);
 int process_add_file(struct file* file){
 	//insert file to thread's fd table.
 	struct thread* current = thread_current();
-	struct fd file_desc;
+	//allocate a page for new file descriptor. when removing a file descriptor, free this page @ resource cleanup.
+	struct fd* file_desc = palloc_get_page(0);
 	
-	file_desc.file = file;
-	file_desc.fd_num = current->max_fd;
+	file_desc->file = file;
+	file_desc->fd_num = current->max_fd;
 	list_push_back(&current->fd_table, &file_desc->elem);
 	current->max_fd ++;
 	
-	return file_desc.fd_num;
+	return file_desc->fd_num;
 }
 
 struct file* process_get_file(int fd){
@@ -68,6 +69,7 @@ void process_close_file(int fd){
 		struct fd* fid = list_entry(e, struct fd, elem);
 		if(fid->fd_num == fd){
 			file_close(fid->file);
+			palloc_free_page(fid);
 			//remove this entry E from the list.
 			break;
 		}
@@ -287,7 +289,7 @@ process_exit (void) {
 	for (e = list_begin (&current->fd_table); e != list_end (&current->fd_table); e = list_remove (e)){
 		struct fd* fid = list_entry(e, struct fd, elem);
 		file_close(fid->file);
-		current->max_fd --;
+		palloc_free_page(fid);
 	}
 	/* ENDOFNEWCODE */
 	 
