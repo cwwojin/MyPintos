@@ -172,7 +172,33 @@ int read (int fd, void *buffer, unsigned size){
 
 //FILESYS - write : Writes size bytes from buffer to the open file fd. Returns the number of bytes actually written.
 int write (int fd, const void *buffer, unsigned size){
-	return 0;
+	//USE : off_t file_write (struct file *file, const void *buffer, off_t size)
+	//validate memory from buffer ~ buffer + size - 1.
+	unsigned i;
+	for(i=0; i< size; i++){
+		//check validity of address.
+		check_address((void*) (buffer + i));
+	}
+	int result = -1;
+	struct file* target;
+	
+	lock_acquire(&filesys_lock);
+	if(fd == 1){
+		//fd = 0, so write to console at once, using putbuf().
+		putbuf(buffer, size);
+		result = size;
+	}
+	else{
+		//fd != 0, so read from file found with FD.
+		target = process_get_file(fd);
+		if(target == NULL){
+			lock_release(&filesys_lock);
+			return -1;
+		}
+		result = file_write(target, buffer, size);
+	}
+	lock_release(&filesys_lock);
+	return result;
 }
 
 
