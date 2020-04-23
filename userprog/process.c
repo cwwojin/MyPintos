@@ -74,7 +74,7 @@ void process_close_file(int fd){
 			break;
 		}
 		else{
-			list_push_back(&current->fd_table, fid->elem);
+			list_push_back(&current->fd_table, &fid->elem);
 		}
 	}
 }
