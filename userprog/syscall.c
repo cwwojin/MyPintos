@@ -145,26 +145,33 @@ int read (int fd, void *buffer, unsigned size){
 		//check validity of address.
 		check_address((void*) (buffer + i));
 	}
-	int result;
+	int result = -1;
 	struct file* target;
 	
 	lock_acquire(&filesys_lock);
 	if(fd == 0){
 		//fd = 0, so get input from keyboard using input_getc()
 		for(i=0; i< size; i++){
-			memcpy(buffer + i, input_getc());
+			*(uint8_t*) (buffer + i) = input_getc();
 		}
+		result = (int) size;
 	}
-	target = process_get_file(fd);
-	if(target == NULL){
-		lock_release(&filesys_lock);
-		return -1;
+	else{
+		//fd != 0, so read from file found with FD.
+		target = process_get_file(fd);
+		if(target == NULL){
+			lock_release(&filesys_lock);
+			return -1;
+		}
+		result = file_read(target, buffer, size);
 	}
-	result = file_read();
-	
-	
-	
-	
+	lock_release(&filesys_lock);
+	return result;
+}
+
+//FILESYS - write : Writes size bytes from buffer to the open file fd. Returns the number of bytes actually written.
+int write (int fd, const void *buffer, unsigned size){
+	return 0;
 }
 
 
@@ -294,6 +301,18 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		}/* Obtain a file's size. */
 		case SYS_READ:
 		{
+			//3 arguments. fd, buffer, size.
+			int fd;
+			void *buffer;
+			unsigned size;
+			int result;
+			fd = (int) f->R.rdi;
+			buffer = (void*) f->R.rsi;
+			size = (unsigned) f->R.rdx;
+			printf("READ -> fd: rdi = %d, buffer: rsi = %d, size: rdx = %d\n", fd, buffer, size);
+			
+			result = read(fd, buffer, size);
+			f->R.rax = (uint64_t) result;
 			break;
 		}/* Read from a file. */
 		case SYS_WRITE:
@@ -305,9 +324,10 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			fd = (int) f->R.rdi;
 			buffer = (void*) f->R.rsi;
 			size = (unsigned) f->R.rdx;
-			printf("fd: rdi = %d, buffer: rsi = %d, size: rdx = %d\n", fd, buffer, size);
+			printf("WRITE -> fd: rdi = %d, buffer: rsi = %d, size: rdx = %d\n", fd, buffer, size);
 			
-			
+			result = write(fd, buffer, size);
+			f->R.rax = (uint64_t) result;
 			break;
 		}/* Write to a file. */
 		case SYS_SEEK:
