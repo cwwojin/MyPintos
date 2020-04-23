@@ -322,6 +322,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			int fd;
 			void *buffer;
 			unsigned size;
+			int result;
 			fd = (int) f->R.rdi;
 			buffer = (void*) f->R.rsi;
 			size = (unsigned) f->R.rdx;
