@@ -105,14 +105,36 @@ int open(const char* file){
 	
 	lock_acquire(&filesys_lock);
 	target = filesys_open(file);
-	lock_release(&filesys_lock);
-	if(target == NULL) return -1;
+	if(target == NULL){
+		lock_release(&filesys_lock);
+		return -1;
+	}
 	
 	result = process_add_file(target);
+	lock_release(&filesys_lock);
+	
 	return result;
 }
 
-//FILESYS
+//FILESYS - filesize : return the size of the file, given the fd.
+int filesize(int fd){
+	//USE : off_t file_length (struct file *file)
+	//1. find the file using the fd.
+	int result;
+	struct file* target;
+	
+	lock_acquire(&filesys_lock);
+	target = process_get_file(fd);
+	if(target == NULL){
+		lock_release(&filesys_lock);
+		return -1;
+	}
+	
+	result = file_length(target);
+	lock_release(&filesys_lock);
+	
+	return result;
+}
 
 
 
@@ -231,6 +253,13 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		}/* Open a file. */
 		case SYS_FILESIZE:
 		{
+			//one argument. filedescriptor.
+			int fd;
+			int result;
+			fd = (int) f->R.rdi;
+			
+			result = filesize(fd);
+			f->R.rax = (uint64_t) result;
 			break;
 		}/* Obtain a file's size. */
 		case SYS_READ:
