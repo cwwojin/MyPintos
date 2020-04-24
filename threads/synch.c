@@ -209,15 +209,6 @@ static void donate_priority(void){
 	struct lock* waitinglock = t->gate;
 	enum intr_level old_level;
 	old_level = intr_disable ();
-	/*
-	if(waitinglock == NULL) return;
-	if(t->priority > waitinglock->holder->priority){
-		//printf("am going to insert.\n");
-		//list_insert_ordered (&(waitinglock->holder->donation_list), &t->elem, compare_pri, NULL);
-		//list_push_back(&waitinglock->holder->donation_list, &t->elem);
-		//printf("inserted successfully.\n");
-	}
-	*/
 	
 	while(waitinglock != NULL){
 		if(t->priority > waitinglock->holder->priority){
@@ -303,44 +294,10 @@ lock_try_acquire (struct lock *lock) {
 	return success;
 }
 
-/*
-static void remove_from_donations(struct lock* lock){
-	struct thread* current = thread_current();
-	//iterate through current thread's donation list
-	struct list_elem* e;
-	
-	//enum intr_level old_level;
-	//old_level = intr_disable ();
-	
-	if(list_empty(&(current->donation_list))) return;
-	e = list_begin(&(current->donation_list));
-	struct thread *ethread = list_entry(e, struct thread, elem);
-	if(lock == ethread->gate){
-		e = list_remove(e);
-	}
-	
-	while(e != list_end(&(current->donation_list))){
-		struct thread *ethread = list_entry(e, struct thread, elem);
-		if(lock == ethread->gate){
-			e = list_remove(e);
-		}
-		else{
-			if(e->next == NULL) break;
-			e = list_next(e);
-		}
-	}
-	
-	//intr_set_level (old_level);
-}
-*/
-
-
 void reset_priority(void){
 	//compare current priority with the MAX priority from the donation list.
-	
 	//enum intr_level old_level;
 	//old_level = intr_disable ();
-	
 	struct thread* current = thread_current();
 	current->priority = current->ori_priority;
 	if(list_empty(&current->donation_list)) return;
