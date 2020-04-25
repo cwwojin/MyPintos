@@ -119,8 +119,8 @@ struct thread {
 	int flag;
 	struct semaphore exit_sema;	/* Semaphore */
 	struct semaphore load_sema;
-	//struct list file_list;
 	struct file* executable;	/* Deny Writes to Executables. */
+	struct intr_frame f_fork;	/* Intr frame context to pass when forking. */
 	
 #endif
 #ifdef VM
