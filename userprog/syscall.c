@@ -266,7 +266,10 @@ int wait (tid_t pid){
 	return process_wait(pid);
 }
 
-
+//fork : Create new process which is the clone of current process. Clone register values, memory space, file descriptors.
+pid_t fork (const char *thread_name){
+	return 0;
+}
 /* ENDOFNEWCODE*/
 
 
