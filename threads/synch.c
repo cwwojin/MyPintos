@@ -268,11 +268,7 @@ lock_acquire (struct lock *lock) {
 	sema_down (&lock->semaphore);
 	current->gate = NULL;
 	lock->holder = current;
-	
 	list_insert_ordered(&current->donation_list, &lock->elem, compare_lock_pri, NULL);
-
-	//sema_down (&lock->semaphore);
-	//lock->holder = thread_current ();
 }
 
 /* Tries to acquires LOCK and returns true if successful or false
@@ -296,12 +292,12 @@ lock_try_acquire (struct lock *lock) {
 
 void reset_priority(void){
 	//compare current priority with the MAX priority from the donation list.
-	//enum intr_level old_level;
-	//old_level = intr_disable ();
 	struct thread* current = thread_current();
+	struct list_elem* e;
 	current->priority = current->ori_priority;
 	if(list_empty(&current->donation_list)) return;
 	
+	/*
 	struct lock* maxlock = list_entry (list_pop_front (&current->donation_list), struct lock, elem);
 	if (maxlock != NULL){ 
 		if (!list_empty(&maxlock->semaphore.waiters)) { 
@@ -311,7 +307,19 @@ void reset_priority(void){
 			}
 		}
 	}
-	//intr_set_level (old_level);
+	*/
+	/* NEWCODE : go through the entire list instead of popping the front. */
+	for(e = list_begin(&current->donation_list); e != list_end(&current->donation_list); e = list_next(e)){
+		struct lock* maxlock = list_entry (e, struct lock, elem);
+		if (maxlock != NULL){ 
+			if (!list_empty(&maxlock->semaphore.waiters)) { 
+				struct thread* maxthread = list_entry(list_front(&maxlock->semaphore.waiters), struct thread, elem); 
+				if (maxthread->priority > current->ori_priority){ 
+					current->priority = maxthread->priority; 
+				}
+			}
+		}
+	}
 }
 
 
