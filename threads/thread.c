@@ -619,6 +619,7 @@ init_thread (struct thread *t, const char *name, int priority) {
 	list_init(&t->fd_table);
 	t->max_fd = 2;
 	list_init(&t->child_list);
+	list_init(&t->file_list);
 #endif
 	
 }
