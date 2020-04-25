@@ -23,7 +23,6 @@
 #endif
 
 #include "threads/synch.h"
-#include "filesys/inode.h"
 
 static void process_cleanup (void);
 static bool load (char *file_name, struct intr_frame *if_);
@@ -544,7 +543,6 @@ load (char *file_name, struct intr_frame *if_) {
 
 	/* Open executable file. */
 	/* NEWCODE : Use a lock. */
-	//lock_acquire(&exe_lock);
 	file = filesys_open (file_name);
 	if (file == NULL) {
 		//lock_release(&exe_lock);
@@ -554,8 +552,6 @@ load (char *file_name, struct intr_frame *if_) {
 	/* NEWCODE : Deny Write to Executables */
 	t->executable = file;
 	file_deny_write(file);
-	printf("denied write to the executable, %d", file->inode->deny_write_cnt);
-	//lock_release(&exe_lock);
 
 	/* Read and verify executable header. */
 	if (file_read (file, &ehdr, sizeof ehdr) != sizeof ehdr
