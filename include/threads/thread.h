@@ -119,7 +119,8 @@ struct thread {
 	int flag;
 	struct semaphore exit_sema;	/* Semaphore */
 	struct semaphore load_sema;
-	struct list file_list;		/* Deny Writes to Executables. */
+	//struct list file_list;
+	struct file* executable;	/* Deny Writes to Executables. */
 	
 #endif
 #ifdef VM
