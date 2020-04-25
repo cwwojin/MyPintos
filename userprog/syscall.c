@@ -307,6 +307,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		}/* Terminate this process. */
 		case SYS_FORK:
 		{
+			/*
 			//one argument, thread_name.
 			char* thread_name;
 			tid_t result;
@@ -314,6 +315,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			
 			result = fork(thread_name, f);
 			f->R.rax = (uint64_t) result;
+			*/
 			break;
 		}/* Clone current process. */
 		case SYS_EXEC:
