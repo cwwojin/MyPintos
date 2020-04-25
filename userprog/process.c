@@ -600,6 +600,7 @@ load (char *file_name, struct intr_frame *if_) {
 		goto done;
 		
 	/* Set up argument */
+	strlcpy(t->name, file_name, 16);
 	*(file_name + strlen(file_name)) = ' ';
 	setup_argument(file_name, if_);
 	//hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp, true);
