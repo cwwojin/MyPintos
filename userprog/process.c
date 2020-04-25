@@ -345,7 +345,9 @@ process_exit (void) {
 	struct list_elem* e;
 	printf("cleanup start.\n");
 	
-	for (e = list_begin (&current->fd_table); e != list_end (&current->fd_table); e = list_remove (e)){
+	//for (e = list_begin (&current->fd_table); e != list_end (&current->fd_table); e = list_remove (e)){
+	while(!list_empty(&current->fd_table)){
+		e = list_pop_front(&current->fd_table);
 		struct fd* fid = list_entry(e, struct fd, elem);
 		printf("going to close file fd : %d..\n", fid->fd_num);
 		file_close(fid->file);
