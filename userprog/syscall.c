@@ -216,6 +216,20 @@ int write (int fd, const void *buffer, unsigned size){
 	return result;
 }
 
+//FILESYS - seek : Changes the next byte to be read or written in open file "fd" to "position".
+void seek (int fd, unsigned position){
+	//USE : void file_seek (struct file *file, off_t new_pos)
+	struct file* target;
+	lock_acquire(&filesys_lock);
+	target = process_get_file(fd);
+	if(target == NULL){
+		lock_release(&filesys_lock);
+		return;
+	}
+	file_seek(target, position);
+	lock_release(&filesys_lock);
+}
+
 //exec : change current process to the executable @ cmd_line.
 int exec(const char* cmd_line){
 	check_address((void*) cmd_line);
@@ -367,6 +381,13 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		}/* Write to a file. */
 		case SYS_SEEK:
 		{
+			//2 arguments. fd, position.
+			int fd;
+			unsigned position;
+			
+			fd = (int) f->R.rdi;
+			position = (unsigned) f->R.rsi;
+			seek(fd, position);
 			break;
 		}/* Change position in a file. */
 		case SYS_TELL:
