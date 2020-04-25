@@ -120,7 +120,7 @@ struct thread {
 	struct semaphore exit_sema;	/* Semaphore */
 	struct semaphore load_sema;
 	struct file* executable;	/* Deny Writes to Executables. */
-	struct intr_frame f_fork;	/* Intr frame context to pass when forking. */
+	struct intr_frame* f_fork;	/* Intr frame context to pass when forking. */
 	
 #endif
 #ifdef VM
