@@ -365,6 +365,12 @@ process_exit (void) {
 	//signal parent with sema.
 	current->exited = true;
 	sema_up(&current->exit_sema);
+	
+	//Allow write to executable.
+	if(cur->executable != NULL) {
+		file_allow_write(cur->executable);
+		file_close(cur->executable);
+	}
 	/* ENDOFNEWCODE */
 	 
 
@@ -545,8 +551,7 @@ load (char *file_name, struct intr_frame *if_) {
 		goto done;
 	}
 	/* NEWCODE : Deny Write to Executables */
-	//add the file to file_list.
-	list_push_back(&t->file_list, file->elem);
+	t->executable = file;
 	file_deny_write(file);
 	lock_release(&exe_lock);
 
