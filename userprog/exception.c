@@ -6,6 +6,8 @@
 #include "threads/thread.h"
 #include "intrinsic.h"
 
+#include "userprog/syscall.h"
+
 /* Number of page faults processed. */
 static long long page_fault_cnt;
 
@@ -148,6 +150,13 @@ page_fault (struct intr_frame *f) {
 
 	/* Count page faults. */
 	page_fault_cnt++;
+	
+	/* NEWCODE */
+	//if page fault was from user context.
+	if(user){
+		exit(-1);
+	}
+	/* ENDOFNEWCODE */
 
 	/* If the fault is true fault, show info and exit. */
 	printf ("Page fault at %p: %s error %s page in %s context.\n",
