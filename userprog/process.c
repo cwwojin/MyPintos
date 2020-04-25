@@ -22,6 +22,8 @@
 #include "vm/vm.h"
 #endif
 
+#include "threads/synch.h"
+
 static void process_cleanup (void);
 static bool load (char *file_name, struct intr_frame *if_);
 static void initd (void *f_name);
@@ -106,7 +108,7 @@ void remove_child_process(struct thread* cp){
 	for (e = list_begin (&current->child_list); e != list_end (&current->child_list); e = list_remove (e)){
 		struct thread* child = list_entry(e, struct thread, child_elem);
 		if(child == cp){
-			palloc_free_page(child);
+			//palloc_free_page(child);
 			//remove this entry E from the list.
 			break;
 		}
@@ -302,12 +304,31 @@ process_wait (tid_t child_tid UNUSED) {
 	 * XXX:       to add infinite loop here before
 	 * XXX:       implementing the process_wait. */
 	
-	while(1){
-		
+	/* NEWCODE */
+	//1. search for the child with "child_tid".
+	struct thread* current = thread_current();
+	struct thread* child;
+	int child_exitstatus = -1;
+	child = get_child_process(child_tid);
+	if(child == NULL) return -1;
+	//2. found child. check conditions.
+	//already waiting?
+	if(child->waiting){
+		return -1;
 	}
+	else{
+		child->waiting = true;
+	}
+	//use semaphore to wait for child.
+	if(!child->exited){
+		sema_down(&child->exit_sema);
+	}
+	child_exitstatus = child->exit_status;
+	//remove from child list.
+	list_remove(&child->child_elem);
+	/* ENDOFNEWCODE */
 	
-	
-	return -1;
+	return child_exitstatus;
 }
 
 /* Exit the process. This function is called by thread_exit (). */
@@ -328,6 +349,11 @@ process_exit (void) {
 		file_close(fid->file);
 		palloc_free_page(fid);
 	}
+	//child list.
+	
+	//signal parent with sema.
+	current->exited = true;
+	sema_up(&current->exit_sema);
 	/* ENDOFNEWCODE */
 	 
 
