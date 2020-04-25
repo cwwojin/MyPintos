@@ -514,7 +514,7 @@ void mlfqs_increment(void){
 	//2. Increment current thread's recent_cpu by 1. FP!!!
 	current->recent_cpu = add_mixed(current->recent_cpu, 1);
 }
-/*
+
 void mlfqs_recalc(void){
 	//This is a function to calculate ALL threads' recent_cpu & priority values.
 	//"All threads" = running / ready / blocked.
@@ -538,7 +538,6 @@ void mlfqs_recalc(void){
 		mlfqs_priority(th);
 	}
 }
-*/
 /**/
 
 /* Idle thread.  Executes when no other thread is ready to run.
