@@ -353,7 +353,7 @@ process_exit (void) {
 		palloc_free_page(fid);
 		printf("page freed.\n");
 	}
-	
+	printf("we're done with fd cleanup.\n");
 	//child list.
 	
 	//signal parent with sema.
