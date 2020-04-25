@@ -203,10 +203,14 @@ int write (int fd, const void *buffer, unsigned size){
 
 //exec : change current process to the executable @ cmd_line.
 int exec(const char* cmd_line){
-	int result;
-	result = process_exec((void*) cmd_line);
-	if(result == -1) exit(-1);
-	return result;
+	check_address((void*) cmd_line);
+	
+	return process_exec((void*)cmd_line);
+}
+
+//wait : Waits for a child process pid and retrieves the child's exit status.
+int wait (pid_t pid){
+	return process_wait(pid);
 }
 
 
