@@ -19,6 +19,7 @@ void syscall_handler (struct intr_frame *);
 
 /* lock for filesys. */
 struct lock filesys_lock;
+void check_address(void* addr);
 
 /* System call.
  *
@@ -230,6 +231,7 @@ void check_address(void* addr){
 	}
 }
 
+/*
 //this is a function for reading in multiple bytes of data from user pointer. check validity of pointer each time.
 static void getmultiple_user(void* addr, void* dest, size_t size){
 	size_t i;
@@ -239,6 +241,7 @@ static void getmultiple_user(void* addr, void* dest, size_t size){
 	}
 	memcpy(dest, addr, size);
 }
+*/
 /* ENDOFNEWCODE*/
 
 
