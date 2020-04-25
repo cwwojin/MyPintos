@@ -23,6 +23,7 @@
 #endif
 
 #include "threads/synch.h"
+#include "userprog/syscall.h"
 
 static void process_cleanup (void);
 static bool load (char *file_name, struct intr_frame *if_);
@@ -84,6 +85,9 @@ void process_close_file(int fd){
 	struct list_elem* e;
 	
 	e = search(&current->fd_table, fd);
+	if(e == NULL){
+		exit(-1);
+	}
 	struct fd* fid = list_entry(e, struct fd, elem);
 	list_remove(e);
 	file_close(fid->file);
