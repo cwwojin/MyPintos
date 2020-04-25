@@ -13,6 +13,7 @@
 #include "filesys/filesys.h"
 #include "filesys/file.h"
 #include "userprog/process.h"
+#include "devices/input.h"
 
 void syscall_entry (void);
 void syscall_handler (struct intr_frame *);
@@ -51,6 +52,20 @@ syscall_init (void) {
 
 
 /* NEWCODE */
+//this is a function for terminating a process with exit status "status". termination message will be printed @ process_exit().
+void exit(int status){
+	//release lock before exit.
+	if(lock_held_by_current_thread(&filesys_lock)){
+		lock_release(&filesys_lock);
+	}
+	struct thread* current = thread_current();
+	current->exit_status = status;
+	
+	//print termination message here.
+	printf ("%s: exit(%d)\n", current->name, current->exit_status);
+	thread_exit();
+}
+
 //this is a function for checking if pointer is "valid". If not, call a page fault.
 void check_address(void* addr){
 	//case 1. NULL pointer.
@@ -67,19 +82,6 @@ void check_address(void* addr){
 	}
 }
 
-//this is a function for terminating a process with exit status "status". termination message will be printed @ process_exit().
-void exit(int status){
-	//release lock before exit.
-	if(lock_held_by_current_thread(&filesys_lock)){
-		lock_release(&filesys_lock);
-	}
-	struct thread* current = thread_current();
-	current->exit_status = status;
-	
-	//print termination message here.
-	printf ("%s: exit(%d)\n", current->name, current->exit_status);
-	thread_exit();
-}
 
 //FILESYS - create : create a file with given name & size.
 bool create(const char *file, unsigned initial_size){
