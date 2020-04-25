@@ -69,7 +69,6 @@ void process_close_file(int fd){
 	//USE : void file_close (struct file *file)
 	struct thread* current = thread_current();
 	struct list_elem* e;
-	/*
 	for (e = list_begin (&current->fd_table); e != list_end (&current->fd_table); e = list_remove (e)){
 		struct fd* fid = list_entry(e, struct fd, elem);
 		if(fid->fd_num == fd){
@@ -82,7 +81,7 @@ void process_close_file(int fd){
 			list_push_back(&current->fd_table, &fid->elem);
 		}
 	}
-	*/
+	/*
 	for (e = list_begin (&current->fd_table); e != list_end (&current->fd_table); e = list_next (e)){
 		struct fd* fid = list_entry(e, struct fd, elem);
 		if(fid->fd_num == fd){
@@ -90,6 +89,7 @@ void process_close_file(int fd){
 			break;
 		}
 	}
+	*/
 }
 
 /* Additional functions for Process Hierarchy. */
