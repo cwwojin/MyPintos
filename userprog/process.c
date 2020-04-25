@@ -30,7 +30,7 @@ static void initd (void *f_name);
 static void __do_fork (void *);
 
 /* Lock for Executables. */
-struct lock exe_lock;
+//struct lock exe_lock;
 
 /* NEWCODE : additional functions for file descriptors. */
 int process_add_file(struct file* file){
@@ -543,17 +543,17 @@ load (char *file_name, struct intr_frame *if_) {
 
 	/* Open executable file. */
 	/* NEWCODE : Use a lock. */
-	lock_acquire(&exe_lock);
+	//lock_acquire(&exe_lock);
 	file = filesys_open (file_name);
 	if (file == NULL) {
-		lock_release(&exe_lock);
+		//lock_release(&exe_lock);
 		printf ("load: %s: open failed\n", file_name);
 		goto done;
 	}
 	/* NEWCODE : Deny Write to Executables */
 	t->executable = file;
 	file_deny_write(file);
-	lock_release(&exe_lock);
+	//lock_release(&exe_lock);
 
 	/* Read and verify executable header. */
 	if (file_read (file, &ehdr, sizeof ehdr) != sizeof ehdr
