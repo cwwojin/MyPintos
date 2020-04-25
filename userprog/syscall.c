@@ -385,6 +385,6 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		}
 	}
 	/* ENDOFNEWCODE */
-	//printf ("system call!\n");
+	printf ("system call!\n");
 	//thread_exit ();
 }
