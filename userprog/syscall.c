@@ -210,7 +210,7 @@ int exec(const char* cmd_line){
 }
 
 //wait : Waits for a child process pid and retrieves the child's exit status.
-int wait (pid_t pid){
+int wait (tid_t pid){
 	return process_wait(pid);
 }
 
