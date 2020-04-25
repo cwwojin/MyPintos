@@ -10,6 +10,7 @@
 
 #include <string.h>
 #include "threads/synch.h"
+#include "threads/init.h"
 #include "filesys/filesys.h"
 #include "filesys/file.h"
 #include "userprog/process.h"
