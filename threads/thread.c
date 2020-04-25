@@ -242,6 +242,7 @@ thread_create (const char *name, int priority,
 	t->parent = current;
 	t->flag = -1;
 	t->exited = false;
+	t->waiting = false;
 	sema_init(&t->exit_sema, 0);
 	sema_init(&t->load_sema, 0);
 	//add t to current thread's child_list.
