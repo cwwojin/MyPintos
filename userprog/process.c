@@ -23,6 +23,7 @@
 #endif
 
 #include "threads/synch.h"
+#include "filesys/inode.h"
 
 static void process_cleanup (void);
 static bool load (char *file_name, struct intr_frame *if_);
