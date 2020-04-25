@@ -70,7 +70,7 @@ void process_close_file(int fd){
 	struct thread* current = thread_current();
 	struct list_elem* e;
 	while (!list_empty(&current->fd_table)){
-		struct fd* fid = list_pop_front(e, struct fd, elem);
+		struct fd* fid = list_pop_front(&current->fd_table);
 		if(fid->fd_num == fd){
 			file_close(fid->file);
 			palloc_free_page(fid);
