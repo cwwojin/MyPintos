@@ -602,7 +602,7 @@ load (char *file_name, struct intr_frame *if_) {
 	/* Set up argument */
 	strlcpy(t->name, file_name, 16);
 	printf("%sEND\n", file_name);
-	printf("%c\n", *(file_name + strlen(file_name) + 1));
+	printf("%d\n", (*(file_name + strlen(file_name) + 1) == NULL));
 	*(file_name + strlen(file_name)) = ' ';
 	printf("%sEND\n", file_name);
 	setup_argument(file_name, if_);
