@@ -270,8 +270,10 @@ int wait (tid_t pid){
 tid_t fork (const char *thread_name, struct intr_frame* if_){
 	check_address((void*) thread_name);
 	//check_address((void*) if_);
+	tid_t result;
 	
-	return process_fork(thread_name, if_);
+	result = process_fork(thread_name, if_);
+	return result;
 }
 /* ENDOFNEWCODE*/
 
