@@ -471,7 +471,7 @@ static void setup_argument(const char *file_name, struct intr_frame *if_){
 	ret_ptr = strtok_r(command, " ", &next_ptr);
 	while(ret_ptr){
 		//for each keyword.
-		//printf("%s\n", ret_ptr);
+		printf("%s\n", ret_ptr);
 		argv[argc] = ret_ptr;
 		argc++;
 		ret_ptr = strtok_r(NULL, " ", &next_ptr);
@@ -601,7 +601,9 @@ load (char *file_name, struct intr_frame *if_) {
 		
 	/* Set up argument */
 	strlcpy(t->name, file_name, 16);
+	printf("%sEND\n", file_name);
 	*(file_name + strlen(file_name)) = ' ';
+	printf("%sEND\n", file_name);
 	setup_argument(file_name, if_);
 	//hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp, true);
 
