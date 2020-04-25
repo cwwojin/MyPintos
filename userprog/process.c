@@ -602,7 +602,10 @@ load (char *file_name, struct intr_frame *if_) {
 	/* Set up argument */
 	strlcpy(t->name, file_name, 16);
 	printf("%sEND\n", file_name);
-	*(file_name + strlen(file_name)) = ' ';
+	if(file_name[strlen(file_name) + 1] != '\0'){
+		*(file_name + strlen(file_name)) = ' ';
+	}
+	//*(file_name + strlen(file_name)) = ' ';
 	printf("%sEND\n", file_name);
 	setup_argument(file_name, if_);
 	//hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp, true);
