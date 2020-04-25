@@ -553,6 +553,7 @@ load (char *file_name, struct intr_frame *if_) {
 	/* NEWCODE : Deny Write to Executables */
 	t->executable = file;
 	file_deny_write(file);
+	printf("denied write to the executable, %d", file->inode->deny_write_cnt);
 	//lock_release(&exe_lock);
 
 	/* Read and verify executable header. */
