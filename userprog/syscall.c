@@ -19,7 +19,6 @@ void syscall_handler (struct intr_frame *);
 
 /* lock for filesys. */
 struct lock filesys_lock;
-void check_address(void* addr);
 
 /* System call.
  *
@@ -52,6 +51,22 @@ syscall_init (void) {
 
 
 /* NEWCODE */
+//this is a function for checking if pointer is "valid". If not, call a page fault.
+void check_address(void* addr){
+	//case 1. NULL pointer.
+	if(addr == NULL){
+		exit(-1);
+	}
+	//case 2. addr is in kernal address space
+	if(is_kernel_vaddr(addr)){
+		exit(-1);
+	}
+	//case 3. UNMAPPED pointer. check if "addr"'s corresponding page exists in current thread's pml4.
+	if(pml4_get_page (thread_current()->pml4, addr) == NULL){
+		exit(-1);
+	}
+}
+
 //this is a function for terminating a process with exit status "status". termination message will be printed @ process_exit().
 void exit(int status){
 	//release lock before exit.
@@ -215,33 +230,6 @@ int wait (tid_t pid){
 }
 
 
-//this is a function for checking if pointer is "valid". If not, call a page fault.
-void check_address(void* addr){
-	//case 1. NULL pointer.
-	if(addr == NULL){
-		exit(-1);
-	}
-	//case 2. addr is in kernal address space
-	if(is_kernel_vaddr(addr)){
-		exit(-1);
-	}
-	//case 3. UNMAPPED pointer. check if "addr"'s corresponding page exists in current thread's pml4.
-	if(pml4_get_page (thread_current()->pml4, addr) == NULL){
-		exit(-1);
-	}
-}
-
-/*
-//this is a function for reading in multiple bytes of data from user pointer. check validity of pointer each time.
-static void getmultiple_user(void* addr, void* dest, size_t size){
-	size_t i;
-	for(i=0; i<size; i++){
-		//check validity of address.
-		check_address(addr+i);
-	}
-	memcpy(dest, addr, size);
-}
-*/
 /* ENDOFNEWCODE*/
 
 
