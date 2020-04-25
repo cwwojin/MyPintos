@@ -606,8 +606,9 @@ load (char *file_name, struct intr_frame *if_) {
 	*(file_name + strlen(file_name)) = ' ';
 	printf("%sEND\n%d\n", file_name, (strlen(file_name) > 128));
 	if(strlen(file_name) > 128){
-		//file_name = strtok_r(file_name, " ", &ret_ptr);
+		file_name = strtok_r(file_name, " ", &ret_ptr);
 	}
+	printf("%sEND\n", file_name);
 	setup_argument(file_name, if_);
 	//hex_dump(if_->rsp, (void*)if_->rsp, KERN_BASE - if_->rsp, true);
 
