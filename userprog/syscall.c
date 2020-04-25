@@ -81,11 +81,6 @@ void exit(int status){
 	thread_exit();
 }
 
-//this is a function for wait : Waits for a child process "pid" and retrieves the child's exit status.
-int wait (tid_t pid){
-	return process_wait(pid);
-}
-
 //FILESYS - create : create a file with given name & size.
 bool create(const char *file, unsigned initial_size){
 	//USE : bool filesys_create (const char *name, off_t initial_size)
