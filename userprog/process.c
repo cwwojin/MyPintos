@@ -65,10 +65,30 @@ struct file* process_get_file(int fd){
 	return resultfile;
 }
 
+struct list_elem* search(struct list* list, int fd){
+	struct list_elem* e;
+	struct list_elem* result = NULL;
+	for (e = list_begin (&current->fd_table); e != list_end (&current->fd_table); e = list_next (e)){
+		struct fd* fid = list_entry(e, struct fd, elem);
+		if(fid->fd_num == fd){
+			result = e;
+			break;
+		}
+	}
+	return result;
+}
+
 void process_close_file(int fd){
 	//USE : void file_close (struct file *file)
 	struct thread* current = thread_current();
 	struct list_elem* e;
+	
+	e = search(&current->fd_table, fd);
+	struct fd* fid = list_entry(e, struct fd, elem);
+	list_remove(e);
+	file_close(fid->file);
+	palloc_free_page(fid);
+	/*
 	while (!list_empty(&current->fd_table)){
 		struct fd* fid = list_pop_front(&current->fd_table);
 		if(fid->fd_num == fd){
@@ -79,14 +99,6 @@ void process_close_file(int fd){
 		}
 		else{
 			list_push_back(&current->fd_table, &fid->elem);
-		}
-	}
-	/*
-	for (e = list_begin (&current->fd_table); e != list_end (&current->fd_table); e = list_next (e)){
-		struct fd* fid = list_entry(e, struct fd, elem);
-		if(fid->fd_num == fd){
-			file_close(fid->file);
-			break;
 		}
 	}
 	*/
