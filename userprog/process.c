@@ -68,7 +68,7 @@ struct file* process_get_file(int fd){
 struct list_elem* search(struct list* list, int fd){
 	struct list_elem* e;
 	struct list_elem* result = NULL;
-	for (e = list_begin (&current->fd_table); e != list_end (&current->fd_table); e = list_next (e)){
+	for (e = list_begin (list); e != list_end (list); e = list_next (e)){
 		struct fd* fid = list_entry(e, struct fd, elem);
 		if(fid->fd_num == fd){
 			result = e;
