@@ -83,7 +83,7 @@ void process_close_file(int fd){
 	for (e = list_begin (&current->fd_table); e != list_end (&current->fd_table); e = list_next (e)){
 		struct fd* fid = list_entry(e, struct fd, elem);
 		if(fid->fd_num == fd){
-			file_close(fid_file);
+			file_close(fid->file);
 			break;
 		}
 	}
