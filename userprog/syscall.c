@@ -242,7 +242,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 	check_address((void*)f->rsp);
 	//get the system call number from "rax".
 	syscall_num = (int) f->R.rax;
-	printf("systemcall number : %d\n", syscall_num);
+	//printf("systemcall number : %d\n", syscall_num);
 	switch(syscall_num){
 		case SYS_HALT:
 		{
@@ -358,7 +358,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			fd = (int) f->R.rdi;
 			buffer = (void*) f->R.rsi;
 			size = (unsigned) f->R.rdx;
-			printf("WRITE -> fd: rdi = %d, buffer: rsi = %X, size: rdx = %d\n", fd, buffer, size);
+			//printf("WRITE -> fd: rdi = %d, buffer: rsi = %X, size: rdx = %d\n", fd, buffer, size);
 			
 			result = write(fd, buffer, size);
 			f->R.rax = (uint64_t) result;
@@ -385,6 +385,6 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		}
 	}
 	/* ENDOFNEWCODE */
-	printf ("system call!\n");
+	//printf ("system call!\n");
 	//thread_exit ();
 }
