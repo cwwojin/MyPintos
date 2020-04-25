@@ -343,12 +343,17 @@ process_exit (void) {
 	/* NEWCODE */
 	//Process resouce cleanup - allocated file descriptors.
 	struct list_elem* e;
+	printf("cleanup start.\n");
 	
 	for (e = list_begin (&current->fd_table); e != list_end (&current->fd_table); e = list_remove (e)){
 		struct fd* fid = list_entry(e, struct fd, elem);
+		printf("going to close file fd : %d..\n", fid->fd_num);
 		file_close(fid->file);
+		printf("file closed.\n");
 		palloc_free_page(fid);
+		printf("page freed.\n");
 	}
+	
 	//child list.
 	
 	//signal parent with sema.
