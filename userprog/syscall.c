@@ -8,6 +8,7 @@
 #include "threads/flags.h"
 #include "intrinsic.h"
 
+#include <syscall.h>
 #include <string.h>
 #include "threads/synch.h"
 #include "threads/init.h"
