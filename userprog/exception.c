@@ -148,14 +148,6 @@ page_fault (struct intr_frame *f) {
 
 	/* Count page faults. */
 	page_fault_cnt++;
-	
-	if(!user){
-		//if page fault at kernel, set rax to -1 and copies its former value into rip.
-		uint64_t ori_rax = f->R.rax;
-		f->R.rax = -1;
-		f->rip = (uintptr_t) ori_rax;
-		return;
-	}
 
 	/* If the fault is true fault, show info and exit. */
 	printf ("Page fault at %p: %s error %s page in %s context.\n",
