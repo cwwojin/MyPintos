@@ -152,6 +152,13 @@ int filesize(int fd){
 	return result;
 }
 
+//FILESYS - close : Closes file descriptor "fd".
+void close (int fd){
+	lock_acquire(&filesys_lock);
+	process_close_file(fd);
+	lock_release(&filesys_lock);
+}
+
 //FILESYS - read : read SIZE bytes from file FD into BUFFER. Return number of bytes read, -1 if fail.
 int read (int fd, void *buffer, unsigned size){
 	//USE : off_t file_read (struct file *file, void *buffer, off_t size)
@@ -228,6 +235,23 @@ void seek (int fd, unsigned position){
 	}
 	file_seek(target, position);
 	lock_release(&filesys_lock);
+}
+
+//FILESYS - tell : Returns the position of the next byte to be read or written in open file "fd".
+unsigned tell (int fd){
+	//USE : off_t file_tell (struct file *file)
+	struct file* target;
+	unsigned result = -1;
+	lock_acquire(&filesys_lock);
+	target = process_get_file(fd);
+	if(target == NULL){
+		lock_release(&filesys_lock);
+		return -1;
+	}
+	result = file_tell (target);
+	lock_release(&filesys_lock);
+	
+	return result;
 }
 
 //exec : change current process to the executable @ cmd_line.
@@ -392,10 +416,21 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		}/* Change position in a file. */
 		case SYS_TELL:
 		{
+			//one argument. fd.
+			int fd;
+			unsigned result;
+			
+			fd = (int) f->R.rdi;
+			result = tell(fd);
+			f->R.rax = (uint64_t) result;
 			break;
 		}/* Report current position in a file. */
 		case SYS_CLOSE:
 		{
+			//one argument. fd.
+			int fd;
+			fd = (int) f->R.rdi;
+			close(fd);
 			break;
 		}/* Close a file. */
 		
