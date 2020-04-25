@@ -114,6 +114,7 @@ struct thread {
 	struct list child_list;		/* List of children */
 	struct list_elem child_elem;
 	bool exited;
+	bool waiting;
 	int exit_status;		/* Exit Status */
 	int flag;
 	struct semaphore exit_sema;	/* Semaphore */
