@@ -430,7 +430,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			//one argument. fd.
 			int fd;
 			fd = (int) f->R.rdi;
-			//close(fd);
+			close(fd);
 			break;
 		}/* Close a file. */
 		
