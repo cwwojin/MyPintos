@@ -69,8 +69,8 @@ void process_close_file(int fd){
 	//USE : void file_close (struct file *file)
 	struct thread* current = thread_current();
 	struct list_elem* e;
-	for (e = list_begin (&current->fd_table); e != list_end (&current->fd_table); e = list_remove (e)){
-		struct fd* fid = list_entry(e, struct fd, elem);
+	while (!list_empty(&current->fd_table)){
+		struct fd* fid = list_pop_front(e, struct fd, elem);
 		if(fid->fd_num == fd){
 			file_close(fid->file);
 			palloc_free_page(fid);
@@ -354,6 +354,7 @@ process_exit (void) {
 	/* NEWCODE */
 	//Process resouce cleanup - allocated file descriptors.
 	struct list_elem* e;
+	printf("");
 	while(!list_empty(&current->fd_table)){
 		e = list_pop_front(&current->fd_table);
 		struct fd* fid = list_entry(e, struct fd, elem);
