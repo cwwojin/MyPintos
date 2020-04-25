@@ -367,9 +367,9 @@ process_exit (void) {
 	sema_up(&current->exit_sema);
 	
 	//Allow write to executable.
-	if(cur->executable != NULL) {
-		file_allow_write(cur->executable);
-		file_close(cur->executable);
+	if(current->executable != NULL) {
+		file_allow_write(current->executable);
+		file_close(current->executable);
 	}
 	/* ENDOFNEWCODE */
 	 
