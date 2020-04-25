@@ -358,7 +358,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			fd = (int) f->R.rdi;
 			buffer = (void*) f->R.rsi;
 			size = (unsigned) f->R.rdx;
-			//printf("WRITE -> fd: rdi = %d, buffer: rsi = %d, size: rdx = %d\n", fd, buffer, size);
+			printf("WRITE -> fd: rdi = %d, buffer: rsi = %X, size: rdx = %d\n", fd, buffer, size);
 			
 			result = write(fd, buffer, size);
 			f->R.rax = (uint64_t) result;
