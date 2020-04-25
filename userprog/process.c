@@ -471,7 +471,7 @@ static void setup_argument(const char *file_name, struct intr_frame *if_){
 	ret_ptr = strtok_r(command, " ", &next_ptr);
 	while(ret_ptr){
 		//for each keyword.
-		printf("%s\n", ret_ptr);
+		//printf("%s\n", ret_ptr);
 		argv[argc] = ret_ptr;
 		argc++;
 		ret_ptr = strtok_r(NULL, " ", &next_ptr);
