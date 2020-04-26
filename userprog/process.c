@@ -602,7 +602,7 @@ load (char *file_name, struct intr_frame *if_) {
 		printf("file name is at user space, so no mapping yet.\n");
 		printf("received physical addr : %d\n", if_->rip);
 		//if_->rip has the physical address.
-		bool allocate = pml4_set_page (t->pml4, file_name, if_->rip, true);
+		bool allocate = pml4_set_page (t->pml4, pg_round_down(file_name), if_->rip, true);
 		if(!allocate){
 			printf("allocation failed!\n");
 		}
