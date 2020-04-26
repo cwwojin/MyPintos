@@ -269,11 +269,9 @@ int wait (tid_t pid){
 //fork : Create new process which is the clone of current process. Clone register values, memory space, file descriptors.
 tid_t fork (const char *thread_name, struct intr_frame* if_){
 	check_address((void*) thread_name);
-	//check_address((void*) if_);
 	tid_t result;
 	
 	result = process_fork(thread_name, if_);
-	printf("my parent's id is %d\n", thread_current()->parent->tid);
 	return result;
 }
 /* ENDOFNEWCODE*/
@@ -315,10 +313,10 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			tid_t result;
 			thread_name = (char*) f->R.rdi;
 			
+			printf("fork start.\n");
 			result = fork(thread_name, f);
 			printf("fork result (child pid) : %d\n", result);
 			f->R.rax = (uint64_t) result;
-			
 			break;
 		}/* Clone current process. */
 		case SYS_EXEC:
