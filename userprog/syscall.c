@@ -257,6 +257,7 @@ unsigned tell (int fd){
 //exec : change current process to the executable @ cmd_line.
 int exec(const char* cmd_line){
 	check_address((void*) cmd_line);
+	printf("cmd_line at %X\n", (int) cmd_line);
 	/*TODO : currently, exec never works because of pml4's cleanup.
 	To make it work, the parameter to process_exec "void* f_name" must be a KERNEL VIRTUAL ADDRESS,
 	which points to a memory with the exact copy of the user page at "cmd_line".*/
@@ -267,7 +268,7 @@ int exec(const char* cmd_line){
 	if(is_kernel_vaddr(command)){
 		printf("is kernel space.\n");
 	}
-	printf("got page.\n");
+	printf("got page : %X\n", (int) command);
 	//void* cmd_pa = pml4_get_page(thread_current()->pml4, cmd_line);
 	memcpy(command, cmd_line, PGSIZE);
 	printf("file name : %s\n", command);
