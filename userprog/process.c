@@ -312,7 +312,7 @@ process_exec (void *f_name) {
 	//tokenizing file name.
 	char* ret_ptr;
 	file_name = strtok_r(file_name, " ", &ret_ptr);
-	printf("exec file : %s", file_name);
+	printf("exec file : %s\n", file_name);
 	/* ENDOFNEWCODE */
 
 	/* We cannot use the intr_frame in the thread structure.
@@ -322,6 +322,12 @@ process_exec (void *f_name) {
 	_if.ds = _if.es = _if.ss = SEL_UDSEG;
 	_if.cs = SEL_UCSEG;
 	_if.eflags = FLAG_IF | FLAG_MBS;
+	
+	/* NEWCODE : if file_name is a user addr, then save its pa. */
+	if(!is_kernel_vaddr(file_name)){
+		void* file_pa = pml4_get_page(thread_current()->pml4, file_name);
+		_if.rip = (uintptr_t) file_pa;
+	}
 
 	/* We first kill the current context */
 	process_cleanup ();
@@ -589,6 +595,16 @@ load (char *file_name, struct intr_frame *if_) {
 	if (t->pml4 == NULL)
 		goto done;
 	process_activate (thread_current ());
+	
+	/* NEWCODE : Must check if executable FILE_NAME is a valid virtual address in pml4, and if not, add a new mapping. */
+	if (!is_kernel_vaddr(file_name)){
+		printf("file name is at user space, so no mapping yet.\n");
+		//if_->rip has the physical address.
+		bool allocate = pml4_set_page (t->pml4, file_name, if_->rip, true);
+		if(!allocate){
+			printf("allocation failed!\n");
+		}
+	}
 	
 
 	/* Open executable file. */
