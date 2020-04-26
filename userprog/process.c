@@ -312,6 +312,7 @@ process_exec (void *f_name) {
 	//tokenizing file name.
 	char* ret_ptr;
 	file_name = strtok_r(file_name, " ", &ret_ptr);
+	printf("exec file : %s", file_name);
 	/* ENDOFNEWCODE */
 
 	/* We cannot use the intr_frame in the thread structure.
@@ -591,10 +592,8 @@ load (char *file_name, struct intr_frame *if_) {
 	
 
 	/* Open executable file. */
-	/* NEWCODE : Use a lock. */
 	file = filesys_open (file_name);
 	if (file == NULL) {
-		//lock_release(&exe_lock);
 		printf ("load: %s: open failed\n", file_name);
 		goto done;
 	}
