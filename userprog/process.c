@@ -330,7 +330,7 @@ process_exec (void *f_name) {
 		//void* newfile_pa = palloc_get_page(PAL_USER);
 		//memcpy(newfile_pa, file_name, PGSIZE);
 		//printf("new file physical addr = %d", (int) newfile_pa);
-		_if.rip = (uintptr_t) newfile_pa;
+		_if.rip = (uintptr_t) file_pa;
 	}
 
 	/* We first kill the current context */
