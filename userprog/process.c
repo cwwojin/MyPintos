@@ -287,8 +287,7 @@ __do_fork (void *aux) {
 		//add this copy to the current(child)'s fd table.
 		process_add_file(copy);
 	}
-	//let parent return from fork().
-	sema_up(&parent->load_sema);
+	
 	
 	process_init ();
 	
@@ -296,6 +295,9 @@ __do_fork (void *aux) {
 	/* Finally, switch to the newly created process. */
 	if (succ)
 		do_iret (&if_);
+	
+	//let parent return from fork().
+	sema_up(&parent->load_sema);
 error:
 	thread_exit ();
 }
