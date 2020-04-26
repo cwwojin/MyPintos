@@ -308,6 +308,13 @@ process_exec (void *f_name) {
 	char *file_name = f_name;
 	bool success;
 	
+	/* NEWCODE : if file_name is a user addr, then save its pa. */
+	if(!is_kernel_vaddr(file_name)){
+		void* file_pa = pml4_get_page(thread_current()->pml4, pg_round_down(file_name));
+		printf("file name is at user space, kernel virtual addr = %X\n", (int) file_pa);
+		file_name = file_pa;
+	}
+	
 	/* NEWCODE */
 	//tokenizing file name.
 	char* ret_ptr;
@@ -322,16 +329,6 @@ process_exec (void *f_name) {
 	_if.ds = _if.es = _if.ss = SEL_UDSEG;
 	_if.cs = SEL_UCSEG;
 	_if.eflags = FLAG_IF | FLAG_MBS;
-	
-	/* NEWCODE : if file_name is a user addr, then save its pa. */
-	if(!is_kernel_vaddr(file_name)){
-		void* file_pa = pml4_get_page(thread_current()->pml4, pg_round_down(file_name));
-		printf("file name is at user space, physical addr = %d\n", (int) file_pa);
-		//void* newfile_pa = palloc_get_page(PAL_USER);
-		//memcpy(newfile_pa, file_name, PGSIZE);
-		//printf("new file physical addr = %d", (int) newfile_pa);
-		_if.rip = (uintptr_t) file_pa;
-	}
 
 	/* We first kill the current context */
 	process_cleanup ();
@@ -599,22 +596,6 @@ load (char *file_name, struct intr_frame *if_) {
 	if (t->pml4 == NULL)
 		goto done;
 	process_activate (thread_current ());
-	
-	/* NEWCODE : Must check if executable FILE_NAME is a valid virtual address in pml4, and if not, add a new mapping. */
-	if (!is_kernel_vaddr(file_name)){
-		printf("file name is at user space, so no mapping yet.\n");
-		printf("received physical addr : %d\n", (int) if_->rip);
-		void* newpage = palloc_get_page(PAL_USER);
-		if(newpage == NULL) printf("fail!!!\n");
-		printf("allocated new page from user pool.\n");
-		memcpy(newpage, (void*) if_->rip, PGSIZE);
-		//if_->rip has the physical address.
-		bool allocate = pml4_set_page (t->pml4, pg_round_down(file_name), newpage, true);
-		if(!allocate){
-			printf("allocation failed!\n");
-		}
-	}
-	
 
 	/* Open executable file. */
 	printf("am going to open executable : %s\n", file_name);
