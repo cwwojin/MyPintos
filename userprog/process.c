@@ -224,7 +224,6 @@ duplicate_pte (uint64_t *pte, void *va, void *aux) {
 	 *    permission. */
 	if (!pml4_set_page (current->pml4, va, newpage, writable)) {
 		/* 6. TODO: if fail to insert page, do error handling. */
-		printf("failed to insert page into child's pgtable.\n");
 		return false;
 	}
 	return true;
@@ -278,7 +277,6 @@ __do_fork (void *aux) {
 		//USE : struct file* file_duplicate (struct file *file)
 		struct file* copy = file_duplicate(parent_fd->file);
 		if(copy == NULL){
-			printf("file copy failed.\n");
 			goto error;
 		}
 		//add this copy to the current(child)'s fd table.
@@ -295,7 +293,6 @@ __do_fork (void *aux) {
 	if (succ)
 		do_iret (&if_);
 error:
-	printf("somehow fork failed.\n");
 	thread_exit ();
 }
 
