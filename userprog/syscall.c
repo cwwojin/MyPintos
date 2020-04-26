@@ -309,12 +309,10 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		}/* Terminate this process. */
 		case SYS_FORK:
 		{
-			printf("Will fork.\n");
 			//one argument, thread_name.
 			char* thread_name;
 			tid_t result;
 			thread_name = (char*) f->R.rdi;
-			printf("fork start : rdi = %d", f->R.rdi);
 			
 			result = fork(thread_name, f);
 			printf("fork result (child pid) : %d\n", result);
