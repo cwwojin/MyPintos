@@ -185,13 +185,15 @@ process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 	tid_t child;
 	struct thread* current = thread_current();
 	current->f_fork = if_;
-	printf("parent if_ saved, rdi = %d -> f_fork.rdi = %d\n", (int) if_->R.rdi, (int) current->f_fork->R.rdi);
+	current->flag = 1;	//for distinguishing between parent & child.
+	//printf("parent if_ saved, rdi = %d -> f_fork.rdi = %d\n", (int) if_->R.rdi, (int) current->f_fork->R.rdi);
 	/* Clone current thread to new thread.*/
 	//return thread_create (name, PRI_DEFAULT, __do_fork, thread_current ());
 	child = thread_create (name, PRI_DEFAULT, __do_fork, thread_current ());
 	if(child == TID_ERROR) return child;
 	
 	sema_down(&current->load_sema);
+	printf("current flag : %d\n", current->flag);
 	return child;
 }
 
