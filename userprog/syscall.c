@@ -262,6 +262,7 @@ int exec(const char* cmd_line){
 	which points to a memory with the exact copy of the user page at "cmd_line".*/
 	
 	//char command[128];
+	printf("am going to get a page from kernel.\n");
 	char* command = palloc_get_page(0);
 	if(is_kernel_vaddr(command)){
 		printf("is kernel space.\n");
