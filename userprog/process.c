@@ -192,6 +192,7 @@ process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 	if(child == TID_ERROR) return child;
 	
 	//sema_down(&current->load_sema);
+	current->f_fork = NULL;
 	return child;
 }
 
