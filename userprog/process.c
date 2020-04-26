@@ -214,7 +214,7 @@ duplicate_pte (uint64_t *pte, void *va, void *aux) {
 	 *    TODO: check whether parent's page is writable or not (set WRITABLE
 	 *    TODO: according to the result). */
 	memcpy(newpage, parent_page, PGSIZE);
-	writable = is_writable(va);
+	writable = is_writable(pte);
 
 	/* 5. Add new page to child's page table at address VA with WRITABLE
 	 *    permission. */
@@ -269,7 +269,7 @@ __do_fork (void *aux) {
 	for(e = list_begin(&parent->fd_table); e != list_end(&parent->fd_table); e = list_next(e)){
 		struct fd* parent_fd = list_entry(e, struct fd, elem);
 		//USE : struct file* file_duplicate (struct file *file)
-		struct file* copy = file_duplicate(fd->file);
+		struct file* copy = file_duplicate(parent_fd->file);
 		if(file == NULL){
 			printf("file copy failed.\n");
 			goto error;
@@ -380,7 +380,6 @@ process_exit (void) {
 	/* NEWCODE */
 	//Process resouce cleanup - allocated file descriptors.
 	struct list_elem* e;
-	printf("");
 	while(!list_empty(&current->fd_table)){
 		e = list_pop_front(&current->fd_table);
 		struct fd* fid = list_entry(e, struct fd, elem);
