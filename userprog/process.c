@@ -249,7 +249,6 @@ __do_fork (void *aux) {
 
 	/* 1. Read the cpu context to local stack. */
 	memcpy (&if_, parent_if, sizeof (struct intr_frame));
-	printf("if copy successful : rdi = %d\n", (int) if_.R.rdi);
 
 	/* 2. Duplicate PT */
 	current->pml4 = pml4_create();
@@ -278,7 +277,6 @@ __do_fork (void *aux) {
 		//USE : struct file* file_duplicate (struct file *file)
 		struct file* copy = file_duplicate(parent_fd->file);
 		if(copy == NULL){
-			printf("file copy failed.\n");
 			goto error;
 		}
 		//add this copy to the current(child)'s fd table.
@@ -292,7 +290,6 @@ __do_fork (void *aux) {
 	if (succ)
 		do_iret (&if_);
 error:
-	printf("somehow fork failed.\n");
 	thread_exit ();
 }
 
