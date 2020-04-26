@@ -325,7 +325,7 @@ process_exec (void *f_name) {
 	
 	/* NEWCODE : if file_name is a user addr, then save its pa. */
 	if(!is_kernel_vaddr(file_name)){
-		void* file_pa = pml4_get_page(thread_current()->pml4, file_name);
+		void* file_pa = pml4_get_page(thread_current()->pml4, pg_round_down(file_name));
 		printf("file name is at user space, physical addr = %d\n", (int) file_pa);
 		void* newfile_pa = palloc_get_page(PAL_USER);
 		memcpy(newfile_pa, file_name, PGSIZE);
