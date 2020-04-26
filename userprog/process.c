@@ -384,7 +384,7 @@ process_wait (tid_t child_tid UNUSED) {
 	//child_exitstatus = child->exit_status;
 	child_exitstatus = current->flag;
 	//remove from child list.
-	printf("attempting to remove child from child_list.");
+	printf("attempting to remove child from child_list.\n");
 	list_remove(&child->child_elem);
 	printf("removal complete.\n");
 	/* ENDOFNEWCODE */
@@ -410,13 +410,14 @@ process_exit (void) {
 		file_close(fid->file);
 		palloc_free_page(fid);
 	}
+	printf("child just finished fd cleanup.");
 	//child list.
 	
 	//signal parent with sema.
 	current->exited = true;
 	if(current->parent != NULL){
 		current->parent->flag = current->exit_status;
-		//printf("child exit status : %d -> parent flag : %d\n", current->exit_status, current->parent->flag);
+		printf("child exit status : %d -> parent flag : %d\n", current->exit_status, current->parent->flag);
 	}
 	sema_up(&current->exit_sema);
 	
@@ -425,6 +426,7 @@ process_exit (void) {
 		//file_allow_write(current->executable);
 		file_close(current->executable);
 	}
+	printf("child finished cleanup. now going to pml4 cleanup.\n");
 	//list_remove(&current->child_elem);
 	/* ENDOFNEWCODE */
 	 
