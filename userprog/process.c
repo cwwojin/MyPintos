@@ -270,7 +270,7 @@ __do_fork (void *aux) {
 		struct fd* parent_fd = list_entry(e, struct fd, elem);
 		//USE : struct file* file_duplicate (struct file *file)
 		struct file* copy = file_duplicate(parent_fd->file);
-		if(file == NULL){
+		if(copy == NULL){
 			printf("file copy failed.\n");
 			goto error;
 		}
