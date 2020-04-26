@@ -268,8 +268,8 @@ int exec(const char* cmd_line){
 		printf("is kernel space.\n");
 	}
 	printf("got page.\n");
-	void* cmd_pa = pml4_get_page(thread_current()->pml4, cmd_line);
-	memcpy(command, cmd_pa, PGSIZE);
+	//void* cmd_pa = pml4_get_page(thread_current()->pml4, cmd_line);
+	memcpy(command, cmd_line, PGSIZE);
 	printf("file name : %s\n", command);
 	//strlcpy(command, cmd_line, 128);
 	
