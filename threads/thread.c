@@ -239,6 +239,7 @@ thread_create (const char *name, int priority,
 	
 #ifdef USERPROG
 	/* NEWCODE for process hierarchy. */
+	printf("now creating child thread..\n");
 	t->parent = current;
 	t->flag = 0;
 	t->exited = false;
