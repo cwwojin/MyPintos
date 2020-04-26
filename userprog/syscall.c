@@ -289,7 +289,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 	check_address((void*)f->rsp);
 	//get the system call number from "rax".
 	syscall_num = (int) f->R.rax;
-	//printf("systemcall number : %d\n", syscall_num);
+	printf("systemcall number : %d\n", syscall_num);
 	switch(syscall_num){
 		case SYS_HALT:
 		{
@@ -309,7 +309,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		}/* Terminate this process. */
 		case SYS_FORK:
 		{
-			/*
+			
 			//one argument, thread_name.
 			char* thread_name;
 			tid_t result;
@@ -317,7 +317,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			
 			result = fork(thread_name, f);
 			f->R.rax = (uint64_t) result;
-			*/
+			
 			break;
 		}/* Clone current process. */
 		case SYS_EXEC:
@@ -459,5 +459,5 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		}
 	}
 	/* ENDOFNEWCODE */
-	//printf ("system call!\n");
+	printf ("system call!\n");
 }
