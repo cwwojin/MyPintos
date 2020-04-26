@@ -186,9 +186,7 @@ process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 	struct thread* current = thread_current();
 	current->f_fork = if_;
 	/* Clone current thread to new thread.*/
-	//printf("fork start, parent priority = %d\n", current->priority);
 	child = thread_create (name, PRI_DEFAULT, __do_fork, thread_current ());
-	//printf("created child.\n");
 	if(child == TID_ERROR) return child;
 	
 	sema_down(&current->load_sema);
@@ -251,13 +249,10 @@ __do_fork (void *aux) {
 	bool succ = true;
 	/* NEWCODE : pass the parent's f_fork, which is passed from process_fork(). */
 	parent_if = parent->f_fork;
-	//printf("received parent if_ : rdi = %d\n", (int) parent_if->R.rdi);
 
 	/* 1. Read the cpu context to local stack. */
 	memcpy (&if_, parent_if, sizeof (struct intr_frame));
-	//printf("if copy successful : rdi = %d\n", (int) if_.R.rdi);
 	if_.R.rax = 0;
-	//printf("child rax = %d, parent rax = %d", (int) if_.R.rax, (int) parent_if->R.rax);
 
 	/* 2. Duplicate PT */
 	current->pml4 = pml4_create();
@@ -375,18 +370,18 @@ process_wait (tid_t child_tid UNUSED) {
 		child->waiting = true;
 	}
 	//use semaphore to wait for child.
-	printf("before sema_down. child shouldn't be destroyed yet.\n");
+	//printf("before sema_down. child shouldn't be destroyed yet.\n");
 	if(!child->exited){
 		sema_down(&child->exit_sema);
 	}
-	printf("sema_up'd by child complete. Now the child [%d] can be destroyed.\n", child_tid);
+	//printf("sema_up'd by child complete. Now the child [%d] can be destroyed.\n", child_tid);
 	
 	//child_exitstatus = child->exit_status;
 	child_exitstatus = current->flag;
 	//remove from child list.
-	printf("attempting to remove child from child_list.\n");
+	//printf("attempting to remove child from child_list.\n");
 	//list_remove(&child->child_elem);
-	printf("removal complete.\n");
+	//printf("removal complete.\n");
 	/* ENDOFNEWCODE */
 	
 	return child_exitstatus;
@@ -410,14 +405,13 @@ process_exit (void) {
 		file_close(fid->file);
 		palloc_free_page(fid);
 	}
-	printf("child just finished fd cleanup.\n");
 	//child list.
 	
 	//signal parent with sema.
 	current->exited = true;
 	if(current->parent != NULL){
 		current->parent->flag = current->exit_status;
-		printf("child exit status : %d -> parent flag : %d\n", current->exit_status, current->parent->flag);
+		//printf("child exit status : %d -> parent flag : %d\n", current->exit_status, current->parent->flag);
 	}
 	sema_up(&current->exit_sema);
 	
@@ -426,8 +420,6 @@ process_exit (void) {
 		//file_allow_write(current->executable);
 		file_close(current->executable);
 	}
-	printf("child finished cleanup. now going to pml4 cleanup.\n");
-	//list_remove(&current->child_elem);
 	/* ENDOFNEWCODE */
 	 
 
