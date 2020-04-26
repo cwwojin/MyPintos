@@ -592,11 +592,13 @@ load (char *file_name, struct intr_frame *if_) {
 	
 
 	/* Open executable file. */
+	printf("am going to open executable : %s\n", file_name);
 	file = filesys_open (file_name);
 	if (file == NULL) {
 		printf ("load: %s: open failed\n", file_name);
 		goto done;
 	}
+	printf("open done.\n");
 	/* NEWCODE : Deny Write to Executables */
 	t->executable = file;
 	file_deny_write(file);
