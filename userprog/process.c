@@ -327,8 +327,8 @@ process_exec (void *f_name) {
 	if(!is_kernel_vaddr(file_name)){
 		void* file_pa = pml4_get_page(thread_current()->pml4, pg_round_down(file_name));
 		printf("file name is at user space, physical addr = %d\n", (int) file_pa);
-		void* newfile_pa = palloc_get_page(PAL_USER);
-		memcpy(newfile_pa, file_name, PGSIZE);
+		//void* newfile_pa = palloc_get_page(PAL_USER);
+		//memcpy(newfile_pa, file_name, PGSIZE);
 		//printf("new file physical addr = %d", (int) newfile_pa);
 		_if.rip = (uintptr_t) newfile_pa;
 	}
@@ -604,8 +604,12 @@ load (char *file_name, struct intr_frame *if_) {
 	if (!is_kernel_vaddr(file_name)){
 		printf("file name is at user space, so no mapping yet.\n");
 		printf("received physical addr : %d\n", if_->rip);
+		void* newpage = palloc_get_page(PAL_USER);
+		if(newpage == NULL) printf("fail!!!\n");
+		printf("allocated new page from user pool.\n");
+		memcpy(newpage, if_->rip, PGSIZE);
 		//if_->rip has the physical address.
-		bool allocate = pml4_set_page (t->pml4, pg_round_down(file_name), if_->rip, true);
+		bool allocate = pml4_set_page (t->pml4, pg_round_down(file_name), newpage, true);
 		if(!allocate){
 			printf("allocation failed!\n");
 		}
