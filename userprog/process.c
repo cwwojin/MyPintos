@@ -250,7 +250,7 @@ __do_fork (void *aux) {
 
 	/* 1. Read the cpu context to local stack. */
 	memcpy (&if_, parent_if, sizeof (struct intr_frame));
-	printf("if copy successful : rdi = %d\n", (int) if_->R.rdi);
+	printf("if copy successful : rdi = %d\n", (int) if_.R.rdi);
 
 	/* 2. Duplicate PT */
 	current->pml4 = pml4_create();
