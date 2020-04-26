@@ -677,6 +677,7 @@ load (char *file_name, struct intr_frame *if_) {
 		goto done;
 		
 	/* Set up argument */
+	printf("current name : %s", t->name);
 	strlcpy(t->name, file_name, 16);
 	*(file_name + strlen(file_name)) = ' ';
 	if(strlen(file_name) > 128){
