@@ -324,7 +324,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			char* cmd_line;
 			cmd_line = (char*) f->R.rdi;
 			
-			printf("start exec : %s\n", cmd_line);
+			//printf("start exec : %s\n", cmd_line);
 			exec(cmd_line);
 			NOT_REACHED();
 			break;
