@@ -92,20 +92,6 @@ void process_close_file(int fd){
 	list_remove(e);
 	file_close(fid->file);
 	palloc_free_page(fid);
-	/*
-	while (!list_empty(&current->fd_table)){
-		struct fd* fid = list_pop_front(&current->fd_table);
-		if(fid->fd_num == fd){
-			file_close(fid->file);
-			palloc_free_page(fid);
-			//remove this entry E from the list.
-			break;
-		}
-		else{
-			list_push_back(&current->fd_table, &fid->elem);
-		}
-	}
-	*/
 }
 
 /* Additional functions for Process Hierarchy. */
@@ -273,6 +259,12 @@ __do_fork (void *aux) {
 	 * TODO:       in include/filesys/file.h. Note that parent should not return
 	 * TODO:       from the fork() until this function successfully duplicates
 	 * TODO:       the resources of parent.*/
+	//current(child)'s fd table : current->fd_table, parent's fd table : parent->fd_table.
+	struct list_elem* e;
+	for(e = list_begin(&parent->fd_table); e != list_end(&parent->fd_table); e = list_next(e)){
+		
+	}
+	 
 
 	process_init ();
 
