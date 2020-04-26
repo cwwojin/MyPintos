@@ -314,6 +314,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			char* thread_name;
 			tid_t result;
 			thread_name = (char*) f->R.rdi;
+			printf("fork start : rdi = %d", f->R.rdi);
 			
 			result = fork(thread_name, f);
 			printf("fork result (child pid) : %d\n", result);
