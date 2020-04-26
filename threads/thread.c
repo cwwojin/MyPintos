@@ -240,7 +240,7 @@ thread_create (const char *name, int priority,
 #ifdef USERPROG
 	/* NEWCODE for process hierarchy. */
 	t->parent = current;
-	t->flag = -1;
+	t->flag = 0;
 	t->exited = false;
 	t->waiting = false;
 	sema_init(&t->exit_sema, 0);
