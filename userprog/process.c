@@ -291,13 +291,14 @@ __do_fork (void *aux) {
 	
 	process_init ();
 	
+	//let parent return from fork().
+	sema_up(&parent->load_sema);
+	
 
 	/* Finally, switch to the newly created process. */
 	if (succ)
 		do_iret (&if_);
 	
-	//let parent return from fork().
-	sema_up(&parent->load_sema);
 error:
 	thread_exit ();
 }
