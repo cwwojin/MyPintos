@@ -754,8 +754,10 @@ do_schedule(int status) {
 	while (!list_empty (&destruction_req)) {
 		struct thread *victim =
 			list_entry (list_pop_front (&destruction_req), struct thread, elem);
-		printf("I am going to destroy thread : %d\n", victim->tid);
+		//printf("I am going to destroy thread : %d\n", victim->tid);
+#ifdef USERPROG
 		list_remove(&victim->child_elem);
+#endif
 		palloc_free_page(victim);
 	}
 	thread_current ()->status = status;
