@@ -381,7 +381,7 @@ process_wait (tid_t child_tid UNUSED) {
 	//child_exitstatus = child->exit_status;
 	child_exitstatus = current->flag;
 	//remove from child list.
-	list_remove(&child->child_elem);
+	//list_remove(&child->child_elem);
 	/* ENDOFNEWCODE */
 	
 	return child_exitstatus;
@@ -412,6 +412,7 @@ process_exit (void) {
 	if(current->parent != NULL){
 		current->parent->flag = current->exit_status;
 	}
+	list_remove(&current->child_elem);
 	sema_up(&current->exit_sema);
 	
 	//Allow write to executable.
