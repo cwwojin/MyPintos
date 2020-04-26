@@ -311,7 +311,7 @@ process_exec (void *f_name) {
 	/* NEWCODE : if file_name is a user addr, then save its pa. */
 	if(!is_kernel_vaddr(file_name)){
 		void* file_pa = pml4_get_page(thread_current()->pml4, pg_round_down(file_name));
-		printf("file name is at user space, kernel virtual addr = %X\n", (int) file_pa);
+		//printf("file name is at user space, kernel virtual addr = %X\n", (int) file_pa);
 		file_name = file_pa;
 	}
 	
@@ -319,7 +319,7 @@ process_exec (void *f_name) {
 	//tokenizing file name.
 	char* ret_ptr;
 	file_name = strtok_r(file_name, " ", &ret_ptr);
-	printf("exec file : %s\n", file_name);
+	//printf("exec file : %s\n", file_name);
 	/* ENDOFNEWCODE */
 
 	/* We cannot use the intr_frame in the thread structure.
@@ -598,13 +598,11 @@ load (char *file_name, struct intr_frame *if_) {
 	process_activate (thread_current ());
 
 	/* Open executable file. */
-	printf("am going to open executable : %s\n", file_name);
 	file = filesys_open (file_name);
 	if (file == NULL) {
 		printf ("load: %s: open failed\n", file_name);
 		goto done;
 	}
-	printf("open done.\n");
 	/* NEWCODE : Deny Write to Executables */
 	t->executable = file;
 	file_deny_write(file);
