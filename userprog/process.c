@@ -186,7 +186,7 @@ process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 	struct thread* current = thread_current();
 	current->f_fork = if_;
 	/* Clone current thread to new thread.*/
-	printf("fork start.\n");
+	printf("fork start, parent priority = %d\n", current->priority);
 	child = thread_create (name, PRI_DEFAULT, __do_fork, thread_current ());
 	printf("created child.\n");
 	if(child == TID_ERROR) return child;
