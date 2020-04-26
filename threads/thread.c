@@ -247,9 +247,11 @@ thread_create (const char *name, int priority,
 	
 	/* Add to run queue. */
 	thread_unblock (t);
+	printf("unblocked\n.");
 	
 	/* NEWCODE */
 	//reschedule if new thread is higher priority than current one
+	printf("yield?\n");
 	if(priority > thread_get_priority()) thread_yield();
 	/* ENDOFNEWCODE */
 	printf("all done.\n");
