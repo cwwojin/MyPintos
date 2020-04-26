@@ -241,22 +241,19 @@ thread_create (const char *name, int priority,
 	/* NEWCODE for process hierarchy. */
 	printf("now creating child thread..\n");
 	t->parent = current;
-	t->flag = 0;
-	t->exited = false;
-	t->waiting = false;
-	sema_init(&t->exit_sema, 0);
-	sema_init(&t->load_sema, 0);
 	//add t to current thread's child_list.
 	list_push_back(&current->child_list, &t->child_elem);
 #endif
 	
 	/* Add to run queue. */
 	thread_unblock (t);
+	printf("unblocked child.\n");
 	
 	/* NEWCODE */
 	//reschedule if new thread is higher priority than current one
 	if(priority > thread_get_priority()) thread_yield();
 	/* ENDOFNEWCODE */
+	printf("all done.\n");
 
 	return tid;
 }
@@ -620,6 +617,11 @@ init_thread (struct thread *t, const char *name, int priority) {
 	t->max_fd = 2;
 	list_init(&t->child_list);
 	t->executable = NULL;
+	t->flag = 0;
+	t->exited = false;
+	t->waiting = false;
+	sema_init(&t->exit_sema, 0);
+	sema_init(&t->load_sema, 0);
 #endif
 	
 }
