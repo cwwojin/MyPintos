@@ -246,13 +246,13 @@ thread_create (const char *name, int priority,
 #endif
 	
 	/* Add to run queue. */
-	printf("Going to unblock child.\n");
 	thread_unblock (t);
+	/*
 	if(current->f_fork != NULL){
 		printf("this is a fork call.\n");
 		sema_down(&current->load_sema);
 	}
-	printf("parent resumes.\n");
+	*/
 	
 	/* NEWCODE */
 	//reschedule if new thread is higher priority than current one
