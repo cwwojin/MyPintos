@@ -755,6 +755,7 @@ do_schedule(int status) {
 		struct thread *victim =
 			list_entry (list_pop_front (&destruction_req), struct thread, elem);
 		printf("I am going to destroy thread : %d\n", victim->tid);
+		list_remove(&victim->child_elem);
 		palloc_free_page(victim);
 	}
 	thread_current ()->status = status;
