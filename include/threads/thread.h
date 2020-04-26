@@ -121,6 +121,7 @@ struct thread {
 	struct semaphore load_sema;
 	struct file* executable;	/* Deny Writes to Executables. */
 	struct intr_frame* f_fork;	/* Intr frame context to pass when forking. */
+	bool exec;
 	
 #endif
 #ifdef VM
