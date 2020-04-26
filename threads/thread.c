@@ -604,8 +604,10 @@ init_thread (struct thread *t, const char *name, int priority) {
 	t->tf.rsp = (uint64_t) t + PGSIZE - sizeof (void *);
 	t->priority = priority;
 	t->magic = THREAD_MAGIC;
-  
-  
+	
+	//New Code : add thread to block_list.
+	list_push_back(&block_list, &t->block_elem);
+	
   	//initialize "gate".
 	t->gate = NULL;
 	list_init(&(t->donation_list));
