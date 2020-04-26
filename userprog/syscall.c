@@ -314,7 +314,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			thread_name = (char*) f->R.rdi;
 			
 			result = fork(thread_name, f);
-			printf("fork result (child pid) : %d\n", result);
+			//printf("fork result (child pid) : %d\n", result);
 			f->R.rax = (uint64_t) result;
 			break;
 		}/* Clone current process. */
