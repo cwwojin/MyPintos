@@ -379,7 +379,7 @@ process_wait (tid_t child_tid UNUSED) {
 	if(!child->exited){
 		sema_down(&child->exit_sema);
 	}
-	printf("sema_up'd by child complete. Now the child can be destroyed.\n");
+	printf("sema_up'd by child complete. Now the child [%d] can be destroyed.\n", child_tid);
 	
 	//child_exitstatus = child->exit_status;
 	child_exitstatus = current->flag;
