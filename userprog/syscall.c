@@ -335,9 +335,9 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			int result;
 			pid = (int) f->R.rdi;
 			
-			printf("parent %d will wait for child : %d\n", thread_current()->tid, pid);
+			//printf("parent %d will wait for child : %d\n", thread_current()->tid, pid);
 			result = wait(pid);
-			printf("wait result : %d\n", result);
+			//printf("wait result : %d\n", result);
 			f->R.rax = (uint64_t) result;
 			break;
 		}/* Wait for a child process to die. */
