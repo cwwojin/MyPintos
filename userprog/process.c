@@ -607,7 +607,7 @@ load (char *file_name, struct intr_frame *if_) {
 		void* newpage = palloc_get_page(PAL_USER);
 		if(newpage == NULL) printf("fail!!!\n");
 		printf("allocated new page from user pool.\n");
-		memcpy(newpage, if_->rip, PGSIZE);
+		memcpy(newpage, (void*) if_->rip, PGSIZE);
 		//if_->rip has the physical address.
 		bool allocate = pml4_set_page (t->pml4, pg_round_down(file_name), newpage, true);
 		if(!allocate){
