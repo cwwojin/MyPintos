@@ -262,21 +262,11 @@ int exec(const char* cmd_line){
 	/*TODO : currently, exec never works because of pml4's cleanup.
 	To make it work, the parameter to process_exec "void* f_name" must be a KERNEL VIRTUAL ADDRESS,
 	which points to a memory with the exact copy of the user page at "cmd_line".*/
-	
-	//char command[128];
-	printf("am going to get a page from kernel.\n");
 	char* command = palloc_get_page(PAL_ZERO);
-	//command = ptov(command);
-	if(is_kernel_vaddr(command)){
-		printf("is kernel space.\n");
-	}
-	printf("got page : %X\n", (int) command);
-	//void* cmd_pa = pml4_get_page(thread_current()->pml4, cmd_line);
-	//memcpy(command, cmd_line, PGSIZE);
+	//printf("got page : %X\n", (int) command);
 	strlcpy(command, cmd_line, strlen(cmd_line)+1);
-	printf("file name : %s\n", command);
-	//strlcpy(command, cmd_line, 128);
-	
+	//printf("file name : %s\n", command);
+	thread_current()->exec = true;
 	return process_exec((void*)command);
 }
 
