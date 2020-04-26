@@ -187,8 +187,8 @@ process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 	current->f_fork = if_;
 	printf("parent if_ saved, rdi = %d -> f_fork.rdi = %d\n", (int) if_->R.rdi, (int) current->f_fork->R.rdi);
 	/* Clone current thread to new thread.*/
-	return thread_create (name, PRI_DEFAULT, __do_fork, thread_current ());
-	//return result;
+	return thread_create (name,
+			PRI_DEFAULT, __do_fork, thread_current ());
 }
 
 #ifndef VM
