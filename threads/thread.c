@@ -239,7 +239,7 @@ thread_create (const char *name, int priority,
 	
 #ifdef USERPROG
 	/* NEWCODE for process hierarchy. */
-	printf("now creating child thread..\n");
+	//printf("now creating child thread..\n");
 	t->parent = current;
 	//add t to current thread's child_list.
 	list_push_back(&current->child_list, &t->child_elem);
@@ -250,14 +250,11 @@ thread_create (const char *name, int priority,
 	if(current->f_fork != NULL){
 		sema_down(&current->load_sema);
 	}
-	printf("unblocked\n.");
 	
 	/* NEWCODE */
 	//reschedule if new thread is higher priority than current one
-	printf("yield?\n");
 	if(priority > thread_get_priority()) thread_yield();
 	/* ENDOFNEWCODE */
-	printf("all done.\n");
 
 	return tid;
 }
