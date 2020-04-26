@@ -375,14 +375,18 @@ process_wait (tid_t child_tid UNUSED) {
 		child->waiting = true;
 	}
 	//use semaphore to wait for child.
+	printf("before sema_down. child shouldn't be destroyed yet.\n");
 	if(!child->exited){
 		sema_down(&child->exit_sema);
 	}
+	printf("sema_up'd by child complete. Now the child can be destroyed.\n");
 	
 	//child_exitstatus = child->exit_status;
 	child_exitstatus = current->flag;
 	//remove from child list.
+	printf("attempting to remove child from child_list.");
 	list_remove(&child->child_elem);
+	printf("removal complete.\n");
 	/* ENDOFNEWCODE */
 	
 	return child_exitstatus;
