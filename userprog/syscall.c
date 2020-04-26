@@ -264,15 +264,15 @@ int exec(const char* cmd_line){
 	
 	//char command[128];
 	printf("am going to get a page from kernel.\n");
-	char* command = palloc_get_page(0);
+	char* command = palloc_get_page(PAL_ZERO);
 	command = ptov(command);
 	if(is_kernel_vaddr(command)){
 		printf("is kernel space.\n");
 	}
 	printf("got page : %X\n", (int) command);
 	//void* cmd_pa = pml4_get_page(thread_current()->pml4, cmd_line);
-	memcpy(command, cmd_line, PGSIZE);
-	//strlcpy(command, cmd_line, 128);
+	//memcpy(command, cmd_line, PGSIZE);
+	strlcpy(command, cmd_line, 128);
 	printf("file name : %s\n", command);
 	//strlcpy(command, cmd_line, 128);
 	
