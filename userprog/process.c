@@ -195,6 +195,9 @@ initd (void *f_name) {
  * TID_ERROR if the thread cannot be created. */
 tid_t
 process_fork (const char *name, struct intr_frame *if_ UNUSED) {
+	/* NEWCODE : save the argument intr_frame in the thread struct. */
+	struct thread* current = thread_current();
+	current->f_fork = if_;
 	/* Clone current thread to new thread.*/
 	return thread_create (name,
 			PRI_DEFAULT, __do_fork, thread_current ());
@@ -244,6 +247,8 @@ __do_fork (void *aux) {
 	/* TODO: somehow pass the parent_if. (i.e. process_fork()'s if_) */
 	struct intr_frame *parent_if;
 	bool succ = true;
+	/* NEWCODE : pass the parent's f_fork, which is passed from process_fork(). */
+	parent_if = parent->f_fork;
 
 	/* 1. Read the cpu context to local stack. */
 	memcpy (&if_, parent_if, sizeof (struct intr_frame));
