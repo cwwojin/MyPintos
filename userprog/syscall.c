@@ -267,6 +267,7 @@ int exec(const char* cmd_line){
 	if(is_kernel_vaddr(command)){
 		printf("is kernel space.\n");
 	}
+	printf("got page.\n");
 	void* cmd_pa = pml4_get_page(thread_current()->pml4, cmd_line);
 	memcpy(command, cmd_pa, PGSIZE);
 	printf("file name : %s\n", command);
