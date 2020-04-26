@@ -186,9 +186,9 @@ process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 	struct thread* current = thread_current();
 	current->f_fork = if_;
 	/* Clone current thread to new thread.*/
-	printf("fork start, parent priority = %d\n", current->priority);
+	//printf("fork start, parent priority = %d\n", current->priority);
 	child = thread_create (name, PRI_DEFAULT, __do_fork, thread_current ());
-	printf("created child.\n");
+	//printf("created child.\n");
 	if(child == TID_ERROR) return child;
 	
 	sema_down(&current->load_sema);
@@ -411,7 +411,7 @@ process_exit (void) {
 	current->exited = true;
 	if(current->parent != NULL){
 		current->parent->flag = current->exit_status;
-		printf("child exit status : %d -> parent flag : %d\n", current->exit_status, current->parent->flag);
+		//printf("child exit status : %d -> parent flag : %d\n", current->exit_status, current->parent->flag);
 	}
 	sema_up(&current->exit_sema);
 	
