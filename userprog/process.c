@@ -381,7 +381,7 @@ process_wait (tid_t child_tid UNUSED) {
 	//child_exitstatus = child->exit_status;
 	child_exitstatus = current->flag;
 	//remove from child list.
-	//list_remove(&child->child_elem);
+	list_remove(&child->child_elem);
 	/* ENDOFNEWCODE */
 	
 	return child_exitstatus;
@@ -420,7 +420,7 @@ process_exit (void) {
 		//file_allow_write(current->executable);
 		file_close(current->executable);
 	}
-	list_remove(&current->child_elem);
+	//list_remove(&current->child_elem);
 	/* ENDOFNEWCODE */
 	 
 
