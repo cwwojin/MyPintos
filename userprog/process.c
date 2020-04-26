@@ -185,15 +185,11 @@ process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 	tid_t child;
 	struct thread* current = thread_current();
 	current->f_fork = if_;
-	current->flag = 1;	//for distinguishing between parent & child.
-	//printf("parent if_ saved, rdi = %d -> f_fork.rdi = %d\n", (int) if_->R.rdi, (int) current->f_fork->R.rdi);
 	/* Clone current thread to new thread.*/
-	//return thread_create (name, PRI_DEFAULT, __do_fork, thread_current ());
 	child = thread_create (name, PRI_DEFAULT, __do_fork, thread_current ());
 	if(child == TID_ERROR) return child;
 	
 	sema_down(&current->load_sema);
-	printf("current flag : %d\n", current->flag);
 	return child;
 }
 
@@ -251,13 +247,13 @@ __do_fork (void *aux) {
 	bool succ = true;
 	/* NEWCODE : pass the parent's f_fork, which is passed from process_fork(). */
 	parent_if = parent->f_fork;
-	printf("received parent if_ : rdi = %d\n", (int) parent_if->R.rdi);
+	//printf("received parent if_ : rdi = %d\n", (int) parent_if->R.rdi);
 
 	/* 1. Read the cpu context to local stack. */
 	memcpy (&if_, parent_if, sizeof (struct intr_frame));
-	printf("if copy successful : rdi = %d\n", (int) if_.R.rdi);
+	//printf("if copy successful : rdi = %d\n", (int) if_.R.rdi);
 	if_.R.rax = 0;
-	printf("child rax = %d, parent rax = %d", (int) if_.R.rax, (int) parent_if->R.rax);
+	//printf("child rax = %d, parent rax = %d", (int) if_.R.rax, (int) parent_if->R.rax);
 
 	/* 2. Duplicate PT */
 	current->pml4 = pml4_create();
