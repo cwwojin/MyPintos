@@ -411,6 +411,7 @@ process_exit (void) {
 	current->exited = true;
 	if(current->parent != NULL){
 		current->parent->flag = current->exit_status;
+		printf("child exit status : %d -> parent flag : %d\n", current->exit_status, current->parent->flag);
 	}
 	sema_up(&current->exit_sema);
 	
