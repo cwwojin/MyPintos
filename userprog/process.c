@@ -182,13 +182,13 @@ initd (void *f_name) {
 tid_t
 process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 	/* NEWCODE : save the argument intr_frame in the thread struct. */
-	tid_t result;
+	//tid_t result;
 	struct thread* current = thread_current();
 	current->f_fork = if_;
 	printf("parent if_ saved, rdi = %d -> f_fork.rdi = %d\n", (int) if_->R.rdi, (int) current->f_fork->R.rdi);
 	/* Clone current thread to new thread.*/
-	result = thread_create (name, PRI_DEFAULT, __do_fork, thread_current ());
-	return result;
+	return thread_create (name, PRI_DEFAULT, __do_fork, thread_current ());
+	//return result;
 }
 
 #ifndef VM
