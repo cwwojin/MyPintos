@@ -191,7 +191,7 @@ process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 	//printf("created child.\n");
 	if(child == TID_ERROR) return child;
 	
-	sema_down(&current->load_sema);
+	//sema_down(&current->load_sema);
 	return child;
 }
 
