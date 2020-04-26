@@ -258,14 +258,11 @@ unsigned tell (int fd){
 //exec : change current process to the executable @ cmd_line.
 int exec(const char* cmd_line){
 	check_address((void*) cmd_line);
-	printf("cmd_line at %X\n", (int) cmd_line);
 	/*TODO : currently, exec never works because of pml4's cleanup.
 	To make it work, the parameter to process_exec "void* f_name" must be a KERNEL VIRTUAL ADDRESS,
 	which points to a memory with the exact copy of the user page at "cmd_line".*/
 	char* command = palloc_get_page(PAL_ZERO);
-	//printf("got page : %X\n", (int) command);
 	strlcpy(command, cmd_line, strlen(cmd_line)+1);
-	//printf("file name : %s\n", command);
 	thread_current()->exec = true;
 	return process_exec((void*)command);
 }
