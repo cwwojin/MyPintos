@@ -265,6 +265,7 @@ int exec(const char* cmd_line){
 	//char command[128];
 	printf("am going to get a page from kernel.\n");
 	char* command = palloc_get_page(0);
+	command = ptov(command);
 	if(is_kernel_vaddr(command)){
 		printf("is kernel space.\n");
 	}
