@@ -412,7 +412,6 @@ process_exit (void) {
 	if(current->parent != NULL){
 		current->parent->flag = current->exit_status;
 	}
-	list_remove(&current->child_elem);
 	sema_up(&current->exit_sema);
 	
 	//Allow write to executable.
@@ -420,6 +419,7 @@ process_exit (void) {
 		//file_allow_write(current->executable);
 		file_close(current->executable);
 	}
+	list_remove(&current->child_elem);
 	/* ENDOFNEWCODE */
 	 
 
