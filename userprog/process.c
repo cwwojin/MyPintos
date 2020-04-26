@@ -326,6 +326,7 @@ process_exec (void *f_name) {
 	/* NEWCODE : if file_name is a user addr, then save its pa. */
 	if(!is_kernel_vaddr(file_name)){
 		void* file_pa = pml4_get_page(thread_current()->pml4, file_name);
+		printf("file name is at user space, physical addr = %d", (int) file_pa);
 		_if.rip = (uintptr_t) file_pa;
 	}
 
@@ -599,6 +600,7 @@ load (char *file_name, struct intr_frame *if_) {
 	/* NEWCODE : Must check if executable FILE_NAME is a valid virtual address in pml4, and if not, add a new mapping. */
 	if (!is_kernel_vaddr(file_name)){
 		printf("file name is at user space, so no mapping yet.\n");
+		printf("received physical addr : %d\n", if_->rip);
 		//if_->rip has the physical address.
 		bool allocate = pml4_set_page (t->pml4, file_name, if_->rip, true);
 		if(!allocate){
