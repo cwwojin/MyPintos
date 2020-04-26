@@ -185,7 +185,7 @@ process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 	//tid_t result;
 	struct thread* current = thread_current();
 	current->f_fork = if_;
-	printf("parent if_ saved, rdi = %d -> f_fork.rdi = %d\n", if_->R.rdi, current->f_fork->R.rdi);
+	printf("parent if_ saved, rdi = %d -> f_fork.rdi = %d\n", (int) if_->R.rdi, (int) current->f_fork->R.rdi);
 	/* Clone current thread to new thread.*/
 	return thread_create (name,
 			PRI_DEFAULT, __do_fork, thread_current ());
@@ -246,11 +246,11 @@ __do_fork (void *aux) {
 	bool succ = true;
 	/* NEWCODE : pass the parent's f_fork, which is passed from process_fork(). */
 	parent_if = parent->f_fork;
-	printf("received parent if_ : rdi = %d\n", parent_if->R.rdi);
+	printf("received parent if_ : rdi = %d\n", (int) parent_if->R.rdi);
 
 	/* 1. Read the cpu context to local stack. */
 	memcpy (&if_, parent_if, sizeof (struct intr_frame));
-	printf("if copy successful : rdi = %d\n", if_->R.rdi);
+	printf("if copy successful : rdi = %d\n", (int) if_->R.rdi);
 
 	/* 2. Duplicate PT */
 	current->pml4 = pml4_create();
