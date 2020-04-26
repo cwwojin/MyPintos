@@ -288,11 +288,10 @@ __do_fork (void *aux) {
 		process_add_file(copy);
 	}
 	
-	
-	process_init ();
-	
 	//let parent return from fork().
 	sema_up(&parent->load_sema);
+	
+	process_init ();
 	
 
 	/* Finally, switch to the newly created process. */
