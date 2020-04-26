@@ -359,7 +359,7 @@ process_wait (tid_t child_tid UNUSED) {
 	//1. search for the child with "child_tid".
 	struct thread* current = thread_current();
 	struct thread* child;
-	int child_exitstatus = -1;
+	int child_exitstatus;
 	child = get_child_process(child_tid);
 	if(child == NULL) return -1;
 	//2. found child. check conditions.
@@ -374,7 +374,9 @@ process_wait (tid_t child_tid UNUSED) {
 	if(!child->exited){
 		sema_down(&child->exit_sema);
 	}
-	child_exitstatus = child->exit_status;
+	
+	//child_exitstatus = child->exit_status;
+	child_exitstatus = current->flag;
 	//remove from child list.
 	list_remove(&child->child_elem);
 	/* ENDOFNEWCODE */
@@ -404,6 +406,9 @@ process_exit (void) {
 	
 	//signal parent with sema.
 	current->exited = true;
+	if(current->parent != NULL){
+		current->parent->flag = current->exit_status;
+	}
 	sema_up(&current->exit_sema);
 	
 	//Allow write to executable.
