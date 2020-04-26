@@ -313,9 +313,8 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			tid_t result;
 			thread_name = (char*) f->R.rdi;
 			
-			printf("fork start.\n");
 			result = fork(thread_name, f);
-			printf("fork result (child pid) : %d\n", result);
+			//printf("fork result (child pid) : %d\n", result);
 			f->R.rax = (uint64_t) result;
 			break;
 		}/* Clone current process. */
@@ -336,9 +335,9 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			int result;
 			pid = (int) f->R.rdi;
 			
-			printf("parent will wait for child : %d\n", pid);
+			//printf("parent will wait for child : %d\n", pid);
 			result = wait(pid);
-			printf("wait result : %d\n", result);
+			//printf("wait result : %d\n", result);
 			f->R.rax = (uint64_t) result;
 			break;
 		}/* Wait for a child process to die. */
