@@ -202,7 +202,7 @@ duplicate_pte (uint64_t *pte, void *va, void *aux) {
 
 	/* 1. TODO: If the parent_page is kernel page, then return immediately. */
 	if(is_kernel_vaddr(va)) {
-		printf("kernel page!\n");
+		//printf("kernel page!\n");
 		return true;
 	}
 
