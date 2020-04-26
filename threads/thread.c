@@ -247,6 +247,9 @@ thread_create (const char *name, int priority,
 	
 	/* Add to run queue. */
 	thread_unblock (t);
+	if(current->f_fork != NULL){
+		sema_down(&current->load_sema);
+	}
 	printf("unblocked\n.");
 	
 	/* NEWCODE */
@@ -618,6 +621,7 @@ init_thread (struct thread *t, const char *name, int priority) {
 	t->max_fd = 2;
 	list_init(&t->child_list);
 	t->executable = NULL;
+	t->f_fork = NULL;
 	t->flag = 0;
 	t->exited = false;
 	t->waiting = false;
