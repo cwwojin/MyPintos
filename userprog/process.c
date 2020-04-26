@@ -182,12 +182,17 @@ initd (void *f_name) {
 tid_t
 process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 	/* NEWCODE : save the argument intr_frame in the thread struct. */
-	//tid_t result;
+	tid_t child;
 	struct thread* current = thread_current();
 	current->f_fork = if_;
 	printf("parent if_ saved, rdi = %d -> f_fork.rdi = %d\n", (int) if_->R.rdi, (int) current->f_fork->R.rdi);
 	/* Clone current thread to new thread.*/
-	return thread_create (name, PRI_DEFAULT, __do_fork, thread_current ());
+	//return thread_create (name, PRI_DEFAULT, __do_fork, thread_current ());
+	child = thread_create (name, PRI_DEFAULT, __do_fork, thread_current ());
+	if(child == TID_ERROR) return child;
+	
+	sema_down(&current->load_sema);
+	return child;
 }
 
 #ifndef VM
@@ -282,12 +287,11 @@ __do_fork (void *aux) {
 		//add this copy to the current(child)'s fd table.
 		process_add_file(copy);
 	}
-	 
-
+	//let parent return from fork().
+	sema_up(&parent->load_sema);
+	
 	process_init ();
 	
-	//let parent return from fork().
-	//sema_up(&parent->load_sema);
 
 	/* Finally, switch to the newly created process. */
 	if (succ)
