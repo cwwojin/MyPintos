@@ -410,7 +410,7 @@ process_exit (void) {
 		file_close(fid->file);
 		palloc_free_page(fid);
 	}
-	printf("child just finished fd cleanup.");
+	printf("child just finished fd cleanup.\n");
 	//child list.
 	
 	//signal parent with sema.
