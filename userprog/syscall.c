@@ -273,6 +273,7 @@ tid_t fork (const char *thread_name, struct intr_frame* if_){
 	tid_t result;
 	
 	result = process_fork(thread_name, if_);
+	printf("my parent's id is %d\n", thread_current()->parent->tid);
 	return result;
 }
 /* ENDOFNEWCODE*/
