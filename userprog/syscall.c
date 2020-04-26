@@ -273,7 +273,7 @@ int exec(const char* cmd_line){
 	printf("got page : %X\n", (int) command);
 	//void* cmd_pa = pml4_get_page(thread_current()->pml4, cmd_line);
 	//memcpy(command, cmd_line, PGSIZE);
-	strlcpy(command, cmd_line, 128);
+	strlcpy(command, cmd_line, strlen(cmd_line));
 	printf("file name : %s\n", command);
 	//strlcpy(command, cmd_line, 128);
 	
