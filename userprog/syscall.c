@@ -261,7 +261,8 @@ int exec(const char* cmd_line){
 	To make it work, the parameter to process_exec "void* f_name" must be a KERNEL VIRTUAL ADDRESS,
 	which points to a memory with the exact copy of the user page at "cmd_line".*/
 	
-	char command[128];
+	//char command[128];
+	char* command = palloc_get_page(0);
 	strlcpy(command, cmd_line, 128);
 	
 	return process_exec((void*)command);
