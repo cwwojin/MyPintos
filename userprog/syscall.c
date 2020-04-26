@@ -257,6 +257,11 @@ unsigned tell (int fd){
 //exec : change current process to the executable @ cmd_line.
 int exec(const char* cmd_line){
 	check_address((void*) cmd_line);
+	/*TODO : currently, exec never works because of pml4's cleanup.
+	To make it work, the parameter to process_exec "void* f_name" must be a KERNEL VIRTUAL ADDRESS,
+	which points to a memory with the exact copy of the user page at "cmd_line".*/
+	
+	
 	
 	return process_exec((void*)cmd_line);
 }
