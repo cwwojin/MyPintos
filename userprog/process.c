@@ -677,8 +677,11 @@ load (char *file_name, struct intr_frame *if_) {
 		goto done;
 		
 	/* Set up argument */
-	printf("current name : %s\ncurrent exec : %d", t->name, t->exec);
-	strlcpy(t->name, file_name, 16);
+	//printf("current name : %s\ncurrent exec : %d\n", t->name, t->exec);
+	if(!t->exec){
+		strlcpy(t->name, file_name, 16);
+	}
+	//strlcpy(t->name, file_name, 16);
 	*(file_name + strlen(file_name)) = ' ';
 	if(strlen(file_name) > 128){
 		file_name = strtok_r(file_name, " ", &ret_ptr);
