@@ -263,7 +263,9 @@ int exec(const char* cmd_line){
 	
 	//char command[128];
 	char* command = palloc_get_page(0);
-	strlcpy(command, cmd_line, 128);
+	void* cmd_pa = pml4_get_page(thread_current()->pml4, cmd_line);
+	memcpy(command, cmd_pa, PGSIZE);
+	//strlcpy(command, cmd_line, 128);
 	
 	return process_exec((void*)command);
 }
