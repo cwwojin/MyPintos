@@ -603,7 +603,7 @@ load (char *file_name, struct intr_frame *if_) {
 	/* NEWCODE : Must check if executable FILE_NAME is a valid virtual address in pml4, and if not, add a new mapping. */
 	if (!is_kernel_vaddr(file_name)){
 		printf("file name is at user space, so no mapping yet.\n");
-		printf("received physical addr : %d\n", if_->rip);
+		printf("received physical addr : %d\n", (int) if_->rip);
 		void* newpage = palloc_get_page(PAL_USER);
 		if(newpage == NULL) printf("fail!!!\n");
 		printf("allocated new page from user pool.\n");
