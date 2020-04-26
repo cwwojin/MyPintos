@@ -385,7 +385,7 @@ process_wait (tid_t child_tid UNUSED) {
 	child_exitstatus = current->flag;
 	//remove from child list.
 	printf("attempting to remove child from child_list.\n");
-	list_remove(&child->child_elem);
+	//list_remove(&child->child_elem);
 	printf("removal complete.\n");
 	/* ENDOFNEWCODE */
 	
