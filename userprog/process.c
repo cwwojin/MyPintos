@@ -39,7 +39,7 @@ int process_add_file(struct file* file){
 	//insert file to thread's fd table.
 	struct thread* current = thread_current();
 	//allocate a page for new file descriptor. when removing a file descriptor, free this page @ resource cleanup.
-	struct fd* file_desc = palloc_get_page(0);
+	//struct fd* file_desc = palloc_get_page(0);
 	struct fd* file_desc = malloc(sizeof(struct fd));
 	
 	file_desc->file = file;
