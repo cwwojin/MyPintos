@@ -22,11 +22,12 @@ struct fd{
 /* process control block for WAITs. */
 struct pcb{
   /* Info needed for waits : "Already waiting?", "Did the process exit?", "Exit status?", "Whats the tid?" */
+  //Set at thread_create(), never touched again.
   struct thread* thread;
   tid_t tid;
-  bool exited;
-  bool waiting;
+  bool exited;    //Set at process_exit(), with exit status from exit().
   int exit_status;
+  bool waiting;   //Set by parent who called process_wait().
   struct list_elem elem;
 };
 
