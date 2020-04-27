@@ -303,6 +303,7 @@ __do_fork (void *aux) {
 	
 error:
 	printf("somehow, fork failed.\n");
+	current->pcb->exit_status = -1;
 	//let parent return from fork().
 	sema_up(&parent->load_sema);
 	exit(-1);
