@@ -401,7 +401,7 @@ process_wait (tid_t child_tid UNUSED) {
 	}
 	//use semaphore to wait for child.
 	if(!child->exited){
-		sema_down(&child->exit_sema);
+		sema_down(&child->thread->exit_sema);
 	}
 	
 	child_exitstatus = child->exit_status;
@@ -455,7 +455,7 @@ process_exit (void) {
 		//printf("child exit status : %d -> parent flag : %d\n", current->exit_status, current->parent->flag);
 	}
 	*/
-	sema_up(&current->exit_sema);
+	sema_up(&current->thread->exit_sema);
 	
 	//Allow write to executable.
 	if(current->executable != NULL) {
