@@ -184,7 +184,7 @@ process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 	//if the child succeeded at resource duplication, then its a success. Otherwise, it would have exited (-1).
 	struct pcb* child_pcb = get_child_process(child);
 	if(child_pcb->exit_status == -1){
-		printf("fork fail due to resource duplication fail.\n");
+		printf("at parent : %d, child : %d, fork fail due to resource duplication fail.\n", current->tid, child_pcb->tid);
 		return TID_ERROR;
 	}
 	
@@ -420,8 +420,9 @@ process_exit (void) {
 	}
 	//child list.
 	//struct list_elem* e;
+	//printf("parent : %d now going into child cleanup.\n", );
 	while(!list_empty(&current->child_list)){
-		e = list_pop_front(&current->fd_table);
+		e = list_pop_front(&current->child_list);
 		struct pcb* pcb = list_entry(e, struct pcb, elem);
 		//palloc_free_page(pcb);
 		free(pcb);
