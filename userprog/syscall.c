@@ -329,10 +329,12 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			//one argument, cmd_line.
 			char* cmd_line;
 			cmd_line = (char*) f->R.rdi;
+			int result;
 			
 			//printf("start exec : %s\n", cmd_line);
-			exec(cmd_line);
-			NOT_REACHED();
+			result exec(cmd_line);
+			f->R.rax = (uint64_t) result;
+			//NOT_REACHED();
 			break;
 		}/* Switch current process. */
 		case SYS_WAIT:
