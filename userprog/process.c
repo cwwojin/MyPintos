@@ -40,6 +40,7 @@ int process_add_file(struct file* file){
 	struct thread* current = thread_current();
 	//allocate a page for new file descriptor. when removing a file descriptor, free this page @ resource cleanup.
 	struct fd* file_desc = palloc_get_page(0);
+	struct fd* file_desc = malloc(sizeof(struct fd));
 	
 	file_desc->file = file;
 	file_desc->fd_num = current->max_fd;
@@ -92,7 +93,8 @@ void process_close_file(int fd){
 	struct fd* fid = list_entry(e, struct fd, elem);
 	list_remove(e);
 	file_close(fid->file);
-	palloc_free_page(fid);
+	//palloc_free_page(fid);
+	free(fid);
 }
 
 /* Additional functions for Process Hierarchy. */
@@ -393,7 +395,8 @@ process_exit (void) {
 		e = list_pop_front(&current->fd_table);
 		struct fd* fid = list_entry(e, struct fd, elem);
 		file_close(fid->file);
-		palloc_free_page(fid);
+		//palloc_free_page(fid);
+		free(fid);
 	}
 	//child list.
 	//struct list_elem* e;
