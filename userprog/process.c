@@ -95,6 +95,7 @@ void process_close_file(int fd){
 }
 
 /* Additional functions for Process Hierarchy. */
+/*
 struct thread* get_child_process(int pid){
 	//look for a process with tid_t "pid". if none, return NULL.
 	struct thread* current = thread_current();
@@ -112,7 +113,26 @@ struct thread* get_child_process(int pid){
 	
 	return result;
 }
+*/
+struct pcb* get_child_process(int pid){
+	//look for a process with tid_t "pid". if none, return NULL.
+	struct thread* current = thread_current();
+	struct pcb* result = NULL;
+	struct list_elem* e;
+	
+	//search through child list.
+	for (e = list_begin (&current->child_list); e != list_end (&current->child_list); e = list_next (e)){
+		struct pcb* child = list_entry(e, struct pcb, elem);
+		if(child->tid == pid){
+			result = child;
+			break;
+		}
+	}
+	
+	return result;
+}
 
+/*
 void remove_child_process(struct thread* cp){
 	//remove "cp" from child list, and free memory.
 	struct thread* current = thread_current();
@@ -130,6 +150,7 @@ void remove_child_process(struct thread* cp){
 		}
 	}
 }
+*/
 /* ENDOFNEWCODE */
 
 
@@ -365,7 +386,8 @@ process_wait (tid_t child_tid UNUSED) {
 	/* NEWCODE */
 	//1. search for the child with "child_tid".
 	struct thread* current = thread_current();
-	struct thread* child;
+	//struct thread* child;
+	struct pcb* child;
 	int child_exitstatus;
 	child = get_child_process(child_tid);
 	if(child == NULL) return -1;
@@ -378,18 +400,18 @@ process_wait (tid_t child_tid UNUSED) {
 		child->waiting = true;
 	}
 	//use semaphore to wait for child.
-	//printf("before sema_down. child shouldn't be destroyed yet.\n");
 	if(!child->exited){
 		sema_down(&child->exit_sema);
 	}
-	//printf("sema_up'd by child complete. Now the child [%d] can be destroyed.\n", child_tid);
 	
-	//child_exitstatus = child->exit_status;
-	child_exitstatus = current->flag;
-	//remove from child list.
-	//printf("attempting to remove child from child_list.\n");
-	//list_remove(&child->child_elem);
-	//printf("removal complete.\n");
+	child_exitstatus = child->exit_status;
+	//child_exitstatus = current->flag;
+	
+	//remove from child list & DESTROY child.
+	//printf("going to removd & destroy child.");
+	list_remove(&child->elem);
+	palloc_free_page(child);
+	//printf("child removal complete.\n");
 	/* ENDOFNEWCODE */
 	
 	return child_exitstatus;
@@ -414,13 +436,25 @@ process_exit (void) {
 		palloc_free_page(fid);
 	}
 	//child list.
+	struct list_elem* e;
+	while(!list_empty(&current->child_list)){
+		e = list_pop_front(&current->fd_table);
+		struct pcb* pcb = list_entry(e, struct pcb, elem);
+		palloc_free_page(pcb);
+	}
+	//printf("children cleanup complete.\n");
 	
 	//signal parent with sema.
 	current->exited = true;
+	//save exit status to pcb.
+	current->pcb->exit_status = current->exit_status;
+	printf("child exit status : %d -> pcb exit status : %d\n", current->exit_status, current->pcb->exit_status);
+	/*
 	if(current->parent != NULL){
 		current->parent->flag = current->exit_status;
 		//printf("child exit status : %d -> parent flag : %d\n", current->exit_status, current->parent->flag);
 	}
+	*/
 	sema_up(&current->exit_sema);
 	
 	//Allow write to executable.
