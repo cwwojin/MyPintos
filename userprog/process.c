@@ -44,7 +44,7 @@ int process_add_file(struct file* file){
 	//if memory allocation failed : return -1.
 	if(file_desc == NULL){
 		printf("Thread [%d] mem allocation failed at fd number : %d\n", current->tid, current->max_fd);
-		//file_close(file);
+		file_close(file);
 		return -1;
 	}
 	
