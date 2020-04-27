@@ -23,6 +23,7 @@
 #endif
 
 #include "threads/synch.h"
+#include "threads/malloc.h"
 #include "userprog/syscall.h"
 
 static void process_cleanup (void);
