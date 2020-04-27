@@ -16,6 +16,8 @@
 #include "userprog/process.h"
 #endif
 
+#include "threads/malloc.h"
+
 //defining default values for mlfqs scheduler.
 #define NICE_DEFAULT 0
 #define RECENT_CPU_DEFAULT 0
@@ -241,7 +243,8 @@ thread_create (const char *name, int priority,
 	/* NEWCODE for process hierarchy. */
 	t->parent = current;
 	/* Make & Initialize a pcb for the child. */
-	struct pcb* t_pcb = palloc_get_page(0);
+	//struct pcb* t_pcb = palloc_get_page(0);
+	struct pcb* t_pcb = malloc(sizeof(struct pcb));
 	t_pcb->thread = t;
 	t_pcb->tid = t->tid;
 	t_pcb->exited = false;
@@ -753,9 +756,6 @@ do_schedule(int status) {
 	while (!list_empty (&destruction_req)) {
 		struct thread *victim =
 			list_entry (list_pop_front (&destruction_req), struct thread, elem);
-#ifdef USERPROG
-		//list_remove(&victim->child_elem);
-#endif
 		palloc_free_page(victim);
 	}
 	thread_current ()->status = status;
