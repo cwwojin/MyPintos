@@ -268,7 +268,8 @@ lock_acquire (struct lock *lock) {
 	sema_down (&lock->semaphore);
 	current->gate = NULL;
 	lock->holder = current;
-	list_insert_ordered(&current->donation_list, &lock->elem, compare_lock_pri, NULL);
+	//list_insert_ordered(&current->donation_list, &lock->elem, compare_lock_pri, NULL);
+	list_push_back(&current->donation_list, &lock->elem);
 }
 
 /* Tries to acquires LOCK and returns true if successful or false
@@ -296,18 +297,6 @@ void reset_priority(void){
 	struct list_elem* e;
 	current->priority = current->ori_priority;
 	if(list_empty(&current->donation_list)) return;
-	
-	/*
-	struct lock* maxlock = list_entry (list_pop_front (&current->donation_list), struct lock, elem);
-	if (maxlock != NULL){ 
-		if (!list_empty(&maxlock->semaphore.waiters)) { 
-			struct thread* maxthread = list_entry(list_front (&maxlock->semaphore.waiters), struct thread, elem); 
-			if (maxthread->priority > current->ori_priority){ 
-				current->priority = maxthread->priority; 
-			}
-		}
-	}
-	*/
 	/* NEWCODE : go through the entire list instead of popping the front. */
 	for(e = list_begin(&current->donation_list); e != list_end(&current->donation_list); e = list_next(e)){
 		struct lock* maxlock = list_entry (e, struct lock, elem);
@@ -337,7 +326,6 @@ lock_release (struct lock *lock) {
 	lock->holder = NULL;
 	
 	//new functions.
-	//remove_from_donations(lock);
 	list_remove(&lock->elem);
 	if(!thread_mlfqs){
 		reset_priority();
