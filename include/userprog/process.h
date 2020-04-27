@@ -19,6 +19,16 @@ struct fd{
   struct list_elem elem;
 };
 
+/* process control block for WAITs. */
+struct pcb{
+  /* Info needed for waits : "Did the process exit?", "Exit status?", "Whats the tid?" */
+  struct thread* thread;
+  tid_t tid;
+  bool exited;
+  int exit_status;
+  struct list_elem elem;
+};
+
 int process_add_file(struct file* file);
 struct file* process_get_file(int fd);
 void process_close_file(int fd);
