@@ -332,7 +332,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			int result;
 			
 			//printf("start exec : %s\n", cmd_line);
-			result exec(cmd_line);
+			result = exec(cmd_line);
 			f->R.rax = (uint64_t) result;
 			//NOT_REACHED();
 			break;
