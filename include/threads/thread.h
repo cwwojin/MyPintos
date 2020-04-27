@@ -113,15 +113,19 @@ struct thread {
 	struct thread* parent;		/* Pointer to the parent */
 	struct list child_list;		/* List of children */
 	struct list_elem child_elem;
+	/* PCB info. */
 	bool exited;
 	bool waiting;
 	int exit_status;		/* Exit Status */
+	
+	struct pcb* pcb;		/* Thread & PCB can point to each other. */
+	
 	int flag;
 	struct semaphore exit_sema;	/* Semaphore */
 	struct semaphore load_sema;
 	struct file* executable;	/* Deny Writes to Executables. */
 	struct intr_frame* f_fork;	/* Intr frame context to pass when forking. */
-	bool exec;
+	bool exec;			/* Is this process made from an EXEC call? */
 	
 #endif
 #ifdef VM
