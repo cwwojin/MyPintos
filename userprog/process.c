@@ -42,7 +42,7 @@ int process_add_file(struct file* file){
 	//struct fd* file_desc = palloc_get_page(0);
 	struct fd* file_desc = malloc(sizeof(struct fd));
 	//if memory allocation failed : return -1.
-	if(file_desc = NULL){
+	if(file_desc == NULL){
 		printf("mem allocation failed at fd number : %d\n", current->max_fd);
 		//file_close(file);
 		return -1;
