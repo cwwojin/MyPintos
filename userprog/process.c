@@ -41,6 +41,12 @@ int process_add_file(struct file* file){
 	//allocate a page for new file descriptor. when removing a file descriptor, free this page @ resource cleanup.
 	//struct fd* file_desc = palloc_get_page(0);
 	struct fd* file_desc = malloc(sizeof(struct fd));
+	//if memory allocation failed : return -1.
+	if(file_desc = NULL){
+		printf("mem allocation failed at fd number : %d\n", current->max_fd);
+		//file_close(file);
+		return -1;
+	}
 	
 	file_desc->file = file;
 	file_desc->fd_num = current->max_fd;
