@@ -258,7 +258,7 @@ __do_fork (void *aux) {
 	 * TODO:       from the fork() until this function successfully duplicates
 	 * TODO:       the resources of parent.*/
 	//current(child)'s fd table : current->fd_table, parent's fd table : parent->fd_table.
-	printf("FD table copy start.\n", );
+	printf("FD table copy start.\n");
 	struct list_elem* e;
 	for(e = list_begin(&parent->fd_table); e != list_end(&parent->fd_table); e = list_next(e)){
 		struct fd* parent_fd = list_entry(e, struct fd, elem);
