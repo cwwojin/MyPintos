@@ -223,10 +223,10 @@ duplicate_pte (uint64_t *pte, void *va, void *aux) {
  *       this function. */
 static void
 __do_fork (void *aux) {
-	//printf("child thread function start.\n");
 	struct intr_frame if_;
 	struct thread *parent = (struct thread *) aux;
 	struct thread *current = thread_current ();
+	printf("do_fork start, parent : %d, child : %d\n", parent->tid, current->tid);
 	/* TODO: somehow pass the parent_if. (i.e. process_fork()'s if_) */
 	struct intr_frame *parent_if;
 	bool succ = true;
@@ -258,12 +258,14 @@ __do_fork (void *aux) {
 	 * TODO:       from the fork() until this function successfully duplicates
 	 * TODO:       the resources of parent.*/
 	//current(child)'s fd table : current->fd_table, parent's fd table : parent->fd_table.
+	printf("FD table copy start.\n", );
 	struct list_elem* e;
 	for(e = list_begin(&parent->fd_table); e != list_end(&parent->fd_table); e = list_next(e)){
 		struct fd* parent_fd = list_entry(e, struct fd, elem);
 		//USE : struct file* file_duplicate (struct file *file)
 		struct file* copy = file_duplicate(parent_fd->file);
 		if(copy == NULL){
+			printf("file copy fail!\n");
 			goto error;
 		}
 		//add this copy to the current(child)'s fd table.
@@ -281,6 +283,7 @@ __do_fork (void *aux) {
 		do_iret (&if_);
 	
 error:
+	printf("somehow, fork failed.\n");
 	thread_exit ();
 }
 
