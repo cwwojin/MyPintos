@@ -436,7 +436,7 @@ process_exit (void) {
 		palloc_free_page(fid);
 	}
 	//child list.
-	struct list_elem* e;
+	//struct list_elem* e;
 	while(!list_empty(&current->child_list)){
 		e = list_pop_front(&current->fd_table);
 		struct pcb* pcb = list_entry(e, struct pcb, elem);
