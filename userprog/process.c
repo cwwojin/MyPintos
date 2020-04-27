@@ -397,7 +397,7 @@ process_exit (void) {
 		struct pcb* pcb = list_entry(e, struct pcb, elem);
 		palloc_free_page(pcb);
 	}
-	current->exited = true;
+	current->pcb->exited = true;
 	//save exit status to pcb.
 	current->pcb->exit_status = current->exit_status;
 	//printf("child exit status : %d -> pcb exit status : %d\n", current->exit_status, current->pcb->exit_status);
