@@ -296,6 +296,8 @@ __do_fork (void *aux) {
 	
 error:
 	printf("somehow, fork failed.\n");
+	//let parent return from fork().
+	sema_up(&parent->load_sema);
 	thread_exit ();
 }
 
