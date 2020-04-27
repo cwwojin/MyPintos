@@ -43,7 +43,7 @@ int process_add_file(struct file* file){
 	struct fd* file_desc = malloc(sizeof(struct fd));
 	//if memory allocation failed : return -1.
 	if(file_desc == NULL){
-		printf("Thread [%d] mem allocation failed at fd number : %d\n", current->tid, current->max_fd);
+		//printf("Thread [%d] mem allocation failed at fd number : %d\n", current->tid, current->max_fd);
 		file_close(file);
 		return -1;
 	}
@@ -186,7 +186,7 @@ process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 	if(child_pcb->exit_status == -1){
 		printf("at parent : %d, child : %d, fork fail due to resource duplication fail.\n", current->tid, child_pcb->tid);
 		int wait = process_wait(child);
-		printf("child exited with status %d, and pcb is freed.\n", wait);
+		//printf("child exited with status %d, and pcb is freed.\n", wait);
 		return TID_ERROR;
 	}
 	
@@ -243,7 +243,7 @@ __do_fork (void *aux) {
 	struct intr_frame if_;
 	struct thread *parent = (struct thread *) aux;
 	struct thread *current = thread_current ();
-	printf("do_fork start, parent : %d, child : %d\n", parent->tid, current->tid);
+	//printf("do_fork start, parent : %d, child : %d\n", parent->tid, current->tid);
 	/* TODO: somehow pass the parent_if. (i.e. process_fork()'s if_) */
 	struct intr_frame *parent_if;
 	bool succ = true;
@@ -275,20 +275,20 @@ __do_fork (void *aux) {
 	 * TODO:       from the fork() until this function successfully duplicates
 	 * TODO:       the resources of parent.*/
 	//current(child)'s fd table : current->fd_table, parent's fd table : parent->fd_table.
-	printf("FD table copy start.\n");
+	//printf("FD table copy start.\n");
 	struct list_elem* e;
 	for(e = list_begin(&parent->fd_table); e != list_end(&parent->fd_table); e = list_next(e)){
 		struct fd* parent_fd = list_entry(e, struct fd, elem);
 		//USE : struct file* file_duplicate (struct file *file)
 		struct file* copy = file_duplicate(parent_fd->file);
 		if(copy == NULL){
-			printf("file copy fail!\n");
+			//printf("file copy fail!\n");
 			goto error;
 		}
 		//add this copy to the current(child)'s fd table.
 		int open = process_add_file(copy);
 		if(open == -1){
-			printf("fd allocation failed!!\n");
+			//printf("fd allocation failed!!\n");
 			goto error;
 		}
 	}
@@ -304,7 +304,7 @@ __do_fork (void *aux) {
 		do_iret (&if_);
 	
 error:
-	printf("somehow, fork failed.\n");
+	//printf("somehow, fork failed.\n");
 	current->pcb->exit_status = -1;
 	//let parent return from fork().
 	sema_up(&parent->load_sema);
