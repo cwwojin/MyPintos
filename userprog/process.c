@@ -131,26 +131,6 @@ struct pcb* get_child_process(int pid){
 	
 	return result;
 }
-
-/*
-void remove_child_process(struct thread* cp){
-	//remove "cp" from child list, and free memory.
-	struct thread* current = thread_current();
-	struct list_elem* e;
-	
-	for (e = list_begin (&current->child_list); e != list_end (&current->child_list); e = list_remove (e)){
-		struct thread* child = list_entry(e, struct thread, child_elem);
-		if(child == cp){
-			//palloc_free_page(child);
-			//remove this entry E from the list.
-			break;
-		}
-		else{
-			list_push_back(&current->child_list, &child->child_elem);
-		}
-	}
-}
-*/
 /* ENDOFNEWCODE */
 
 
@@ -386,7 +366,6 @@ process_wait (tid_t child_tid UNUSED) {
 	/* NEWCODE */
 	//1. search for the child with "child_tid".
 	struct thread* current = thread_current();
-	//struct thread* child;
 	struct pcb* child;
 	int child_exitstatus;
 	child = get_child_process(child_tid);
@@ -405,13 +384,9 @@ process_wait (tid_t child_tid UNUSED) {
 	}
 	
 	child_exitstatus = child->exit_status;
-	//child_exitstatus = current->flag;
-	
 	//remove from child list & DESTROY child.
-	//printf("going to removd & destroy child.");
 	list_remove(&child->elem);
 	palloc_free_page(child);
-	//printf("child removal complete.\n");
 	/* ENDOFNEWCODE */
 	
 	return child_exitstatus;
@@ -448,13 +423,7 @@ process_exit (void) {
 	current->exited = true;
 	//save exit status to pcb.
 	current->pcb->exit_status = current->exit_status;
-	printf("child exit status : %d -> pcb exit status : %d\n", current->exit_status, current->pcb->exit_status);
-	/*
-	if(current->parent != NULL){
-		current->parent->flag = current->exit_status;
-		//printf("child exit status : %d -> parent flag : %d\n", current->exit_status, current->parent->flag);
-	}
-	*/
+	//printf("child exit status : %d -> pcb exit status : %d\n", current->exit_status, current->pcb->exit_status);
 	sema_up(&current->exit_sema);
 	
 	//Allow write to executable.
