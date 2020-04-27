@@ -114,13 +114,13 @@ struct thread {
 	struct list child_list;		/* List of children */
 	struct list_elem child_elem;
 	/* PCB info. */
-	bool exited;
-	bool waiting;
+	//bool exited;
+	//bool waiting;
 	int exit_status;		/* Exit Status */
 	
 	struct pcb* pcb;		/* Thread & PCB can point to each other. */
 	
-	int flag;
+	//int flag;
 	struct semaphore exit_sema;	/* Semaphore */
 	struct semaphore load_sema;
 	struct file* executable;	/* Deny Writes to Executables. */
