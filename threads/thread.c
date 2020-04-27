@@ -239,20 +239,21 @@ thread_create (const char *name, int priority,
 	
 #ifdef USERPROG
 	/* NEWCODE for process hierarchy. */
-	//printf("now creating child thread..\n");
 	t->parent = current;
+	/* Make & Initialize a pcb for the child. */
+	struct pcb* t_pcb = palloc_get_page(0);
+	t_pcb->thread = t;
+	t_pcb->tid = t->tid;
+	t_pcb->exited = false;
+	t_pcb->waiting = false;
+	t->pcb = t_pcb;
 	//add t to current thread's child_list.
-	list_push_back(&current->child_list, &t->child_elem);
+	//list_push_back(&current->child_list, &t->child_elem);
+	list_push_back(&current->child_list, &t_pcb->elem);
 #endif
 	
 	/* Add to run queue. */
 	thread_unblock (t);
-	/*
-	if(current->f_fork != NULL){
-		printf("this is a fork call.\n");
-		sema_down(&current->load_sema);
-	}
-	*/
 	
 	/* NEWCODE */
 	//reschedule if new thread is higher priority than current one
@@ -755,9 +756,8 @@ do_schedule(int status) {
 	while (!list_empty (&destruction_req)) {
 		struct thread *victim =
 			list_entry (list_pop_front (&destruction_req), struct thread, elem);
-		//printf("I am going to destroy thread : %d\n", victim->tid);
 #ifdef USERPROG
-		list_remove(&victim->child_elem);
+		//list_remove(&victim->child_elem);
 #endif
 		palloc_free_page(victim);
 	}
