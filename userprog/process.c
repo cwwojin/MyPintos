@@ -277,7 +277,11 @@ __do_fork (void *aux) {
 			goto error;
 		}
 		//add this copy to the current(child)'s fd table.
-		process_add_file(copy);
+		int open = process_add_file(copy);
+		if(open == -1){
+			printf("fd allocation failed!!\n");
+			goto error;
+		}
 	}
 	
 	//let parent return from fork().
