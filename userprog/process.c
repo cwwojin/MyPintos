@@ -367,7 +367,8 @@ process_wait (tid_t child_tid UNUSED) {
 	child_exitstatus = child->exit_status;
 	//remove from child list & DESTROY child.
 	list_remove(&child->elem);
-	palloc_free_page(child);
+	//palloc_free_page(child);
+	free(child);
 	/* ENDOFNEWCODE */
 	
 	return child_exitstatus;
@@ -396,7 +397,8 @@ process_exit (void) {
 	while(!list_empty(&current->child_list)){
 		e = list_pop_front(&current->fd_table);
 		struct pcb* pcb = list_entry(e, struct pcb, elem);
-		palloc_free_page(pcb);
+		//palloc_free_page(pcb);
+		free(pcb);
 	}
 	current->pcb->exited = true;
 	//save exit status to pcb.
