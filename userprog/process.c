@@ -95,25 +95,6 @@ void process_close_file(int fd){
 }
 
 /* Additional functions for Process Hierarchy. */
-/*
-struct thread* get_child_process(int pid){
-	//look for a process with tid_t "pid". if none, return NULL.
-	struct thread* current = thread_current();
-	struct thread* result = NULL;
-	struct list_elem* e;
-	
-	//search through child list.
-	for (e = list_begin (&current->child_list); e != list_end (&current->child_list); e = list_next (e)){
-		struct thread* child = list_entry(e, struct thread, child_elem);
-		if(child->tid == pid){
-			result = child;
-			break;
-		}
-	}
-	
-	return result;
-}
-*/
 struct pcb* get_child_process(int pid){
 	//look for a process with tid_t "pid". if none, return NULL.
 	struct thread* current = thread_current();
@@ -312,7 +293,7 @@ process_exec (void *f_name) {
 	/* NEWCODE : if file_name is a user addr, then save its pa. */
 	if(!is_kernel_vaddr(file_name)){
 		void* file_pa = pml4_get_page(thread_current()->pml4, pg_round_down(file_name));
-		//printf("file name is at user space, kernel virtual addr = %X\n", (int) file_pa);
+		printf("file name is at user space, kernel virtual addr = %X\n", (int) file_pa);
 		file_name = file_pa;
 	}
 	
@@ -320,7 +301,6 @@ process_exec (void *f_name) {
 	//tokenizing file name.
 	char* ret_ptr;
 	file_name = strtok_r(file_name, " ", &ret_ptr);
-	//printf("exec file : %s\n", file_name);
 	/* ENDOFNEWCODE */
 
 	/* We cannot use the intr_frame in the thread structure.
@@ -417,9 +397,6 @@ process_exit (void) {
 		struct pcb* pcb = list_entry(e, struct pcb, elem);
 		palloc_free_page(pcb);
 	}
-	//printf("children cleanup complete.\n");
-	
-	//signal parent with sema.
 	current->exited = true;
 	//save exit status to pcb.
 	current->pcb->exit_status = current->exit_status;
