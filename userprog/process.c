@@ -181,6 +181,13 @@ process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 	if(child == TID_ERROR) return child;
 	
 	sema_down(&current->load_sema);
+	//if the child succeeded at resource duplication, then its a success. Otherwise, it would have exited (-1).
+	struct pcb* child_pcb = get_child_process(child);
+	if(child_pcb->exit_status == -1){
+		printf("fork fail due to resource duplication fail.\n");
+		return TID_ERROR;
+	}
+	
 	current->f_fork = NULL;
 	return child;
 }
@@ -298,7 +305,7 @@ error:
 	printf("somehow, fork failed.\n");
 	//let parent return from fork().
 	sema_up(&parent->load_sema);
-	exit(1);
+	exit(-1);
 	//thread_exit ();
 }
 
