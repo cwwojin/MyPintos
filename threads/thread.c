@@ -625,9 +625,6 @@ init_thread (struct thread *t, const char *name, int priority) {
 	list_init(&t->child_list);
 	t->executable = NULL;
 	t->f_fork = NULL;
-	t->flag = 0;
-	t->exited = false;
-	t->waiting = false;
 	t->exec = false;
 	sema_init(&t->exit_sema, 0);
 	sema_init(&t->load_sema, 0);
