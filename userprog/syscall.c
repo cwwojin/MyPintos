@@ -294,7 +294,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 	check_address((void*)f->rsp);
 	//get the system call number from "rax".
 	syscall_num = (int) f->R.rax;
-	printf("systemcall number : %d\n", syscall_num);
+	//printf("systemcall number : %d\n", syscall_num);
 	switch(syscall_num){
 		case SYS_HALT:
 		{
