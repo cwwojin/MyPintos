@@ -185,7 +185,7 @@ process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 	struct pcb* child_pcb = get_child_process(child);
 	if(child_pcb->exit_status == -1){
 		printf("at parent : %d, child : %d, fork fail due to resource duplication fail.\n", current->tid, child_pcb->tid);
-		int wait = wait(child);
+		int wait = process_wait(child);
 		printf("child exited with status %d, and pcb is freed.", wait);
 		return TID_ERROR;
 	}
