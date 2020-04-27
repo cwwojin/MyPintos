@@ -455,7 +455,7 @@ process_exit (void) {
 		//printf("child exit status : %d -> parent flag : %d\n", current->exit_status, current->parent->flag);
 	}
 	*/
-	sema_up(&current->thread->exit_sema);
+	sema_up(&current->exit_sema);
 	
 	//Allow write to executable.
 	if(current->executable != NULL) {
