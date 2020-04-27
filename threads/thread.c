@@ -242,6 +242,7 @@ thread_create (const char *name, int priority,
 #ifdef USERPROG
 	/* NEWCODE for process hierarchy. */
 	t->parent = current;
+	printf("trying to create thread %d..\n", t->tid);
 	/* Make & Initialize a pcb for the child. */
 	//struct pcb* t_pcb = palloc_get_page(0);
 	struct pcb* t_pcb = malloc(sizeof(struct pcb));
