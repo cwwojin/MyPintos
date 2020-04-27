@@ -298,7 +298,8 @@ error:
 	printf("somehow, fork failed.\n");
 	//let parent return from fork().
 	sema_up(&parent->load_sema);
-	thread_exit ();
+	exit(-1);
+	//thread_exit ();
 }
 
 /* Switch the current execution context to the f_name.
