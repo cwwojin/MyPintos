@@ -176,20 +176,21 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 	thread_tick ();
 	/* NEWCODE FOR MLFQS SCHEDULER!!*/
 	if(thread_mlfqs){
+		printf("current thread : %d\n", thread_current()->tid);
 		//1.EVERY INTERRUPT -> increment recent_cpu.
 		mlfqs_increment();
 		//2.Every second -> recalculate load_avg -> recent_cpu.
 		if(ticks % TIMER_FREQ == 0){
 			printf("calculating load avg : %d seconds..\n", (int)(ticks / TIMER_FREQ));
 			mlfqs_load_avg();
-			//printf("calculating recent_cpu for all threads..\n");
+			printf("calculating recent_cpu for all threads..\n");
 			mlfqs_recalc();
 		}
 		//3.Every 4 ticks -> recalculate every thread's priority.
 		if(ticks % 4 == 0){
-			//mlfqs_recalc_threads();
-			//printf("calculating all thread priority..\n");
-			mlfqs_priority(thread_current());
+			printf("calculating all thread priority..\n");
+			mlfqs_recalc_threads();
+			//mlfqs_priority(thread_current());
 		}
 	}
 	/* NEWCODE */
