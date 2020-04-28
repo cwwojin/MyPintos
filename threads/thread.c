@@ -311,21 +311,6 @@ thread_unblock (struct thread *t) {
 	
 	/* New Code : Delete t from block_list. */
 	list_remove(&t->block_elem);
-	/*
-	struct list_elem* i;
-	struct thread* th;
-	for(i = list_begin(&block_list); i != list_end(&block_list); i = list_remove(i)){
-		th = list_entry(i,struct thread, block_elem);
-		if(th == t){	//found the entry
-			break;
-		}
-		else{
-			list_push_back(&block_list, &th->block_elem);
-		}
-	}
-	*/
-	/* ENDOFNEWCODE */
-	
 	
 	if (thread_current() != idle_thread && thread_current()->priority < t->priority)
     		thread_yield();
@@ -481,7 +466,7 @@ void mlfqs_priority(struct thread *t){
 	//1. Check if t is idle_thread or not.
 	if(t == idle_thread) return;
 	//2. Recalculate priority based on equation, use fixed point for recent_cpu.
-	t->priority = PRI_MAX - fp_to_int_round(div_mixed(t->recent_cpu, 4)) - (t->nice * 2);
+	t->priority = PRI_MAX - fp_to_int(div_mixed(t->recent_cpu, 4)) - (t->nice * 2);
 }
 
 void mlfqs_recent_cpu(struct thread *t){
@@ -490,7 +475,8 @@ void mlfqs_recent_cpu(struct thread *t){
 	if(t == idle_thread) return;
 	//2. Calculate recent_cpu based on equation, use fixed point for load_avg & recent_cpu.
 	int load2 = mult_mixed(load_avg, 2);
-	int left = mult_fp(t->recent_cpu, div_fp(load2, add_mixed(load2, 1)));
+	int load3 = div_fp(load2, add_mixed(load2, 1));
+	int left = mult_fp(t->recent_cpu, load3);
 	//This should be a FP number, not regular int!!
 	int new_recent = add_fp(left, int_to_fp(t->nice));
 	t->recent_cpu = new_recent;
@@ -525,25 +511,45 @@ void mlfqs_increment(void){
 }
 
 void mlfqs_recalc(void){
-	//This is a function to calculate ALL threads' recent_cpu & priority values.
+	//This is a function to calculate ALL threads' recent_cpu.
 	//"All threads" = running / ready / blocked.
-	//running -> get thread_current()
 	struct thread* running = thread_current();
 	mlfqs_recent_cpu(running);
-	mlfqs_priority(running);
-	//ready -> all stored in ready_list
+	//mlfqs_priority(running);
 	struct list_elem* i;
 	//struct thread* th;
 	for(i = list_begin(&ready_list); i != list_end(&ready_list); i = list_next(i)){
 		struct thread* th = list_entry(i, struct thread, elem);
 		mlfqs_recent_cpu(th);
-		mlfqs_priority(th);
+		//mlfqs_priority(th);
 	}
 	//blocked -> all stored in block_list
 	struct list_elem* e;
 	for(e = list_begin(&block_list); e != list_end(&block_list); e = list_next(e)){
 		struct thread* th = list_entry(e, struct thread, block_elem);
 		mlfqs_recent_cpu(th);
+		//mlfqs_priority(th);
+	}
+}
+
+void mlfqs_recalc_threads(void){
+	//This is a function to calculate ALL threads' priority values.
+	//"All threads" = running / ready / blocked.
+	struct thread* running = thread_current();
+	//mlfqs_recent_cpu(running);
+	mlfqs_priority(running);
+	struct list_elem* i;
+	//struct thread* th;
+	for(i = list_begin(&ready_list); i != list_end(&ready_list); i = list_next(i)){
+		struct thread* th = list_entry(i, struct thread, elem);
+		//mlfqs_recent_cpu(th);
+		mlfqs_priority(th);
+	}
+	//blocked -> all stored in block_list
+	struct list_elem* e;
+	for(e = list_begin(&block_list); e != list_end(&block_list); e = list_next(e)){
+		struct thread* th = list_entry(e, struct thread, block_elem);
+		//mlfqs_recent_cpu(th);
 		mlfqs_priority(th);
 	}
 }
