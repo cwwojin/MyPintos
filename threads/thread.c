@@ -310,7 +310,7 @@ thread_unblock (struct thread *t) {
 	t->status = THREAD_READY;
 	
 	/* New Code : Delete t from block_list. */
-	list_remove(t->block_elem);
+	list_remove(&t->block_elem);
 	/*
 	struct list_elem* i;
 	struct thread* th;
