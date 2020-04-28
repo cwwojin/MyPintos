@@ -310,11 +310,10 @@ thread_unblock (struct thread *t) {
 	t->status = THREAD_READY;
 	
 	/* New Code : Delete t from block_list. */
-	
+	list_remove(t->block_elem);
+	/*
 	struct list_elem* i;
-	//struct list_elem* e = NULL;
 	struct thread* th;
-	//i = list_begin(&block_list);
 	for(i = list_begin(&block_list); i != list_end(&block_list); i = list_remove(i)){
 		th = list_entry(i,struct thread, block_elem);
 		if(th == t){	//found the entry
@@ -324,8 +323,7 @@ thread_unblock (struct thread *t) {
 			list_push_back(&block_list, &th->block_elem);
 		}
 	}
-	//if(e != NULL) list_remove(e);
-	
+	*/
 	/* ENDOFNEWCODE */
 	
 	
