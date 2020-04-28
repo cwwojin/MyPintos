@@ -148,7 +148,7 @@ void
 timer_print_stats (void) {
 	printf ("Timer: %"PRId64" ticks\n", timer_ticks ());
 }
-
+
 
 
 /* Alarm function. */
@@ -183,15 +183,15 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 	if(thread_mlfqs){
 		//1.EVERY INTERRUPT -> increment recent_cpu.
 		mlfqs_increment();
-		//2.Every 4 ticks -> recalculate every thread's priority.
-		if(ticks % 4 == 0){
-			mlfqs_recalc_threads();
-			//mlfqs_priority(thread_current());
-		}
-		//3.Every second -> recalc!
+		//2.Every second -> recalculate load_avg -> recent_cpu.
 		if(ticks % TIMER_FREQ == 0){
 			mlfqs_load_avg();
 			mlfqs_recalc();
+		}
+		//3.Every 4 ticks -> recalculate every thread's priority.
+		if(ticks % 4 == 0){
+			mlfqs_recalc_threads();
+			//mlfqs_priority(thread_current());
 		}
 	}
 	
