@@ -173,19 +173,14 @@ static void timer_alarm(void){
 static void
 timer_interrupt (struct intr_frame *args UNUSED) {
 	ticks++;
-	/* NEWCODE */
-	//call alarm function.
-	//timer_alarm();
-	/* ENDOFNEWCODE */
 	thread_tick ();
-	
 	/* NEWCODE FOR MLFQS SCHEDULER!!*/
 	if(thread_mlfqs){
 		//1.EVERY INTERRUPT -> increment recent_cpu.
 		//mlfqs_increment();
 		//2.Every second -> recalculate load_avg -> recent_cpu.
 		if(ticks % TIMER_FREQ == 0){
-			printf("calculating load avg : %d seconds..\n", (int)(ticks / TIMER_FREQ));
+			//printf("calculating load avg : %d seconds..\n", (int)(ticks / TIMER_FREQ));
 			mlfqs_load_avg();
 			//mlfqs_recalc();
 		}
@@ -195,11 +190,9 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 			//mlfqs_priority(thread_current());
 		}
 	}
-	
 	/* NEWCODE */
 	//call alarm function.
 	timer_alarm();
-	
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
