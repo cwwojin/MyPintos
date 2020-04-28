@@ -175,7 +175,7 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 	ticks++;
 	/* NEWCODE */
 	//call alarm function.
-	timer_alarm();
+	//timer_alarm();
 	/* ENDOFNEWCODE */
 	thread_tick ();
 	
@@ -194,6 +194,10 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 			//mlfqs_priority(thread_current());
 		}
 	}
+	
+	/* NEWCODE */
+	//call alarm function.
+	timer_alarm();
 	
 }
 
