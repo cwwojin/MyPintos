@@ -184,7 +184,7 @@ process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 	//if the child succeeded at resource duplication, then its a success. Otherwise, it would have exited (-1).
 	struct pcb* child_pcb = get_child_process(child);
 	if(child_pcb->exit_status == -1){
-		printf("at parent : %d, child : %d, fork fail due to resource duplication fail.\n", current->tid, child_pcb->tid);
+		//printf("at parent : %d, child : %d, fork fail due to resource duplication fail.\n", current->tid, child_pcb->tid);
 		int wait = process_wait(child);
 		//printf("child exited with status %d, and pcb is freed.\n", wait);
 		return TID_ERROR;
@@ -243,7 +243,6 @@ __do_fork (void *aux) {
 	struct intr_frame if_;
 	struct thread *parent = (struct thread *) aux;
 	struct thread *current = thread_current ();
-	//printf("do_fork start, parent : %d, child : %d\n", parent->tid, current->tid);
 	/* TODO: somehow pass the parent_if. (i.e. process_fork()'s if_) */
 	struct intr_frame *parent_if;
 	bool succ = true;
@@ -275,7 +274,6 @@ __do_fork (void *aux) {
 	 * TODO:       from the fork() until this function successfully duplicates
 	 * TODO:       the resources of parent.*/
 	//current(child)'s fd table : current->fd_table, parent's fd table : parent->fd_table.
-	//printf("FD table copy start.\n");
 	struct list_elem* e;
 	for(e = list_begin(&parent->fd_table); e != list_end(&parent->fd_table); e = list_next(e)){
 		struct fd* parent_fd = list_entry(e, struct fd, elem);
@@ -304,9 +302,7 @@ __do_fork (void *aux) {
 		do_iret (&if_);
 	
 error:
-	//printf("somehow, fork failed.\n");
 	current->pcb->exit_status = -1;
-	//let parent return from fork().
 	sema_up(&parent->load_sema);
 	exit(-1);
 	//thread_exit ();
