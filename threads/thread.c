@@ -24,7 +24,7 @@
 #define LOAD_AVG_DEFAULT 0
 
 //this is the load_avg value!!
-int load_avg = LOAD_AVG_DEFAULT;
+int load_avg;
 
 
 /* Random value for struct thread's `magic' member.
