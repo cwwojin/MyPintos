@@ -183,9 +183,10 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 	if(thread_mlfqs){
 		//1.EVERY INTERRUPT -> increment recent_cpu.
 		mlfqs_increment();
-		//2.Every 4 ticks -> recalculate current thread priority.
+		//2.Every 4 ticks -> recalculate every thread's priority.
 		if(ticks % 4 == 0){
-			mlfqs_priority(thread_current());
+			mlfqs_recalc_threads();
+			//mlfqs_priority(thread_current());
 		}
 		//3.Every second -> recalc!
 		if(ticks % TIMER_FREQ == 0){
