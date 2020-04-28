@@ -466,7 +466,11 @@ void mlfqs_priority(struct thread *t){
 	//1. Check if t is idle_thread or not.
 	if(t == idle_thread) return;
 	//2. Recalculate priority based on equation, use fixed point for recent_cpu.
-	t->priority = PRI_MAX - fp_to_int(div_mixed(t->recent_cpu, 4)) - (t->nice * 2);
+	//t->priority = PRI_MAX - fp_to_int(div_mixed(t->recent_cpu, 4)) - (t->nice * 2);
+	
+	int left = sub_fp(int_to_fp(PRI_MAX), div_mixed(t->recent_cpu, 4));
+	int new_priority = sub_mixed(left, (t->nice * 2));
+	t->priority = fp_to_int(new_priority);
 }
 
 void mlfqs_recent_cpu(struct thread *t){
