@@ -243,8 +243,8 @@ thread_create (const char *name, int priority,
 	/* NEWCODE for process hierarchy. */
 	t->parent = current;
 	/* Make & Initialize a pcb for the child. */
-	//struct pcb* t_pcb = palloc_get_page(0);
-	struct pcb* t_pcb = malloc(sizeof(struct pcb));
+	struct pcb* t_pcb = palloc_get_page(0);
+	//struct pcb* t_pcb = malloc(sizeof(struct pcb));
 	if(t_pcb == NULL){
 		//memory allocation failed for pcb!
 		//printf("at creating thread %d, memory allocation for pcb failed.\n", t->tid);
