@@ -280,6 +280,7 @@ thread_create (const char *name, int priority,
    primitives in synch.h. */
 void
 thread_block (void) {
+	ASSERT (thread_current() != idle_thread);
 	ASSERT (!intr_context ());
 	ASSERT (intr_get_level () == INTR_OFF);
 	
