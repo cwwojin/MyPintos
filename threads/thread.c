@@ -132,6 +132,7 @@ thread_init (void) {
 	init_thread (initial_thread, "main", PRI_DEFAULT);
 	initial_thread->status = THREAD_RUNNING;
 	initial_thread->tid = allocate_tid ();
+	initial_thread->alarm_ticks = 0;	//init thread's alarmtick value.
 }
 
 /* Starts preemptive thread scheduling by enabling interrupts.
