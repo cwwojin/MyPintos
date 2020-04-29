@@ -118,6 +118,7 @@ timer_sleep (int64_t ticks) {
 	curr->alarm_ticks = start + ticks;
 	list_push_back (&asleep_list, &curr->elem);
 	printf("thread %d is going to sleep, instead of thread %d.\n", curr->tid, thread_current()->tid);
+	//thread_current()->status = THREAD_BLOCKED;
 	thread_block();
 	intr_set_level (old_level);
 	/* ENDOFNEWCODE */
@@ -185,7 +186,7 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 	if(thread_mlfqs){
 		printf("current thread : %d\n", thread_current()->tid);
 		//1.EVERY INTERRUPT -> increment recent_cpu.
-		mlfqs_increment();
+		//mlfqs_increment();
 		printf("incremented recent cpu\n");
 		//2.Every second -> recalculate load_avg -> recent_cpu.
 		if(ticks % TIMER_FREQ == 0){
