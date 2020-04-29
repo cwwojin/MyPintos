@@ -183,6 +183,7 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 		printf("current thread : %d\n", thread_current()->tid);
 		//1.EVERY INTERRUPT -> increment recent_cpu.
 		mlfqs_increment();
+		printf("incremented recent cpu\n");
 		//2.Every second -> recalculate load_avg -> recent_cpu.
 		if(ticks % TIMER_FREQ == 0){
 			printf("calculating load avg : %d seconds..\n", (int)(ticks / TIMER_FREQ));
