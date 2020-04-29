@@ -547,9 +547,9 @@ static void setup_argument(const char *file_name, struct intr_frame *if_){
 	int argc = 0;
 	char* ret_ptr;
 	char* next_ptr;
-	char command[128];
-	strlcpy(command, file_name, 128);
-	char* argv[10];
+	char command[32];
+	strlcpy(command, file_name, 32);
+	char* argv[32];
 	
 	ret_ptr = strtok_r(command, " ", &next_ptr);
 	while(ret_ptr){
