@@ -105,7 +105,7 @@ timer_sleep (int64_t ticks) {
 	enum intr_level old_level;
 
 	ASSERT (!intr_context ());
-	//ASSERT (intr_get_level () == INTR_ON);
+	ASSERT (intr_get_level () == INTR_ON);
 	old_level = intr_disable ();
 	
 	int64_t start = timer_ticks ();
@@ -117,6 +117,7 @@ timer_sleep (int64_t ticks) {
 	//ASSERT(curr != idle_thread());
 	curr->alarm_ticks = start + ticks;
 	list_push_back (&asleep_list, &curr->elem);
+	printf("thread %d is going to sleep, instead of thread %d.\n", curr->tid, thread_current()->tid);
 	thread_block();
 	intr_set_level (old_level);
 	/* ENDOFNEWCODE */
