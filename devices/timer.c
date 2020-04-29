@@ -147,7 +147,7 @@ timer_print_stats (void) {
 /* Alarm function. */
 static void timer_alarm(void){
 	//iterate through asleep_list, wake up any threads that are past "alarm time".
-	intr_yield_on_return();
+	//intr_yield_on_return();
 	
 	struct thread* th;
 	struct list_elem* i;
