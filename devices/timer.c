@@ -114,7 +114,7 @@ timer_sleep (int64_t ticks) {
 	/* NEWCODE */
 	//Same as thread_yield(), but put thread in asleep_list.
 	struct thread *curr = thread_current ();
-	
+	//ASSERT(curr != idle_thread());
 	curr->alarm_ticks = start + ticks;
 	list_push_back (&asleep_list, &curr->elem);
 	thread_block();
@@ -179,6 +179,8 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 	ticks++;
 	thread_tick ();
 	/* NEWCODE FOR MLFQS SCHEDULER!!*/
+	enum intr_level old_level;
+	old_level = intr_disable ();
 	if(thread_mlfqs){
 		printf("current thread : %d\n", thread_current()->tid);
 		//1.EVERY INTERRUPT -> increment recent_cpu.
@@ -198,6 +200,7 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 			//mlfqs_priority(thread_current());
 		}
 	}
+	intr_set_level (old_level);
 	/* NEWCODE */
 	//call alarm function.
 	timer_alarm();
