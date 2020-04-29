@@ -285,9 +285,9 @@ thread_block (void) {
 	
 	//New Code : add thread to block_list.
 	list_push_back(&block_list, &thread_current()->block_elem);
-	
+	struct thread* current = thread_current();
 	thread_current ()->status = THREAD_BLOCKED;
-	printf("thread %d is blocked.", thread_current()->tid);
+	printf("thread %d is blocked.", current->tid);
 	schedule ();
 }
 
