@@ -280,6 +280,12 @@ tid_t fork (const char *thread_name, struct intr_frame* if_){
 	result = process_fork(thread_name, if_);
 	return result;
 }
+
+//PROJECT2 EXTRA - DUP2 : Duplicate a file descriptor.
+int dup2(oldfd, newfd){
+	int result = -1;
+	return result;
+}
 /* ENDOFNEWCODE*/
 
 
@@ -459,6 +465,19 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			close(fd);
 			break;
 		}/* Close a file. */
+		case SYS_DUP2:
+		{
+			//2 arguments. oldfd, newfd.
+			int oldfd;
+			int newfd;
+			int result;
+			oldfd = f->R.rdi;
+			newfd = f->R.rsi;
+			
+			result = dup2(oldfd, newfd);
+			f->R.rax = (uint64_t) result;
+			break;
+		}/* Duplicate a file descriptor. EXTRA!!! */
 		
 		default:
 		{
