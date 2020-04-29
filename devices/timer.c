@@ -180,10 +180,10 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 		//printf("incremented recent cpu\n");
 		//2.Every second -> recalculate load_avg -> recent_cpu.
 		if(ticks % TIMER_FREQ == 0){
-			printf("calculating load avg : %d seconds..\n", (int)(ticks / TIMER_FREQ));
+			//printf("calculating load avg : %d seconds..\n", (int)(ticks / TIMER_FREQ));
 			mlfqs_load_avg();
-			printf("calculating recent_cpu for all threads..\n");
-			mlfqs_recalc();
+			//printf("calculating recent_cpu for all threads..\n");
+			//mlfqs_recalc();
 		}
 		//3.Every 4 ticks -> recalculate every thread's priority.
 		if(ticks % 4 == 0){
