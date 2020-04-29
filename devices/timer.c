@@ -102,17 +102,19 @@ timer_elapsed (int64_t then) {
 /* Suspends execution for approximately TICKS timer ticks. */
 void
 timer_sleep (int64_t ticks) {
+	enum intr_level old_level;
+
+	ASSERT (!intr_context ());
+	//ASSERT (intr_get_level () == INTR_ON);
+	old_level = intr_disable ();
+	
 	int64_t start = timer_ticks ();
 
 	//ASSERT (intr_get_level () == INTR_ON);
 	/* NEWCODE */
 	//Same as thread_yield(), but put thread in asleep_list.
 	struct thread *curr = thread_current ();
-	enum intr_level old_level;
-
-	ASSERT (!intr_context ());
-	//ASSERT (intr_get_level () == INTR_ON);
-	old_level = intr_disable ();
+	
 	curr->alarm_ticks = start + ticks;
 	list_push_back (&asleep_list, &curr->elem);
 	thread_block();
