@@ -113,7 +113,6 @@ timer_sleep (int64_t ticks) {
 	struct thread *curr = thread_current ();
 	curr->alarm_ticks = start + ticks;
 	list_push_back (&asleep_list, &curr->elem);
-	printf("thread %d is going to sleep, instead of thread %d.\n", curr->tid, thread_current()->tid);
 	thread_block();
 	intr_set_level (old_level);
 	/* ENDOFNEWCODE */
