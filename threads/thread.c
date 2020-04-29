@@ -287,6 +287,7 @@ thread_block (void) {
 	list_push_back(&block_list, &thread_current()->block_elem);
 	
 	thread_current ()->status = THREAD_BLOCKED;
+	printf("thread %d is blocked.", thread_current()->tid);
 	schedule ();
 }
 
