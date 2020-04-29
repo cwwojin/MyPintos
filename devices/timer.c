@@ -103,30 +103,20 @@ timer_elapsed (int64_t then) {
 void
 timer_sleep (int64_t ticks) {
 	enum intr_level old_level;
-
 	ASSERT (!intr_context ());
 	ASSERT (intr_get_level () == INTR_ON);
-	old_level = intr_disable ();
-	
+	old_level = intr_disable ();	
 	int64_t start = timer_ticks ();
 
-	//ASSERT (intr_get_level () == INTR_ON);
 	/* NEWCODE */
 	//Same as thread_yield(), but put thread in asleep_list.
 	struct thread *curr = thread_current ();
-	//ASSERT(curr != idle_thread());
 	curr->alarm_ticks = start + ticks;
 	list_push_back (&asleep_list, &curr->elem);
 	printf("thread %d is going to sleep, instead of thread %d.\n", curr->tid, thread_current()->tid);
-	//thread_current()->status = THREAD_BLOCKED;
 	thread_block();
 	intr_set_level (old_level);
 	/* ENDOFNEWCODE */
-	
-	/*
-	while (timer_elapsed (start) < ticks)
-		thread_yield ();
-	*/
 }
 
 /* Suspends execution for approximately MS milliseconds. */
@@ -184,16 +174,16 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 	enum intr_level old_level;
 	old_level = intr_disable ();
 	if(thread_mlfqs){
-		printf("current thread : %d\n", thread_current()->tid);
+		//printf("current thread : %d\n", thread_current()->tid);
 		//1.EVERY INTERRUPT -> increment recent_cpu.
 		mlfqs_increment();
-		printf("incremented recent cpu\n");
+		//printf("incremented recent cpu\n");
 		//2.Every second -> recalculate load_avg -> recent_cpu.
 		if(ticks % TIMER_FREQ == 0){
 			printf("calculating load avg : %d seconds..\n", (int)(ticks / TIMER_FREQ));
 			mlfqs_load_avg();
-			//printf("calculating recent_cpu for all threads..\n");
-			//mlfqs_recalc();
+			printf("calculating recent_cpu for all threads..\n");
+			mlfqs_recalc();
 		}
 		//3.Every 4 ticks -> recalculate every thread's priority.
 		if(ticks % 4 == 0){
