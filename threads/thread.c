@@ -43,6 +43,8 @@ static struct list ready_list;
 /* NEWCODE!! : List of BLOCKED threads. Add @ block(), remove @ unblock() */
 static struct list block_list;
 
+static struct list all_list;
+
 /* Idle thread. */
 static struct thread *idle_thread;
 
@@ -262,6 +264,7 @@ thread_create (const char *name, int priority,
 #endif
 	
 	/* Add to run queue. */
+	list_push_back(&all_list, t->block_elem);
 	thread_unblock (t);
 	
 	/* NEWCODE */
@@ -359,7 +362,7 @@ thread_exit (void) {
 #ifdef USERPROG
 	process_exit ();
 #endif
-
+	list_remove(&thread_current()->block_elem);
 	/* Just set our status to dying and schedule another process.
 	   We will be destroyed during the call to schedule_tail(). */
 	intr_disable ();
