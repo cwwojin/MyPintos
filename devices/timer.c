@@ -174,15 +174,15 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 	enum intr_level old_level;
 	old_level = intr_disable ();
 	if(thread_mlfqs){
-		//printf("current thread : %d\n", thread_current()->tid);
+		printf("current thread : %d\n", thread_current()->tid);
 		//1.EVERY INTERRUPT -> increment recent_cpu.
 		mlfqs_increment();
 		//printf("incremented recent cpu\n");
 		//2.Every second -> recalculate load_avg -> recent_cpu.
 		if(ticks % TIMER_FREQ == 0){
-			//printf("calculating load avg : %d seconds..\n", (int)(ticks / TIMER_FREQ));
+			printf("calculating load avg : %d seconds..\n", (int)(ticks / TIMER_FREQ));
 			mlfqs_load_avg();
-			printf("calculating recent_cpu for all threads..\n");
+			//printf("calculating recent_cpu for all threads..\n");
 			mlfqs_recalc();
 		}
 		//3.Every 4 ticks -> recalculate every thread's priority.
