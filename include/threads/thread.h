@@ -141,6 +141,7 @@ struct thread {
 	int nice;
 	int recent_cpu;
 	struct list_elem block_elem;
+	struct list_elem all_elem;
 	
 };
 
