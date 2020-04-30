@@ -533,24 +533,9 @@ void mlfqs_recalc(void){
 	
 	struct list_elem* i;
 	for(i = list_begin(&all_list); i != list_end(&all_list); i = list_next(i)){
-		struct thread* th = list_entry(i, struct thread, block_elem);
+		struct thread* th = list_entry(i, struct thread, all_elem);
 		mlfqs_recent_cpu(th);
 	}
-	
-	/*
-	for(i = list_begin(&ready_list); i != list_end(&ready_list); i = list_next(i)){
-		struct thread* th = list_entry(i, struct thread, elem);
-		mlfqs_recent_cpu(th);
-		//mlfqs_priority(th);
-	}
-	//blocked -> all stored in block_list
-	struct list_elem* e;
-	for(e = list_begin(&block_list); e != list_end(&block_list); e = list_next(e)){
-		struct thread* th = list_entry(e, struct thread, block_elem);
-		mlfqs_recent_cpu(th);
-		//mlfqs_priority(th);
-	}
-	*/
 }
 
 void mlfqs_recalc_threads(void){
@@ -561,22 +546,9 @@ void mlfqs_recalc_threads(void){
 	
 	struct list_elem* i;
 	for(i = list_begin(&all_list); i != list_end(&all_list); i = list_next(i)){
-		struct thread* th = list_entry(i, struct thread, block_elem);
+		struct thread* th = list_entry(i, struct thread, all_elem);
 		mlfqs_priority(th);
 	}
-	
-	/*
-	for(i = list_begin(&ready_list); i != list_end(&ready_list); i = list_next(i)){
-		struct thread* th = list_entry(i, struct thread, elem);
-		mlfqs_priority(th);
-	}
-	//blocked -> all stored in block_list
-	struct list_elem* e;
-	for(e = list_begin(&block_list); e != list_end(&block_list); e = list_next(e)){
-		struct thread* th = list_entry(e, struct thread, block_elem);
-		mlfqs_priority(th);
-	}
-	*/
 }
 /**/
 
@@ -644,7 +616,7 @@ init_thread (struct thread *t, const char *name, int priority) {
 	t->magic = THREAD_MAGIC;
 	
 	//New Code : add thread to block_list.
-	list_push_back(&block_list, &t->block_elem);
+	//list_push_back(&block_list, &t->block_elem);
 	
   	//initialize "gate".
 	t->gate = NULL;
