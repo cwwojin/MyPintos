@@ -265,7 +265,7 @@ thread_create (const char *name, int priority,
 #endif
 	
 	/* Add to run queue. */
-	list_push_back(&all_list, t->block_elem);
+	list_push_back(&all_list, &t->block_elem);
 	thread_unblock (t);
 	
 	/* NEWCODE */
