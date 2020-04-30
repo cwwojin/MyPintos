@@ -187,7 +187,7 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 		}
 		//3.Every 4 ticks -> recalculate every thread's priority.
 		if(ticks % 4 == 0){
-			printf("calculating all thread priority..\n");
+			//printf("calculating all thread priority..\n");
 			mlfqs_recalc_threads();
 		}
 	}
