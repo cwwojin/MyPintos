@@ -284,7 +284,8 @@ thread_block (void) {
 	ASSERT (intr_get_level () == INTR_OFF);
 	
 	//New Code : add thread to block_list.
-	list_push_back(&block_list, &thread_current()->block_elem);
+	//list_push_back(&block_list, &thread_current()->block_elem);
+	list_push_front(&block_list, &thread_current()->block_elem);
 	
 	thread_current ()->status = THREAD_BLOCKED;
 	
