@@ -40,9 +40,7 @@ int load_avg;
    that are ready to run but not actually running. */
 static struct list ready_list;
 
-/* NEWCODE!! : List of BLOCKED threads. Add @ block(), remove @ unblock() */
-static struct list block_list;
-
+/* NEWCODE!! : List of ALL threads. Add @ create(), remove @ exit() */
 static struct list all_list;
 
 /* Idle thread. */
@@ -126,8 +124,7 @@ thread_init (void) {
 	lock_init (&tid_lock);
 	list_init (&ready_list);
 	list_init (&destruction_req);
-	//New BLOCK_LIST.
-	list_init (&block_list);
+	//New ALL_LIST.
 	list_init (&all_list);
 
 	/* Set up a thread structure for the running thread. */
