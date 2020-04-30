@@ -265,7 +265,7 @@ thread_create (const char *name, int priority,
 #endif
 	
 	/* Add to run queue. */
-	list_push_back(&all_list, &t->block_elem);
+	list_push_back(&all_list, &t->all_elem);
 	thread_unblock (t);
 	
 	/* NEWCODE */
@@ -289,7 +289,6 @@ thread_block (void) {
 	
 	//New Code : add thread to block_list.
 	//list_push_back(&block_list, &thread_current()->block_elem);
-	//list_push_front(&block_list, &thread_current()->block_elem);
 	
 	thread_current ()->status = THREAD_BLOCKED;
 	
@@ -363,7 +362,9 @@ thread_exit (void) {
 #ifdef USERPROG
 	process_exit ();
 #endif
-	list_remove(&thread_current()->block_elem);
+	//Remove from ALL_List.
+	list_remove(&thread_current()->all_elem);
+	
 	/* Just set our status to dying and schedule another process.
 	   We will be destroyed during the call to schedule_tail(). */
 	intr_disable ();
@@ -524,13 +525,15 @@ void mlfqs_increment(void){
 void mlfqs_recalc(void){
 	//This is a function to calculate ALL threads' recent_cpu.
 	//"All threads" = running / ready / blocked.
-	struct thread* running = thread_current();
-	mlfqs_recent_cpu(running);
+	//struct thread* running = thread_current();
+	//mlfqs_recent_cpu(running);
+	
 	struct list_elem* i;
 	for(i = list_begin(&all_list); i != list_end(&all_list); i = list_next(i)){
 		struct thread* th = list_entry(i, struct thread, block_elem);
 		mlfqs_recent_cpu(th);
 	}
+	
 	/*
 	for(i = list_begin(&ready_list); i != list_end(&ready_list); i = list_next(i)){
 		struct thread* th = list_entry(i, struct thread, elem);
@@ -550,23 +553,27 @@ void mlfqs_recalc(void){
 void mlfqs_recalc_threads(void){
 	//This is a function to calculate ALL threads' priority values.
 	//"All threads" = running / ready / blocked.
-	struct thread* running = thread_current();
-	//mlfqs_recent_cpu(running);
-	mlfqs_priority(running);
+	//struct thread* running = thread_current();
+	//mlfqs_priority(running);
+	
 	struct list_elem* i;
-	//struct thread* th;
+	for(i = list_begin(&all_list); i != list_end(&all_list); i = list_next(i)){
+		struct thread* th = list_entry(i, struct thread, block_elem);
+		mlfqs_priority(th);
+	}
+	
+	/*
 	for(i = list_begin(&ready_list); i != list_end(&ready_list); i = list_next(i)){
 		struct thread* th = list_entry(i, struct thread, elem);
-		//mlfqs_recent_cpu(th);
 		mlfqs_priority(th);
 	}
 	//blocked -> all stored in block_list
 	struct list_elem* e;
 	for(e = list_begin(&block_list); e != list_end(&block_list); e = list_next(e)){
 		struct thread* th = list_entry(e, struct thread, block_elem);
-		//mlfqs_recent_cpu(th);
 		mlfqs_priority(th);
 	}
+	*/
 }
 /**/
 
