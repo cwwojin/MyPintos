@@ -155,6 +155,18 @@ int filesize(int fd){
 
 //FILESYS - close : Closes file descriptor "fd".
 void close (int fd){
+	struct thread* current = thread_current();
+	if(fd == 0){
+		//close stdin.
+		current->stdin = false;
+		return;
+	}
+	else if(fd == 1){
+		//close stdout.
+		current->stdout = false;
+		return;
+	}
+	
 	lock_acquire(&filesys_lock);
 	process_close_file(fd);
 	lock_release(&filesys_lock);
@@ -164,6 +176,7 @@ void close (int fd){
 int read (int fd, void *buffer, unsigned size){
 	//USE : off_t file_read (struct file *file, void *buffer, off_t size)
 	//validate memory from buffer ~ buffer + size - 1.
+	struct thread* current = thread_current();
 	unsigned i;
 	for(i=0; i< size; i++){
 		//check validity of address.
@@ -175,8 +188,12 @@ int read (int fd, void *buffer, unsigned size){
 	lock_acquire(&filesys_lock);
 	if(fd == 0){
 		//fd = 0, so get input from keyboard using input_getc()
+		//result = 0;
 		for(i=0; i< size; i++){
-			*(uint8_t*) (buffer + i) = input_getc();
+			if(current->stdin){
+				*(uint8_t*) (buffer + i) = input_getc();
+				//result++;
+			}
 		}
 		result = (int) size;
 	}
@@ -197,6 +214,7 @@ int read (int fd, void *buffer, unsigned size){
 int write (int fd, const void *buffer, unsigned size){
 	//USE : off_t file_write (struct file *file, const void *buffer, off_t size)
 	//validate memory from buffer ~ buffer + size - 1.
+	struct thread* current = thread_current();
 	unsigned i;
 	for(i=0; i< size; i++){
 		//check validity of address.
@@ -208,8 +226,10 @@ int write (int fd, const void *buffer, unsigned size){
 	lock_acquire(&filesys_lock);
 	if(fd == 1){
 		//fd = 0, so write to console at once, using putbuf().
-		putbuf(buffer, size);
-		result = size;
+		if(current->stdout){
+			putbuf(buffer, size);
+			result = size;
+		}
 	}
 	else{
 		//fd != 0, so read from file found with FD.
@@ -284,6 +304,34 @@ tid_t fork (const char *thread_name, struct intr_frame* if_){
 //PROJECT2 EXTRA - DUP2 : Duplicate a file descriptor.
 int dup2(oldfd, newfd){
 	int result = -1;
+	struct file* oldfile;
+	
+	lock_acquire(&filesys_lock);
+	oldfile = process_get_file(oldfd);
+	if(oldfile == NULL){		//oldfd is not valid.
+		lock_release(&filesys_lock);
+		return -1;
+	}
+	if(newfd == oldfd){		//oldfd is valid, but newfd is same as oldfd.
+		lock_release(&filesys_lock);
+		return newfd;
+	}
+	//oldfd is valid & newfd is different from oldfd.
+	if(process_get_file(newfd) != NULL){	//newfd is already an open file descriptor.
+		process_close_file(newfd);
+	}
+	//make a new file descriptor.
+	struct fd* newfile_desc = malloc(sizeof(struct fd));
+	if(newfile_desc == NULL){	//allocation failed.
+		lock_release(&filesys_lock);
+		return -1;
+	}
+	newfile_desc->file = oldfile;
+	newfile_desc->fd_num = newfd;
+	list_push_back(&thread_current()->fd_table, &file_desc->elem);
+	
+	
+	lock_release(&filesys_lock);
 	return result;
 }
 /* ENDOFNEWCODE*/
