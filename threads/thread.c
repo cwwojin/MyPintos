@@ -128,6 +128,7 @@ thread_init (void) {
 	list_init (&destruction_req);
 	//New BLOCK_LIST.
 	list_init (&block_list);
+	list_init (&all_list);
 
 	/* Set up a thread structure for the running thread. */
 	initial_thread = running_thread ();
@@ -287,7 +288,7 @@ thread_block (void) {
 	ASSERT (intr_get_level () == INTR_OFF);
 	
 	//New Code : add thread to block_list.
-	list_push_back(&block_list, &thread_current()->block_elem);
+	//list_push_back(&block_list, &thread_current()->block_elem);
 	//list_push_front(&block_list, &thread_current()->block_elem);
 	
 	thread_current ()->status = THREAD_BLOCKED;
@@ -316,7 +317,7 @@ thread_unblock (struct thread *t) {
 	t->status = THREAD_READY;
 	
 	/* New Code : Delete t from block_list. */
-	list_remove(&t->block_elem);
+	//list_remove(&t->block_elem);
 	
 	if (thread_current() != idle_thread && thread_current()->priority < t->priority)
     		thread_yield();
@@ -525,9 +526,12 @@ void mlfqs_recalc(void){
 	//"All threads" = running / ready / blocked.
 	struct thread* running = thread_current();
 	mlfqs_recent_cpu(running);
-	//mlfqs_priority(running);
 	struct list_elem* i;
-	//struct thread* th;
+	for(i = list_begin(&all_list); i != list_end(&all_list); i = list_next(i)){
+		struct thread* th = list_entry(i, struct thread, block_elem);
+		mlfqs_recent_cpu(th);
+	}
+	/*
 	for(i = list_begin(&ready_list); i != list_end(&ready_list); i = list_next(i)){
 		struct thread* th = list_entry(i, struct thread, elem);
 		mlfqs_recent_cpu(th);
@@ -540,6 +544,7 @@ void mlfqs_recalc(void){
 		mlfqs_recent_cpu(th);
 		//mlfqs_priority(th);
 	}
+	*/
 }
 
 void mlfqs_recalc_threads(void){
