@@ -174,7 +174,7 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 	enum intr_level old_level;
 	old_level = intr_disable ();
 	if(thread_mlfqs){
-		printf("current thread : %d\n", thread_current()->tid);
+		//printf("current thread : %d\n", thread_current()->tid);
 		//1.EVERY INTERRUPT -> increment recent_cpu.
 		mlfqs_increment();
 		//printf("incremented recent cpu\n");
@@ -187,8 +187,8 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 		}
 		//3.Every 4 ticks -> recalculate every thread's priority.
 		if(ticks % 4 == 0){
-			//printf("calculating all thread priority..\n");
-			//mlfqs_recalc_threads();
+			printf("calculating all thread priority..\n");
+			mlfqs_recalc_threads();
 		}
 	}
 	intr_set_level (old_level);
