@@ -328,7 +328,7 @@ int dup2(oldfd, newfd){
 	}
 	newfile_desc->file = oldfile;
 	newfile_desc->fd_num = newfd;
-	list_push_back(&thread_current()->fd_table, &file_desc->elem);
+	list_push_back(&thread_current()->fd_table, &newfile_desc->elem);
 	
 	
 	lock_release(&filesys_lock);
