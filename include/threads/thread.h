@@ -125,10 +125,6 @@ struct thread {
 	struct file* executable;	/* Deny Writes to Executables. */
 	struct intr_frame* f_fork;	/* Intr frame context to pass when forking. */
 	bool exec;			/* Is this process made from an EXEC call? */
-	
-	/* Project #2 Extra. */
-	bool stdin;			/* true = Stdin open */
-	bool stdout;			/* true = Stdout open */
 #endif
 #ifdef VM
 	/* Table for whole virtual memory owned by thread. */
