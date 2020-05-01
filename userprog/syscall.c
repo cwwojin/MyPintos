@@ -156,17 +156,6 @@ int filesize(int fd){
 //FILESYS - close : Closes file descriptor "fd".
 void close (int fd){
 	struct thread* current = thread_current();
-	if(fd == 0){
-		//close stdin.
-		current->stdin = false;
-		return;
-	}
-	else if(fd == 1){
-		//close stdout.
-		current->stdout = false;
-		return;
-	}
-	
 	lock_acquire(&filesys_lock);
 	process_close_file(fd);
 	lock_release(&filesys_lock);
@@ -188,12 +177,8 @@ int read (int fd, void *buffer, unsigned size){
 	lock_acquire(&filesys_lock);
 	if(fd == 0){
 		//fd = 0, so get input from keyboard using input_getc()
-		//result = 0;
 		for(i=0; i< size; i++){
-			if(current->stdin){
-				*(uint8_t*) (buffer + i) = input_getc();
-				//result++;
-			}
+			*(uint8_t*) (buffer + i) = input_getc();
 		}
 		result = (int) size;
 	}
@@ -225,11 +210,9 @@ int write (int fd, const void *buffer, unsigned size){
 	
 	lock_acquire(&filesys_lock);
 	if(fd == 1){
-		//fd = 0, so write to console at once, using putbuf().
-		if(current->stdout){
-			putbuf(buffer, size);
-			result = size;
-		}
+		//fd = 1, so write to console at once, using putbuf().
+		putbuf(buffer, size);
+		result = size;
 	}
 	else{
 		//fd != 0, so read from file found with FD.
@@ -304,6 +287,7 @@ tid_t fork (const char *thread_name, struct intr_frame* if_){
 //PROJECT2 EXTRA - DUP2 : Duplicate a file descriptor.
 int dup2(oldfd, newfd){
 	int result = -1;
+	/*
 	struct file* oldfile;
 	
 	lock_acquire(&filesys_lock);
@@ -332,6 +316,7 @@ int dup2(oldfd, newfd){
 	
 	
 	lock_release(&filesys_lock);
+	*/
 	return result;
 }
 /* ENDOFNEWCODE*/
