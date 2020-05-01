@@ -155,7 +155,6 @@ int filesize(int fd){
 
 //FILESYS - close : Closes file descriptor "fd".
 void close (int fd){
-	struct thread* current = thread_current();
 	lock_acquire(&filesys_lock);
 	process_close_file(fd);
 	lock_release(&filesys_lock);
