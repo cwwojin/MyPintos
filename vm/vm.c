@@ -5,6 +5,7 @@
 #include "vm/inspect.h"
 
 #include "threads/thread.h"
+#include "threads/mmu.h"
 
 /* Initializes the virtual memory subsystem by invoking each subsystem's
  * intialize codes. */
