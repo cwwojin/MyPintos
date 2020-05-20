@@ -4,6 +4,8 @@
 #include "vm/vm.h"
 #include "vm/inspect.h"
 
+#include "threads/thread.h"
+
 /* Initializes the virtual memory subsystem by invoking each subsystem's
  * intialize codes. */
 void
@@ -127,6 +129,7 @@ vm_get_frame (void) {
 		frame = malloc(sizeof struct frame);
 		if(frame != NULL){
 			frame->kva = new;
+			frame->page == NULL;
 		}
 	}
 
@@ -170,6 +173,8 @@ bool
 vm_claim_page (void *va UNUSED) {
 	struct page *page = NULL;
 	/* TODO: Fill this function */
+	//get a new page. then call do_claim_page().
+	
 
 	return vm_do_claim_page (page);
 }
@@ -184,6 +189,7 @@ vm_do_claim_page (struct page *page) {
 	page->frame = frame;
 
 	/* TODO: Insert page table entry to map page's VA to frame's PA. */
+	pml4_set_page(thread_current()->pml4, page->va, frame->kva, true);
 
 	return swap_in (page, frame->kva);
 }
