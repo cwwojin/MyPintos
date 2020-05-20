@@ -121,6 +121,11 @@ static struct frame *
 vm_get_frame (void) {
 	struct frame *frame = NULL;
 	/* TODO: Fill this function. */
+	frame = palloc_get_page(PAL_USER);	//get a page from the user pool. NULL if allocation fails.
+	if(frame != NULL){
+		//initialize frame.
+		
+	}
 
 	ASSERT (frame != NULL);
 	ASSERT (frame->page == NULL);
