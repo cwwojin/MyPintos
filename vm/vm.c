@@ -127,7 +127,7 @@ vm_get_frame (void) {
 	void* new = palloc_get_page(PAL_USER);	//get a page from the user pool. NULL if allocation fails.
 	if(new != NULL){
 		//initialize frame.
-		frame = malloc(sizeof struct frame);
+		frame = malloc(sizeof(struct frame));
 		if(frame != NULL){
 			frame->kva = new;
 			frame->page == NULL;
