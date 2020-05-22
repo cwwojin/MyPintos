@@ -168,6 +168,19 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	struct supplemental_page_table *spt UNUSED = &thread_current ()->spt;
 	struct page *page = NULL;
 	/* TODO: Validate the fault */
+	page = spt_find_page(spt,addr);
+	if(page == NULL){	//the page is INVALID, so its a real fault.
+		return false;
+	}
+	//USE : page_get_type (struct page *page) to get type, to determine the cause of the "bogus" fault.
+	switch(page_get_type(page)){
+		case VM_ANON :
+			
+			break;
+		default :
+			return false;
+			break;
+	}
 	/* TODO: Your code goes here */
 
 	return vm_do_claim_page (page);
