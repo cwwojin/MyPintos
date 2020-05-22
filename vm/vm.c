@@ -172,15 +172,6 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	if(page == NULL){	//the page is INVALID, so its a real fault.
 		return false;
 	}
-	//USE : page_get_type (struct page *page) to get type, to determine the cause of the "bogus" fault.
-	switch(page_get_type(page)){
-		case VM_ANON :
-			
-			break;
-		default :
-			return false;
-			break;
-	}
 	/* TODO: Your code goes here */
 
 	return vm_do_claim_page (page);
