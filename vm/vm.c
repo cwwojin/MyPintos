@@ -172,6 +172,7 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	if(page == NULL){	//the page is INVALID, so its a real fault.
 		return false;
 	}
+	uninit_initialize (page, addr);		//initialize the uninit_page, on the first fault.
 	/* TODO: Your code goes here */
 
 	return vm_do_claim_page (page);
