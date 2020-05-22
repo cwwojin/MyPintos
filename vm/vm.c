@@ -70,7 +70,7 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
 				break;
 		}
 		/* TODO: Insert the page into the spt. */
-		return spt_insert_page(thread_current()->spt, page);
+		return spt_insert_page(&thread_current()->spt, page);
 	}
 err:
 	return false;
