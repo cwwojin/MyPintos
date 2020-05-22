@@ -6,7 +6,7 @@
 
 #include "threads/thread.h"
 #include "threads/mmu.h"
-#include "vm.uninit.h"
+#include "vm/uninit.h"
 
 /* Initializes the virtual memory subsystem by invoking each subsystem's
  * intialize codes. */
