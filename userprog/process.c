@@ -936,7 +936,7 @@ setup_stack (struct intr_frame *if_) {
 	/* TODO: Your code goes here */
 	success = vm_alloc_page(VM_MARKER_0, stack_bottom, true);
 	if(success){
-		success = vm_do_claim_page(spt_find_page(thread_current()->spt, stack_bottom));
+		success = vm_do_claim_page(spt_find_page(&thread_current()->spt, stack_bottom));
 	}
 	
 	if(success){
