@@ -863,9 +863,9 @@ lazy_load_segment (struct page *page, void *aux) {
 	//The info we need from AUX : file struct pointer, page_read_bytes, page_zero_bytes.
 	//Where is the physical FRAME? -> page->frame->kva
 	uint8_t *kpage = page->frame->kva;
-	size_t page_read_bytes = (struct lazy_aux*) aux->page_read_bytes;
-	size_t page_zero_bytes = (struct lazy_aux*) aux->page_zero_bytes;
-	struct file* file = (struct lazy_aux*) aux->executable;
+	size_t page_read_bytes = ((struct lazy_aux*)aux)->page_read_bytes;
+	size_t page_zero_bytes = ((struct lazy_aux*)aux)->page_zero_bytes;
+	struct file* file = ((struct lazy_aux*)aux)->executable;
 	if (kpage == NULL)
 		return false;
 	// Load this page.
