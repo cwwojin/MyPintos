@@ -912,8 +912,8 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 		AUX.executable = file;
 		AUX.page_read_bytes = page_read_bytes;
 		AUX.page_zero_bytes = page_zero_bytes;
-		
 		aux = &AUX;
+		printf("Going to READ : %d & ZERO : %d bytes to page at Uaddr : %X..\n",page_read_bytes,page_zero_bytes,upage);
 		if (!vm_alloc_page_with_initializer (VM_ANON, upage,
 					writable, lazy_load_segment, aux))
 			return false;
