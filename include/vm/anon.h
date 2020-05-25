@@ -5,8 +5,8 @@ struct page;
 enum vm_type;
 
 struct anon_page {
-  struct file* executable;
-  size_t page_read_bytes;
+	struct file* executable;
+	size_t page_read_bytes;
 	size_t page_zero_bytes;
 };
 
