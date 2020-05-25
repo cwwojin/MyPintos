@@ -142,7 +142,7 @@ vm_get_frame (void) {
 		frame = malloc(sizeof(struct frame));
 		if(frame != NULL){
 			frame->kva = new;
-			frame->page == NULL;
+			frame->page = NULL;
 		}
 	}
 
