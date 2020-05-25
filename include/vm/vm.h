@@ -59,6 +59,13 @@ struct page {
 	};
 };
 
+/* The AUX information passed to anonymous pages. */
+struct lazy_aux {
+	struct file* executable;
+	size_t page_read_bytes;
+	size_t page_zero_bytes;
+};
+
 /* The representation of "frame" */
 struct frame {
 	void *kva;
