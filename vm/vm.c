@@ -7,6 +7,7 @@
 #include "threads/thread.h"
 #include "threads/mmu.h"
 #include "vm/uninit.h"
+#include <debug.h>
 
 /* Initializes the virtual memory subsystem by invoking each subsystem's
  * intialize codes. */
@@ -173,6 +174,7 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	page = spt_find_page(spt, pg_round_down(addr));
 	if(page == NULL){	//the page is INVALID, so its a real fault.
 		printf("page not found in spt.\n");
+		debug_backtrace();
 		return false;
 	}
 	//printf("page found.\n");
