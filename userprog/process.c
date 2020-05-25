@@ -868,6 +868,7 @@ lazy_load_segment (struct page *page, void *aux) {
 	struct file* file = ((struct lazy_aux*)aux)->executable;
 	printf("aux : %X\n", aux);
 	printf("reading READ : %d & ZERO : %d bytes to page %X..\n",page_read_bytes,page_zero_bytes,page->va);
+	free((struct lazy_aux*) aux);
 	if (kpage == NULL)
 		return false;
 	// Load this page.
@@ -908,13 +909,13 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 
 		/* TODO: Set up aux to pass information to the lazy_load_segment. */
 		void *aux = NULL;
-		struct lazy_aux AUX;
-		AUX.executable = file;
-		AUX.page_read_bytes = page_read_bytes;
-		AUX.page_zero_bytes = page_zero_bytes;
-		aux = &AUX;
+		struct lazy_aux* AUX = malloc(sizeof(struct lazy_aux));
+		AUX->executable = file;
+		AUX->page_read_bytes = page_read_bytes;
+		AUX->page_zero_bytes = page_zero_bytes;
+		aux = AUX;
 		printf("aux : %X\n", aux);
-		printf("AUX => READ : %d & ZERO : %d\n", AUX.page_read_bytes, AUX.page_zero_bytes);
+		printf("AUX => READ : %d & ZERO : %d\n", AUX->page_read_bytes, AUX->page_zero_bytes);
 		printf("Going to READ : %d & ZERO : %d bytes to page at Uaddr : %X..\n",page_read_bytes,page_zero_bytes,upage);
 		if (!vm_alloc_page_with_initializer (VM_ANON, upage,
 					writable, lazy_load_segment, aux))
