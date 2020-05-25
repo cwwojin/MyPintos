@@ -315,13 +315,6 @@ process_exec (void *f_name) {
 	char *file_name = f_name;
 	bool success;
 	
-	/* NEWCODE : if file_name is a user addr, then save its pa. */
-	if(!is_kernel_vaddr(file_name)){
-		void* file_pa = pml4_get_page(thread_current()->pml4, pg_round_down(file_name));
-		printf("file name is at user space, kernel virtual addr = %X\n", (int) file_pa);
-		file_name = file_pa;
-	}
-	
 	/* NEWCODE */
 	//tokenizing file name.
 	char* ret_ptr;
@@ -867,28 +860,20 @@ lazy_load_segment (struct page *page, void *aux) {
 	/* TODO: Load the segment from the file */
 	/* TODO: This called when the first page fault occurs on address VA. */
 	/* TODO: VA is available when calling this function. */
-	/*
-		uint8_t *kpage = palloc_get_page (PAL_USER);
-		if (kpage == NULL)
-			return false;
-
-		// Load this page.
-		if (file_read (file, kpage, page_read_bytes) != (int) page_read_bytes) {
-			palloc_free_page (kpage);
-			return false;
-		}
-		memset (kpage + page_read_bytes, 0, page_zero_bytes);
-
-		// Add the page to the process's address space.
-		if (!install_page (upage, kpage, writable)) {
-			palloc_free_page (kpage);
-			return false;
-		}
-	*/
 	//The info we need from AUX : file struct pointer, page_read_bytes, page_zero_bytes.
-	//return values : false if failed.
-	
-	
+	//Where is the physical FRAME? -> page->frame->kva
+	uint8_t *kpage = page->frame->kva;
+	size_t page_read_bytes = (struct lazy_aux*) aux->page_read_bytes;
+	size_t page_zero_bytes = (struct lazy_aux*) aux->page_zero_bytes;
+	struct file* file = (struct lazy_aux*) aux->executable;
+	if (kpage == NULL)
+		return false;
+	// Load this page.
+	if (file_read (file, kpage, page_read_bytes) != (int) page_read_bytes) {
+		return false;
+	}
+	memset (kpage + page_read_bytes, 0, page_zero_bytes);
+	return true;
 }
 
 /* Loads a segment starting at offset OFS in FILE at address
@@ -921,6 +906,12 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 
 		/* TODO: Set up aux to pass information to the lazy_load_segment. */
 		void *aux = NULL;
+		struct lazy_aux AUX;
+		AUX.executable = file;
+		AUX.page_read_bytes = page_read_bytes;
+		AUX.page_zero_bytes = page_zero_bytes;
+		
+		aux = &AUX;
 		if (!vm_alloc_page_with_initializer (VM_ANON, upage,
 					writable, lazy_load_segment, aux))
 			return false;
