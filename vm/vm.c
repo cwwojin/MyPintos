@@ -173,9 +173,9 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	page = spt_find_page(spt, pg_round_down(addr));
 	if(page == NULL){	//the page is INVALID, so its a real fault.
 		printf("page not found in spt.\n");
-		return false;
+		//return false;
 	}
-	printf("page found.\n");
+	//printf("page found.\n");
 	/* TODO: Your code goes here */
 
 	return vm_do_claim_page (page);
