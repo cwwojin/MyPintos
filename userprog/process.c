@@ -942,9 +942,6 @@ setup_stack (struct intr_frame *if_) {
 	if(success){
 		if_->rsp = USER_STACK;
 	}
-	else{
-		if_->rsp = stack_bottom;
-	}
 	
 	return success;
 }
