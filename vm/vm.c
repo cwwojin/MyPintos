@@ -168,12 +168,13 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	struct supplemental_page_table *spt UNUSED = &thread_current ()->spt;
 	struct page *page = NULL;
 	/* TODO: Validate the fault */
-	printf("user : %d, write : %d, not_present : %d\n",user,write,not_present);
-	page = spt_find_page(spt,addr);
+	printf("fault @ %X, user : %d, write : %d, not_present : %d\n",addr,user,write,not_present);
+	page = spt_find_page(spt, pg_round_down(addr));
 	if(page == NULL){	//the page is INVALID, so its a real fault.
 		printf("page not found in spt.\n");
 		return false;
 	}
+	printf("page found.\n");
 	/* TODO: Your code goes here */
 
 	return vm_do_claim_page (page);
