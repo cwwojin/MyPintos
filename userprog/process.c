@@ -936,13 +936,13 @@ setup_stack (struct intr_frame *if_) {
 	/* TODO: Your code goes here */
 	success = vm_alloc_page(VM_MARKER_0 + VM_ANON, stack_bottom, true);
 	if(success){
+		printf("struct page allocation successful, %X\n", stack_bottom);
 		success = vm_claim_page(stack_bottom);
 	}
-	
 	if(success){
+		printf("got frame.\n");
 		if_->rsp = USER_STACK;
 	}
-	
 	return success;
 }
 #endif /* VM */
