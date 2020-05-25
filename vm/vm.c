@@ -67,7 +67,6 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
 				uninit_new(page, upage, init, type, aux, file_map_initializer);
 				break;
 			default:
-				goto err;
 				break;
 		}
 		/* TODO: Insert the page into the spt. */
