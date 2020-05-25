@@ -866,7 +866,7 @@ lazy_load_segment (struct page *page, void *aux) {
 	size_t page_read_bytes = ((struct lazy_aux*)aux)->page_read_bytes;
 	size_t page_zero_bytes = ((struct lazy_aux*)aux)->page_zero_bytes;
 	struct file* file = ((struct lazy_aux*)aux)->executable;
-	
+	printf("aux : %X\n", aux);
 	printf("reading READ : %d & ZERO : %d bytes to page %X..\n",page_read_bytes,page_zero_bytes,page->va);
 	if (kpage == NULL)
 		return false;
@@ -913,6 +913,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 		AUX.page_read_bytes = page_read_bytes;
 		AUX.page_zero_bytes = page_zero_bytes;
 		aux = &AUX;
+		printf("aux : %X\n", aux);
 		printf("AUX => READ : %d & ZERO : %d\n", AUX.page_read_bytes, AUX.page_zero_bytes);
 		printf("Going to READ : %d & ZERO : %d bytes to page at Uaddr : %X..\n",page_read_bytes,page_zero_bytes,upage);
 		if (!vm_alloc_page_with_initializer (VM_ANON, upage,
