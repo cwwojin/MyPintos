@@ -865,12 +865,14 @@ lazy_load_segment (struct page *page, void *aux) {
 	uint8_t *kpage = page->frame->kva;
 	size_t page_read_bytes = ((struct lazy_aux*)aux)->page_read_bytes;
 	size_t page_zero_bytes = ((struct lazy_aux*)aux)->page_zero_bytes;
+	off_t ofs = ((struct lazy_aux*)aux)->offset;
 	struct file* file = ((struct lazy_aux*)aux)->executable;
 	printf("aux : %X\n", aux);
 	free((struct lazy_aux*) aux);
 	if (kpage == NULL)
 		return false;
 	// Load this page.
+	file_seek(file, ofs);
 	if (file_read (file, kpage, page_read_bytes) != (int) page_read_bytes) {
 		printf("load failed..\n");
 		return false;
@@ -913,8 +915,9 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 		AUX->executable = file;
 		AUX->page_read_bytes = page_read_bytes;
 		AUX->page_zero_bytes = page_zero_bytes;
+		AUX->offset = ofs;
 		aux = AUX;
-		printf("aux : %X. Going to READ : %d & ZERO : %d bytes to page at Uaddr : %X..\n",aux, page_read_bytes,page_zero_bytes,upage);
+		printf("aux : %X. Going to READ : %d & ZERO : %d bytes starting @ offset : %d to page at Uaddr : %X..\n",aux,page_read_bytes,page_zero_bytes,ofs,upage);
 		if (!vm_alloc_page_with_initializer (VM_ANON, upage,
 					writable, lazy_load_segment, aux)){
 			printf("Alloc failed..\n");
