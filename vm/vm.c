@@ -245,12 +245,19 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 	hash_first (&i, &src->hash);
 	while(hash_next(&i)){
 		struct page *p = hash_entry(hash_cur (&i), struct page, hash_elem);	//get the SRC's page.
+		/*
 		struct page *newp = malloc(sizeof(struct page));
 		memcpy(newp, p, sizeof(struct page));
 		if(spt_insert_page(dst,newp)){
 			printf("SPT_COPY : failed to insert page into DST.\n");
 			return false;
 		}
+		*/
+		if(vm_alloc_page(page_get_type(p), p->va, true)){
+			printf("SPT_COPY : failed to allocate page.\n");
+			return false;
+		}
+		struct page* newp = spt_find_page(dst, p->va);
 		if(vm_do_claim_page(newp)){
 			printf("SPT_COPY : failed to claim page.\n");
 			return false;
