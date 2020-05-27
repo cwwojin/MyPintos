@@ -64,6 +64,7 @@ struct lazy_aux {
 	struct file* executable;
 	size_t page_read_bytes;
 	size_t page_zero_bytes;
+	off_t offset;
 };
 
 /* The representation of "frame" */
