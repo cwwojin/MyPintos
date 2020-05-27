@@ -59,7 +59,7 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
 		/* TODO: Create the page, fetch the initialier according to the VM type,
 		 * TODO: and then create "uninit" page struct by calling uninit_new. You
 		 * TODO: should modify the field after calling the uninit_new. */
-		printf("allocating new page of type : %d at addr : %X..\n",VM_TYPE(type), upage);
+		//printf("allocating new page of type : %d at addr : %X..\n",VM_TYPE(type), upage);
 		struct page* page = malloc(sizeof(struct page));
 		switch(VM_TYPE(type)){		//uninit_new (page,va,init,type,aux, bool(*initializer))
 			case VM_ANON:
@@ -170,11 +170,11 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	struct supplemental_page_table *spt UNUSED = &thread_current ()->spt;
 	struct page *page = NULL;
 	/* TODO: Validate the fault */
-	printf("fault @ %X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
+	//printf("fault @ %X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
 	page = spt_find_page(spt, pg_round_down(addr));
 	if(page == NULL){	//the page is INVALID, so its a real fault.
-		printf("page not found in spt.\n");
-		debug_backtrace();
+		//printf("page not found in spt.\n");
+		//debug_backtrace();
 		return false;
 	}
 	//printf("page found.\n");
