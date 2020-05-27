@@ -867,14 +867,13 @@ lazy_load_segment (struct page *page, void *aux) {
 	size_t page_zero_bytes = ((struct lazy_aux*)aux)->page_zero_bytes;
 	off_t ofs = ((struct lazy_aux*)aux)->offset;
 	struct file* file = ((struct lazy_aux*)aux)->executable;
-	printf("aux : %X\n", aux);
 	free((struct lazy_aux*) aux);
 	if (kpage == NULL)
 		return false;
 	// Load this page.
 	file_seek(file, ofs);
 	if (file_read (file, kpage, page_read_bytes) != (int) page_read_bytes) {
-		printf("load failed..\n");
+		//printf("load failed..\n");
 		return false;
 	}
 	memset (kpage + page_read_bytes, 0, page_zero_bytes);
@@ -917,10 +916,9 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 		AUX->page_zero_bytes = page_zero_bytes;
 		AUX->offset = ofs;
 		aux = AUX;
-		printf("aux : %X. Going to READ : %d & ZERO : %d bytes starting @ offset : %d to page at Uaddr : %X..\n",aux,page_read_bytes,page_zero_bytes,ofs,upage);
 		if (!vm_alloc_page_with_initializer (VM_ANON, upage,
 					writable, lazy_load_segment, aux)){
-			printf("Alloc failed..\n");
+			//printf("Alloc failed..\n");
 			return false;
 		}
 		/* Advance. */
@@ -944,11 +942,9 @@ setup_stack (struct intr_frame *if_) {
 	/* TODO: Your code goes here */
 	success = vm_alloc_page(VM_MARKER_0 + VM_ANON, stack_bottom, true);
 	if(success){
-		printf("struct page allocation successful, %X\n", stack_bottom);
 		success = vm_claim_page(stack_bottom);
 	}
 	if(success){
-		printf("got frame.\n");
 		if_->rsp = USER_STACK;
 	}
 	return success;
