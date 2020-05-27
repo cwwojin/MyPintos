@@ -241,6 +241,22 @@ supplemental_page_table_init (struct supplemental_page_table *spt UNUSED) {
 bool
 supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 		struct supplemental_page_table *src UNUSED) {
+	struct hash_iterator i;
+	hash_first (&i, &src->hash);
+	while(hash_next(&i)){
+		struct page *p = hash_entry(hash_cur (&i), struct page, hash_elem);	//get the SRC's page.
+		struct page *newp = malloc(sizeof(struct page));
+		memcpy(newp, p, sizeof(struct page));
+		if(vm_do_claim_page(newp)){
+			printf("failed to claim page.\n");
+			return false;
+		}
+		if(spt_insert_page(dst,newp)){
+			printf("failed to insert page into DST.\n");
+			return false;
+		}
+	}
+	return true;
 }
 
 /* Free the resource hold by the supplemental page table */
@@ -248,4 +264,10 @@ void
 supplemental_page_table_kill (struct supplemental_page_table *spt UNUSED) {
 	/* TODO: Destroy all the supplemental_page_table hold by thread and
 	 * TODO: writeback all the modified contents to the storage. */
+	struct hash_iterator i;
+	hash_first (&i, &spt->hash);
+	while(hash_next(&i)){
+		struct page *page = hash_entry(hash_cur (&i), struct page, hash_elem);
+		destroy(page);
+	}
 }
