@@ -65,4 +65,14 @@ uninit_destroy (struct page *page) {
 	struct uninit_page *uninit UNUSED = &page->uninit;
 	/* TODO: Fill this function.
 	 * TODO: If you don't have anything to do, just return. */
+	switch(VM_TYPE(uninit->type)){
+		case VM_ANON :	//free the LAZY_AUX passed from lazy-loading.
+			struct lazy_aux* lazy_aux = uninit->aux;
+			if(free != NULL){
+				free(lazy_aux);
+			}
+			break;
+		default :
+			break;
+	}
 }
