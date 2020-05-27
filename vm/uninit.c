@@ -10,6 +10,7 @@
 
 #include "vm/vm.h"
 #include "vm/uninit.h"
+#include "threads/malloc.h"
 
 static bool uninit_initialize (struct page *page, void *kva);
 static void uninit_destroy (struct page *page);
@@ -67,8 +68,7 @@ uninit_destroy (struct page *page) {
 	 * TODO: If you don't have anything to do, just return. */
 	switch(VM_TYPE(uninit->type)){
 		case VM_ANON :	//free the LAZY_AUX passed from lazy-loading.
-			struct lazy_aux* lazy_aux;
-			lazy_aux = uninit->aux;
+			struct lazy_aux* lazy_aux = uninit->aux;
 			if(lazy_aux != NULL){
 				free(lazy_aux);
 			}
