@@ -247,12 +247,12 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 		struct page *p = hash_entry(hash_cur (&i), struct page, hash_elem);	//get the SRC's page.
 		struct page *newp = malloc(sizeof(struct page));
 		memcpy(newp, p, sizeof(struct page));
-		if(vm_do_claim_page(newp)){
-			printf("SPT_COPY : failed to claim page.\n");
+		if(spt_insert_page(dst,newp)){
+			printf("SPT_COPY : failed to insert page into DST.\n");
 			return false;
 		}
-		if(spt_insert_page(dst,newp)){
-			printf("failed to insert page into DST.\n");
+		if(vm_do_claim_page(newp)){
+			printf("SPT_COPY : failed to claim page.\n");
 			return false;
 		}
 	}
