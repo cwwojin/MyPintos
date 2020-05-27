@@ -68,7 +68,7 @@ uninit_destroy (struct page *page) {
 	switch(VM_TYPE(uninit->type)){
 		case VM_ANON :	//free the LAZY_AUX passed from lazy-loading.
 			struct lazy_aux* lazy_aux = uninit->aux;
-			if(free != NULL){
+			if(lazy_aux != NULL){
 				free(lazy_aux);
 			}
 			break;
