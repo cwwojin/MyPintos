@@ -250,7 +250,7 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 			return false;
 		}
 		struct page* newp = spt_find_page(dst, p->va);
-		if(!vm_do_claim_page(p->va)){
+		if(!vm_do_claim_page(newp)){
 			printf("SPT_COPY : failed to claim page.\n");
 			return false;
 		}
