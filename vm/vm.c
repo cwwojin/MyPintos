@@ -170,7 +170,6 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	struct supplemental_page_table *spt UNUSED = &thread_current ()->spt;
 	struct page *page = NULL;
 	/* TODO: Validate the fault */
-	printf("thread : %d trying to access address : 0x%X\n",thread_current()->tid,addr);
 	page = spt_find_page(spt, pg_round_down(addr));
 	if(page == NULL){	//the page is INVALID, so its a real fault.
 		printf("FAULT : page not found in spt.\n");
@@ -254,16 +253,8 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 			printf("SPT_COPY : failed to allocate page.\n");
 			return false;
 		}
-		struct page* newp = spt_find_page(dst, p->va);
-		/*
-		struct page* newp = malloc(sizeof(struct page));
-		memcpy(newp, p, sizeof(struct page));
-		if(!spt_insert_page(dst, newp)){
-			printf("SPT_COPY : failed to insert page into DST.\n");
-			return false;
-		}
-		*/
-		if(!vm_do_claim_page(newp)){
+		//struct page* newp = spt_find_page(dst, p->va);
+		if(!vm_claim_page(p->va)){
 			printf("SPT_COPY : failed to claim page.\n");
 			return false;
 		}
