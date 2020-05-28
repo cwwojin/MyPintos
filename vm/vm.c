@@ -258,7 +258,7 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 			printf("SPT_COPY : failed to claim page.\n");
 			return false;
 		}
-		memcpy(newp->frame.kva, p->frame.kva, PGSIZE);
+		memcpy(newp->frame->kva, p->frame->kva, PGSIZE);
 	}
 	return true;
 }
