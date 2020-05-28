@@ -253,11 +253,12 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 			printf("SPT_COPY : failed to allocate page.\n");
 			return false;
 		}
-		//struct page* newp = spt_find_page(dst, p->va);
-		if(!vm_claim_page(p->va)){
+		struct page* newp = spt_find_page(dst, p->va);
+		if(vm_do_claim_page(newp)){
 			printf("SPT_COPY : failed to claim page.\n");
 			return false;
 		}
+		memcpy(newp->frame.kva, p->frame.kva, PGSIZE);
 	}
 	return true;
 }
