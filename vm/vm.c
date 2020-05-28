@@ -175,7 +175,7 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	if(page == NULL){	//the page is INVALID, so its a real fault.
 		printf("FAULT : page not found in spt.\n");
 		printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
-		debug_backtrace_all();
+		debug_backtrace();
 		return false;
 	}
 	/* TODO: Your code goes here */
