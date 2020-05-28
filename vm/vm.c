@@ -173,8 +173,8 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	//printf("fault @ %X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
 	page = spt_find_page(spt, pg_round_down(addr));
 	if(page == NULL){	//the page is INVALID, so its a real fault.
-		printf("page not found in spt.\n");
-		printf("fault @ %X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
+		printf("FAULT : page not found in spt.\n");
+		printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
 		debug_backtrace();
 		return false;
 	}
@@ -246,9 +246,6 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 	while(hash_next(&i)){
 		struct page *p = hash_entry(hash_cur (&i), struct page, hash_elem);	//get the SRC's page.
 		printf("Going to copy page : 0x%X..\n", p->va);
-		if(spt_find_page(dst, p->va) == NULL){
-			printf("Page not in child SPT..\n");
-		}
 		if(!vm_alloc_page(page_get_type(p), p->va, true)){
 			printf("SPT_COPY : failed to allocate page.\n");
 			return false;
