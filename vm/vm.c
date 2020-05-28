@@ -246,6 +246,10 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 	while(hash_next(&i)){
 		struct page *p = hash_entry(hash_cur (&i), struct page, hash_elem);	//get the SRC's page.
 		printf("Going to copy page : 0x%X..\n", p->va);
+		if(is_kernel_vaddr(p->va)) {
+			printf("kernel page!\n");
+			continue;
+		}
 		if(!vm_alloc_page(page_get_type(p), p->va, true)){
 			printf("SPT_COPY : failed to allocate page.\n");
 			return false;
