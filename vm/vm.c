@@ -259,7 +259,7 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 	return true;
 }
 
-void spt_free_page(const struct hash_elem* e){
+void spt_free_page(struct hash_elem* e, void* aux UNUSED){
 	struct page* page = hash_entry(e, struct page, hash_elem);
 	destroy(page);
 }
