@@ -152,12 +152,10 @@ page_fault (struct intr_frame *f) {
 	page_fault_cnt++;
 	
 	/* NEWCODE */
-#ifndef VM
 	//if page fault was from user context.
 	if(user){
 		exit(-1);
 	}
-#endif
 	/* ENDOFNEWCODE */
 
 	/* If the fault is true fault, show info and exit. */
