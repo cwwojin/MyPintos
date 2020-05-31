@@ -172,8 +172,8 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	//printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
 	page = spt_find_page(spt, pg_round_down(addr));
 	if(page == NULL){	//the page is INVALID, so its a real fault.
-		printf("FAULT : page not found in spt.\n");
-		printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
+		//printf("FAULT : page not found in spt.\n");
+		//printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
 		//debug_backtrace();
 		return false;
 	}
@@ -244,18 +244,21 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 	hash_first (&i, &src->hash);
 	while(hash_next(&i)){
 		struct page *p = hash_entry(hash_cur (&i), struct page, hash_elem);	//get the SRC's page.
-		//printf("Going to copy page : 0x%X..\n", p->va);
-		if(!vm_alloc_page_with_initializer(page_get_type(p), p->va, true, p->uninit.init, p->uninit.aux)){
+		printf("Going to copy page : 0x%X..\n", p->va);
+		void* aux = NULL;
+		switch(page_get_type(p)){
+			case VM_ANON :
+				aux = malloc(sizeof(struct lazy_aux));
+				memcpy(aux, p->uninit.aux, sizeof(struct lazy_aux));
+				break;
+			default :
+				break;
+		}
+		if(!vm_alloc_page_with_initializer(page_get_type(p), p->va, true, p->uninit.init, aux)){
 			printf("SPT_COPY : failed to allocate page.\n");
 			return false;
 		}
 		struct page* newp = spt_find_page(dst, p->va);
-		/*
-		if(!vm_do_claim_page(newp)){
-			printf("SPT_COPY : failed to claim page.\n");
-			return false;
-		}
-		*/
 		if(p->frame != NULL){
 			if(!vm_do_claim_page(newp)){
 				printf("SPT_COPY : failed to claim page.\n");
