@@ -84,7 +84,7 @@ void check_address(void* addr){
 	//case 3. UNMAPPED pointer. check if "addr"'s corresponding page exists in current thread's pml4.
 	if(pml4_get_page (thread_current()->pml4, addr) == NULL){
 		printf("addr : 0x%X\n",addr);
-		exit(-1);
+		//exit(-1);
 	}
 }
 
