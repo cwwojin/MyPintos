@@ -91,7 +91,7 @@ void check_address(void* addr){
 #else
 	//VM : case 3. UNMAPPED pointer. check if "addr"'s corresponding page exists in current thread's Supplemental Page Table.
 	if(spt_find_page(&thread_current()->spt, pg_round_down(addr)) == NULL){
-		printf("ARGUMENT addr : 0x%X not in SPT!!\n",addr);
+		//printf("ARGUMENT addr : 0x%X not in SPT!!\n",addr);
 		exit(-1);
 	}
 #endif
