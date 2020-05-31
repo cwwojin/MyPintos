@@ -436,6 +436,10 @@ process_exit (void) {
 		file_close(current->executable);
 	}
 	/* ENDOFNEWCODE */
+	
+	if(current->exit_status == -1){
+		debug_backtrace();
+	}
 	 
 
 	process_cleanup ();
