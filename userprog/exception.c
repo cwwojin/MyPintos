@@ -154,7 +154,7 @@ page_fault (struct intr_frame *f) {
 	/* NEWCODE */
 	//if page fault was from user context.
 	if(user){
-		exit(-1);
+		//exit(-1);
 	}
 	/* ENDOFNEWCODE */
 
