@@ -265,6 +265,7 @@ void spt_free_page(struct hash_elem* e, void* aux UNUSED){
 	struct page* page = hash_entry(e, struct page, hash_elem);
 	printf("destroying page 0x%X..\n", page->va);
 	destroy(page);
+	free(page);
 }
 
 /* Free the resource hold by the supplemental page table */
@@ -272,5 +273,5 @@ void
 supplemental_page_table_kill (struct supplemental_page_table *spt UNUSED) {
 	/* TODO: Destroy all the supplemental_page_table hold by thread and
 	 * TODO: writeback all the modified contents to the storage. */
-	//hash_destroy(&spt->hash, spt_free_page);
+	hash_destroy(&spt->hash, spt_free_page);
 }
