@@ -867,7 +867,7 @@ lazy_load_segment (struct page *page, void *aux) {
 	size_t page_zero_bytes = ((struct lazy_aux*)aux)->page_zero_bytes;
 	off_t ofs = ((struct lazy_aux*)aux)->offset;
 	struct file* file = ((struct lazy_aux*)aux)->executable;
-	//free((struct lazy_aux*) aux);
+	free((struct lazy_aux*) aux);
 	if (kpage == NULL)
 		return false;
 	// Load this page.
