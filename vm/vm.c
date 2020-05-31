@@ -239,7 +239,6 @@ supplemental_page_table_init (struct supplemental_page_table *spt UNUSED) {
 bool
 supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 		struct supplemental_page_table *src UNUSED) {
-	debug_backtrace();
 	struct hash_iterator i;
 	hash_first (&i, &src->hash);
 	while(hash_next(&i)){
