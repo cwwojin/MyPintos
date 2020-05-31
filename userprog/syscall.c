@@ -18,6 +18,10 @@
 #include "devices/input.h"
 #include "threads/palloc.h"
 
+#ifdef VM
+#include "vm/vm.h"
+#endif
+
 void syscall_entry (void);
 void syscall_handler (struct intr_frame *);
 
@@ -77,17 +81,20 @@ void check_address(void* addr){
 	}
 	//case 2. addr is in kernel address space
 	if(!is_user_vaddr(addr)){
-		printf("0x%X : kernel space!!\n", addr);
 		exit(-1);
 	}
-	else{
-		printf("addr : 0x%X, user? : %d\n",addr, is_user_vaddr(addr));
-	}
+#ifndef VM
 	//case 3. UNMAPPED pointer. check if "addr"'s corresponding page exists in current thread's pml4.
 	if(pml4_get_page (thread_current()->pml4, addr) == NULL){
-		//printf("addr : 0x%X\n",addr);
-		//exit(-1);
+		exit(-1);
 	}
+#else
+	//VM : case 3. UNMAPPED pointer. check if "addr"'s corresponding page exists in current thread's Supplemental Page Table.
+	if(spt_find_page(&thread_current()->spt, addr) == NULL){
+		printf("ARGUMENT addr : 0x%X not in SPT!!\n",addr);
+		exit(-1);
+	}
+#endif
 }
 
 
