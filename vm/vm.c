@@ -243,7 +243,7 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 	hash_first (&i, &src->hash);
 	while(hash_next(&i)){
 		struct page *p = hash_entry(hash_cur (&i), struct page, hash_elem);	//get the SRC's page.
-		//printf("Going to copy page : 0x%X..\n", p->va);
+		printf("Going to copy page : 0x%X..\n", p->va);
 		if(!vm_alloc_page_with_initializer(page_get_type(p), p->va, true, p->uninit.init, p->uninit.aux)){
 			printf("SPT_COPY : failed to allocate page.\n");
 			return false;
@@ -263,7 +263,7 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 
 void spt_free_page(struct hash_elem* e, void* aux UNUSED){
 	struct page* page = hash_entry(e, struct page, hash_elem);
-	printf("destroying page 0x%X..\n", page->va);
+	//printf("destroying page 0x%X..\n", page->va);
 	destroy(page);
 	free(page);
 }
