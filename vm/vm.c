@@ -246,7 +246,7 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 		struct page *p = hash_entry(hash_cur (&i), struct page, hash_elem);	//get the SRC's page.
 		printf("Going to copy page : 0x%X..\n", p->va);
 		void* aux = NULL;
-		switch(page_get_type(p)){
+		switch(p->uninit.type){
 			case VM_ANON :
 				aux = malloc(sizeof(struct lazy_aux));
 				memcpy(aux, p->uninit.aux, sizeof(struct lazy_aux));
