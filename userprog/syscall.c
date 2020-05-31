@@ -73,14 +73,17 @@ void exit(int status){
 void check_address(void* addr){
 	//case 1. NULL pointer.
 	if(addr == NULL){
+		printf("NULL pointer!!\n");
 		exit(-1);
 	}
-	//case 2. addr is in kernal address space
+	//case 2. addr is in kernel address space
 	if(is_kernel_vaddr(addr)){
+		printf("kernel-space.\n");
 		exit(-1);
 	}
 	//case 3. UNMAPPED pointer. check if "addr"'s corresponding page exists in current thread's pml4.
 	if(pml4_get_page (thread_current()->pml4, addr) == NULL){
+		printf("addr : 0x%X\n",addr);
 		exit(-1);
 	}
 }
