@@ -61,6 +61,7 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
 		 * TODO: should modify the field after calling the uninit_new. */
 		//printf("allocating new page of type : %d at addr : %X..\n",VM_TYPE(type), upage);
 		struct page* page = malloc(sizeof(struct page));
+		page->writable = writable;
 		switch(VM_TYPE(type)){		//uninit_new (page,va,init,type,aux, bool(*initializer))
 			case VM_ANON:
 				uninit_new(page, upage, init, type, aux, anon_initializer);
@@ -167,6 +168,7 @@ vm_stack_growth (void *addr UNUSED) {
 /* Handle the fault on write_protected page */
 static bool
 vm_handle_wp (struct page *page UNUSED) {
+	return page->writable;
 }
 
 /* Return true on success */
@@ -231,7 +233,7 @@ vm_do_claim_page (struct page *page) {
 	page->frame = frame;
 
 	/* TODO: Insert page table entry to map page's VA to frame's PA. */
-	pml4_set_page(thread_current()->pml4, page->va, frame->kva, true);
+	pml4_set_page(thread_current()->pml4, page->va, frame->kva, page->writable);
 
 	return swap_in (page, frame->kva);
 }
@@ -276,7 +278,7 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 			default :
 				break;
 		}
-		if(!vm_alloc_page_with_initializer(page_get_type(p), p->va, true, p->uninit.init, aux)){
+		if(!vm_alloc_page_with_initializer(page_get_type(p), p->va, p->writable, p->uninit.init, aux)){
 			printf("SPT_COPY : failed to allocate page.\n");
 			return false;
 		}
