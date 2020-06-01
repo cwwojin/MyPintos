@@ -17,6 +17,7 @@
 #include "userprog/process.h"
 #include "devices/input.h"
 #include "threads/palloc.h"
+#include "threads/vaddr.h"
 
 #ifdef VM
 #include "vm/vm.h"
@@ -91,7 +92,9 @@ void check_address(void* addr){
 #else
 	//VM : case 3. UNMAPPED pointer. check if "addr"'s corresponding page exists in current thread's Supplemental Page Table.
 	if(spt_find_page(&thread_current()->spt, pg_round_down(addr)) == NULL){
-		//printf("ARGUMENT addr : 0x%X not in SPT!!\n",addr);
+		printf("ARGUMENT addr : 0x%X not in SPT!!\n",addr);
+		printf("RSP at beginning of syscall : 0x%X\n", thread_current()->syscall_rsp);
+		bool accessing_stack = ((USER_STACK - (int) pg_round_down(addr)) <= (PGSIZE << 8) && (uintptr_t*)addr >= (thread_current()->syscall_rsp - 64));
 		exit(-1);
 	}
 #endif
@@ -342,6 +345,9 @@ syscall_handler (struct intr_frame *f UNUSED) {
 	int syscall_num;
 	//check validity of stack pointer.
 	check_address((void*)f->rsp);
+#ifdef VM
+	current->syscall_rsp = f->rsp;
+#endif
 	//get the system call number from "rax".
 	syscall_num = (int) f->R.rax;
 	//printf("systemcall number : %d\n", syscall_num);
