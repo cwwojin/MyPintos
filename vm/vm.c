@@ -154,8 +154,15 @@ vm_get_frame (void) {
 }
 
 /* Growing the stack. */
-static void
+static bool
 vm_stack_growth (void *addr UNUSED) {
+	bool success;
+	success = vm_alloc_page(VM_MARKER_0 + VM_ANON, pg_round_down(addr), true);
+	if(success){
+		success = vm_claim_page(pg_round_down(addr));
+	}
+	printf("stack growth successful? : %d\n", success);
+	return success;
 }
 
 /* Handle the fault on write_protected page */
@@ -177,13 +184,7 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	if(page == NULL){	//the page is INVALID.
 		accessing_stack = ((addr < USER_STACK) && (USER_STACK - (int) pg_round_down(addr)) <= (PGSIZE << 8) && (uintptr_t)addr >= (f->rsp - 64));
 		if(accessing_stack){	//Stack Growth.
-			//printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
-			success = vm_alloc_page(VM_MARKER_0 + VM_ANON, pg_round_down(addr), true);
-			if(success){
-				success = vm_claim_page(pg_round_down(addr));
-			}
-			//printf("stack growth successful? : %d\n", success);
-			return success;
+			return vm_stack_growth(addr);
 		}
 		else{		//Not a stack-access, so its a real fault.
 			//printf("FAULT : page not found in spt.\n");
@@ -191,7 +192,6 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 			//debug_backtrace();
 			return false;
 		}
-		//return false;
 	}
 	/* TODO: Your code goes here */
 
