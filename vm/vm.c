@@ -175,7 +175,7 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	//printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
 	page = spt_find_page(spt, pg_round_down(addr));
 	if(page == NULL){	//the page is INVALID.
-		accessing_stack = ((USER_STACK - (int) pg_round_down(addr)) <= (PGSIZE << 8) && (uintptr_t*)addr >= (f->rsp - 64));
+		accessing_stack = ((USER_STACK - (int) pg_round_down(addr)) <= (PGSIZE << 8) && (uintptr_t)addr >= (f->rsp - 64));
 		if(accessing_stack){	//Stack Growth.
 			//printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
 			success = vm_alloc_page(VM_MARKER_0 + VM_ANON, pg_round_down(addr), true);
