@@ -6,6 +6,7 @@
 
 #include "threads/thread.h"
 #include "threads/mmu.h"
+#include "threads/vaddr.h"
 #include "vm/uninit.h"
 #include <debug.h>
 
@@ -168,14 +169,29 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 		bool user UNUSED, bool write UNUSED, bool not_present UNUSED) {
 	struct supplemental_page_table *spt UNUSED = &thread_current ()->spt;
 	struct page *page = NULL;
+	bool accessing_stack;
+	bool success;
 	/* TODO: Validate the fault */
 	//printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
 	page = spt_find_page(spt, pg_round_down(addr));
-	if(page == NULL){	//the page is INVALID, so its a real fault.
-		//printf("FAULT : page not found in spt.\n");
-		//printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
-		//debug_backtrace();
-		return false;
+	if(page == NULL){	//the page is INVALID.
+		accessing_stack = ((USER_STACK - pg_round_down(addr)) <= (PGSIZE << 8) && (uint32_t*)addr >= (f->rsp - 64));
+		if(accessing_stack){	//Stack Growth.
+			printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
+			success = vm_alloc_page(VM_MARKER_0 + VM_ANON, pg_round_down(addr), true);
+			if(success){
+				success = vm_claim_page(pg_round_down(addr));
+			}
+			printf("stack growth successful? : %d\n", success);
+			return success;
+		}
+		else{		//Not a stack-access, so its a real fault.
+			//printf("FAULT : page not found in spt.\n");
+			//printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
+			//debug_backtrace();
+			return false;
+		}
+		//return false;
 	}
 	/* TODO: Your code goes here */
 
