@@ -168,6 +168,7 @@ vm_stack_growth (void *addr UNUSED) {
 /* Handle the fault on write_protected page */
 static bool
 vm_handle_wp (struct page *page UNUSED) {
+	printf("writable : %d", page->writable);
 	return page->writable;
 }
 
@@ -188,15 +189,13 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 			return vm_stack_growth(addr);
 		}
 		else{		//Not a stack-access, so its a real fault.
-			//printf("FAULT : page not found in spt.\n");
 			//printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
-			//debug_backtrace();
 			return false;
 		}
 	}
 	/* TODO: Your code goes here */
 	if(write){
-		if(!vm_handle_wp (page)){	//Check if write-protected page.
+		if(!vm_handle_wp(page)){	//Check if write-protected page.
 			return false;
 		}
 	}
