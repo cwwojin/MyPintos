@@ -92,10 +92,14 @@ void check_address(void* addr){
 #else
 	//VM : case 3. UNMAPPED pointer. check if "addr"'s corresponding page exists in current thread's Supplemental Page Table.
 	if(spt_find_page(&thread_current()->spt, pg_round_down(addr)) == NULL){
-		printf("ARGUMENT addr : 0x%X not in SPT!!\n",addr);
-		printf("RSP at beginning of syscall : 0x%X\n", thread_current()->syscall_rsp);
+		printf("ARGUMENT addr : 0x%X not in SPT, ",addr);
+		printf("RSP at beginning of syscall : 0x%X, ", thread_current()->syscall_rsp);
 		bool accessing_stack = ((USER_STACK - (int) pg_round_down(addr)) <= (PGSIZE << 8) && (uintptr_t*)addr >= (thread_current()->syscall_rsp - 64));
-		exit(-1);
+		printf("accessing stack? : %d\n", accessing_stack);
+		if(!accessing_stack){
+			exit(-1);
+		}
+		//exit(-1);
 	}
 #endif
 }
