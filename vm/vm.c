@@ -61,7 +61,6 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
 		 * TODO: should modify the field after calling the uninit_new. */
 		printf("allocating new page of type : %d at addr : %X, writable : %d\n",VM_TYPE(type), upage, writable);
 		struct page* page = malloc(sizeof(struct page));
-		page->writable = writable;
 		switch(VM_TYPE(type)){		//uninit_new (page,va,init,type,aux, bool(*initializer))
 			case VM_ANON:
 				uninit_new(page, upage, init, type, aux, anon_initializer);
@@ -72,6 +71,7 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
 			default:
 				break;
 		}
+		page->writable = writable;
 		/* TODO: Insert the page into the spt. */
 		return spt_insert_page(&thread_current()->spt, page);
 	}
