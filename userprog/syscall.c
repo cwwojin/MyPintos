@@ -94,7 +94,7 @@ void check_address(void* addr){
 	if(spt_find_page(&thread_current()->spt, pg_round_down(addr)) == NULL){
 		printf("ARGUMENT addr : 0x%X not in SPT, ",addr);
 		printf("RSP at beginning of syscall : 0x%X, ", thread_current()->syscall_rsp);
-		bool accessing_stack = (((int) addr < USER_STACK) && (USER_STACK - (int) pg_round_down(addr)) <= (PGSIZE << 8) && (uintptr_t)addr >= (thread_current()->syscall_rsp - 64));
+		bool accessing_stack = ((addr < USER_STACK) && (USER_STACK - (int) pg_round_down(addr)) <= (PGSIZE << 8) && (uintptr_t)addr >= (thread_current()->syscall_rsp - 64));
 		printf("accessing stack? : %d\n", accessing_stack);
 		if(!accessing_stack){
 			exit(-1);
