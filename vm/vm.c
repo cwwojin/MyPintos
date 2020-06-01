@@ -161,7 +161,6 @@ vm_stack_growth (void *addr UNUSED) {
 	if(success){
 		success = vm_claim_page(pg_round_down(addr));
 	}
-	printf("stack growth successful? : %d\n", success);
 	return success;
 }
 
