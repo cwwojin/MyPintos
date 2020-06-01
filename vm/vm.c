@@ -59,7 +59,7 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
 		/* TODO: Create the page, fetch the initialier according to the VM type,
 		 * TODO: and then create "uninit" page struct by calling uninit_new. You
 		 * TODO: should modify the field after calling the uninit_new. */
-		printf("allocating new page of type : %d at addr : %X, writable : %d\n",VM_TYPE(type), upage, writable);
+		//printf("allocating new page of type : %d at addr : %X, writable : %d\n",VM_TYPE(type), upage, writable);
 		struct page* page = malloc(sizeof(struct page));
 		switch(VM_TYPE(type)){		//uninit_new (page,va,init,type,aux, bool(*initializer))
 			case VM_ANON:
@@ -168,7 +168,7 @@ vm_stack_growth (void *addr UNUSED) {
 /* Handle the fault on write_protected page */
 static bool
 vm_handle_wp (struct page *page UNUSED) {
-	printf("writable : %d", page->writable);
+	//printf("writable : %d\n", page->writable);
 	return page->writable;
 }
 
