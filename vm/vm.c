@@ -193,6 +193,11 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 		}
 	}
 	/* TODO: Your code goes here */
+	if(write){
+		if(vm_handle_wp (page)){	//Check if write-protected page.
+			return false;
+		}
+	}
 
 	return vm_do_claim_page (page);
 }
