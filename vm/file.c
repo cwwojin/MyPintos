@@ -26,6 +26,13 @@ file_map_initializer (struct page *page, enum vm_type type, void *kva) {
 	page->operations = &file_ops;
 
 	struct file_page *file_page = &page->file;
+	file_page->init = page->uninit.init;
+	file_page->aux = page->uninit.aux;
+	file_page->type = page->uninit.type;
+	struct lazy_aux* AUX = page->uninit.aux;
+	if(AUX != NULL){
+		file_page->file = AUX->executable;
+	}
 }
 
 /* Swap in the page by read contents from the file. */
@@ -44,6 +51,9 @@ file_map_swap_out (struct page *page) {
 static void
 file_map_destroy (struct page *page) {
 	struct file_page *file_page UNUSED = &page->file;
+	if(file_page->aux != NULL){
+		free(file_page->aux);
+	}
 }
 
 /* Do the mmap */
