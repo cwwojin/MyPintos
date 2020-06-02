@@ -114,6 +114,7 @@ void check_address(void* addr){
 #ifdef VM
 static void write_permission(void* addr){
 	struct page* page = spt_find_page(&thread_current()->spt, pg_round_down(addr));
+	printf("Page : 0x%X, writable : %d\n", pg_round_down(addr), page->writable);
 	if(!page->writable){
 		printf("Page is write-protected : 0x%X\n", pg_round_down(addr));
 		exit(-1);
