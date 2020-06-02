@@ -326,11 +326,32 @@ tid_t fork (const char *thread_name, struct intr_frame* if_){
 }
 
 #ifdef VM
+//lazy-load initializer for file-mapped pages.
+static bool file_lazy_load (struct page *page, void *aux) {
+	uint8_t *kpage = page->frame->kva;
+	size_t page_read_bytes = ((struct lazy_aux*)aux)->page_read_bytes;
+	size_t page_zero_bytes = ((struct lazy_aux*)aux)->page_zero_bytes;
+	off_t ofs = ((struct lazy_aux*)aux)->offset;
+	struct file* file = ((struct lazy_aux*)aux)->executable;
+	if (kpage == NULL)
+		return false;
+	// Load this page.
+	file_seek(file, ofs);
+	if (file_read (file, kpage, page_read_bytes) != (int) page_read_bytes) {
+		printf("load failed..\n");
+		return false;
+	}
+	memset (kpage + page_read_bytes, 0, page_zero_bytes);
+	page->file_page.read_bytes = page_read_bytes;
+	return true;
+}
+
 //mmap : Maps "length" bytes of the file "fd" starting from "offset", into VA space at "addr".
 void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
-	void* result = NULL;
+	void* upage = addr;
+	off_t ofs = offset;
 	//1. FAIL if addr isn't page-aligned or is 0, or Length is 0.
-	if(addr == 0 || (addr % PGSIZE) != 0 || length == 0){
+	if(addr == 0 || (addr % PGSIZE) != 0 || !is_user_vaddr(addr) || length == 0){
 		printf("addr : 0x%X, offset : %d, LENGTH : %d\n",addr, addr % PGSIZE, length);
 		return NULL;
 	}
@@ -342,15 +363,40 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 		lock_release(&filesys_lock);
 		return NULL;
 	}
+	lock_release(&filesys_lock);
 	//3. FAIL if file length is 0.
 	if(file_length(target) == 0){
 		return NULL;
 	}
 	//4. Check how many pages needed & where. If any page overlaps with current spt pages, then FAIL.
-	//spt_find_page(&thread_current()->spt, addr);
-	
-	lock_release(&filesys_lock);
-	return result;
+	int i;
+	for(i=0; i < length/PGSIZE + (length % PGSIZE != 0); i++){
+		if(spt_find_page(&thread_current()->spt, addr + i * PGSIZE) != NULL){
+			return NULL;
+		}
+	}
+	//5. Allocate file-mapped pages.
+	while(length > 0){
+		size_t page_read_bytes = length < PGSIZE ? length : PGSIZE;
+		size_t page_zero_bytes = PGSIZE - page_read_bytes;
+		/* set up AUX. */
+		void *aux = NULL;
+		struct lazy_aux* AUX = malloc(sizeof(struct lazy_aux));
+		AUX->executable = target;
+		AUX->page_read_bytes = page_read_bytes;
+		AUX->page_zero_bytes = page_zero_bytes;
+		AUX->offset = ofs;
+		aux = AUX;
+		if (!vm_alloc_page_with_initializer (VM_FILE, upage, writable, file_lazy_load, aux)){
+			printf("Alloc failed @ page : 0x%X\n", upage);
+			return NULL;
+		}
+		/* Advance. */
+		length -= page_read_bytes;
+		upage += PGSIZE;
+		ofs += PGSIZE;
+	}
+	return addr;
 }
 #endif
 /* ENDOFNEWCODE*/
