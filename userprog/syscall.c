@@ -337,8 +337,9 @@ static bool file_lazy_load (struct page *page, void *aux) {
 		return false;
 	// Load this page.
 	file_seek(file, ofs);
-	if (file_read (file, kpage, page_read_bytes) != (int) page_read_bytes) {
-		printf("load failed..\n");
+	int read = file_read (file, kpage, page_read_bytes);
+	if (read != (int) page_read_bytes) {
+		printf("load failed @ page 0x%X, read %d bytes instead of %d..\n", page->va, read, page_read_bytes);
 		return false;
 	}
 	memset (kpage + page_read_bytes, 0, page_zero_bytes);
