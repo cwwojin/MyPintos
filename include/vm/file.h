@@ -8,9 +8,10 @@ enum vm_type;
 
 struct file_page {
 	vm_initializer *init;
-	void *aux;
+	struct lazy_aux* aux;
 	enum vm_type type;
 	struct file* file;
+	size_t read_bytes;
 };
 
 void vm_file_init (void);
