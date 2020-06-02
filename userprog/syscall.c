@@ -92,7 +92,6 @@ void check_address(void* addr){
 	}
 #else
 	//VM : case 3. UNMAPPED pointer. check if "addr"'s corresponding page exists in current thread's Supplemental Page Table.
-	printf("Checking addr : 0x%X..\n", addr);
 	struct page* page = spt_find_page(&thread_current()->spt, pg_round_down(addr));
 	if(page == NULL){	//Stack Growth from a SYSCALL.
 		bool accessing_stack = ((addr < USER_STACK) && (USER_STACK - (int) pg_round_down(addr)) <= (PGSIZE << 8) && (uintptr_t)addr >= (thread_current()->syscall_rsp - 64));
@@ -394,7 +393,6 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 		AUX->offset = ofs;
 		aux = AUX;
 		if (!vm_alloc_page_with_initializer (VM_FILE, upage, writable, file_lazy_load, aux)){
-			//printf("Alloc failed @ page : 0x%X\n", upage);
 			return NULL;
 		}
 		/* Advance. */
@@ -408,18 +406,13 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 //munmap : Unmaps the mapping for the address range "addr".
 void munmap (void *addr){
 	struct page* page = spt_find_page(&thread_current()->spt, addr);
-	printf("ADDR : 0x%X\n", addr);
+	//printf("ADDR : 0x%X\n", addr);
 	if(page == NULL){
-		printf("page not found in SPT.\n");
 		return;
 	}
 	lock_acquire(&filesys_lock);
 	if(page_get_type(page) == VM_FILE){
-		printf("page is a file-mapped page.\n");
 		spt_remove_page(&thread_current()->spt, page);
-	}
-	else{
-		printf("Not a file-mapped page.\n");
 	}
 	lock_release(&filesys_lock);
 }
