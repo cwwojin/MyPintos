@@ -333,7 +333,7 @@ static bool file_lazy_load (struct page *page, void *aux) {
 	size_t page_zero_bytes = ((struct lazy_aux*)aux)->page_zero_bytes;
 	off_t ofs = ((struct lazy_aux*)aux)->offset;
 	struct file* file = ((struct lazy_aux*)aux)->executable;
-	printf("LOADING addr : 0x%X, read_bytes : %d, zero_bytes : %d, ofs : %d\n", page->va, page_read_bytes, page_zero_bytes, ofs);
+	//printf("LOADING addr : 0x%X, read_bytes : %d, zero_bytes : %d, ofs : %d\n", page->va, page_read_bytes, page_zero_bytes, ofs);
 	if (kpage == NULL)
 		return false;
 	// Load this page.
@@ -355,7 +355,7 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 	size_t read_bytes;
 	//1. FAIL if addr isn't page-aligned or is 0, or Length is 0.
 	if(addr == 0 || ((int)addr % PGSIZE) != 0 || !is_user_vaddr(addr) || length == 0 || ((int)offset % PGSIZE) != 0){
-		printf("addr : 0x%X, addr%PGSIZE : %d, offset : %d, LENGTH : %d\n",addr, (int)addr % PGSIZE, offset, length);
+		printf("FAIL @ addr : 0x%X, addr%PGSIZE : %d, offset : %d, LENGTH : %d\n",addr, (int)addr % PGSIZE, offset, length);
 		return NULL;
 	}
 	//2. Get the file "FD".
@@ -392,7 +392,7 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 		AUX->offset = ofs;
 		aux = AUX;
 		if (!vm_alloc_page_with_initializer (VM_FILE, upage, writable, file_lazy_load, aux)){
-			printf("Alloc failed @ page : 0x%X\n", upage);
+			//printf("Alloc failed @ page : 0x%X\n", upage);
 			return NULL;
 		}
 		/* Advance. */
