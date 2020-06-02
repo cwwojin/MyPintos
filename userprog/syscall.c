@@ -18,6 +18,7 @@
 #include "devices/input.h"
 #include "threads/palloc.h"
 #include "threads/vaddr.h"
+#include "threads/mmu.h"
 
 #ifdef VM
 #include "vm/vm.h"
@@ -326,8 +327,27 @@ tid_t fork (const char *thread_name, struct intr_frame* if_){
 
 #ifdef VM
 //mmap : Maps "length" bytes of the file "fd" starting from "offset", into VA space at "addr".
-void *mmap (void *addr, size_t length, int writable, int fd, off_t offset){
+void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
+	void* result = NULL;
+	//1. FAIL if addr isn't page-aligned or is 0.
+	if(addr == 0){
+		return NULL;
+	}
+	if(addr % PGSIZE != 0){
+		return NULL;
+	}
+	//2. Get the file "FD".
+	struct file* target;
+	lock_acquire(&filesys_lock);
+	target = process_get_file(fd);
+	if(target == NULL){
+		lock_release(&filesys_lock);
+		return NULL;
+	}
+	lock_release(&filesys_lock);
+	//3. FAIL if file length is 0.
 	
+	return result;
 }
 #endif
 /* ENDOFNEWCODE*/
