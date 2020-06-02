@@ -342,7 +342,7 @@ static bool file_lazy_load (struct page *page, void *aux) {
 		return false;
 	}
 	memset (kpage + page_read_bytes, 0, page_zero_bytes);
-	page->file_page.read_bytes = page_read_bytes;
+	page->file.read_bytes = page_read_bytes;
 	return true;
 }
 
