@@ -269,6 +269,7 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 		void* aux = NULL;
 		switch(p->uninit.type){
 			case VM_ANON :
+			case VM_FILE :
 				if(p->uninit.aux != NULL){
 					aux = malloc(sizeof(struct lazy_aux));
 					memcpy(aux, p->uninit.aux, sizeof(struct lazy_aux));
