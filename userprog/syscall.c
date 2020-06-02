@@ -351,8 +351,8 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 	void* upage = addr;
 	off_t ofs = offset;
 	//1. FAIL if addr isn't page-aligned or is 0, or Length is 0.
-	if(addr == 0 || (addr % PGSIZE) != 0 || !is_user_vaddr(addr) || length == 0){
-		printf("addr : 0x%X, offset : %d, LENGTH : %d\n",addr, addr % PGSIZE, length);
+	if(addr == 0 || ((int)addr % PGSIZE) != 0 || !is_user_vaddr(addr) || length == 0){
+		printf("addr : 0x%X, offset : %d, LENGTH : %d\n",addr, (int)addr % PGSIZE, length);
 		return NULL;
 	}
 	//2. Get the file "FD".
