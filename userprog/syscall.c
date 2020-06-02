@@ -585,9 +585,20 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		case SYS_MMAP:
 		{
 			printf("syscall num : MMAP\n");
-			exit(-1);
+			//5 arguments. addr, length, writable, fd, offset);
+			void* addr = (void*) f->R.rdi;
+			size_t length = (size_t) f->R.rsi;
+			int writable = (int) f->R.rdx;
+			int fd = (int) f->R.r10;
+			off_t offset = (off_t) f->R.r8;
+			void* result;
+			printf("addr : 0x%X, length : %d, writable : %d, fd : %d, offset : %d\n", addr, length, writable, fd, offset);
+			
+			result = mmap(addr, length, writable, fd, offset);
+			f->R.rax = (uint64_t) result;
+			//exit(-1);
 			break;
-		}
+		}/* Map a file to file-mapped pages. */
 		case SYS_MUNMAP:
 		{
 			printf("syscall num : MUNMAP\n");
