@@ -5,7 +5,8 @@ struct page;
 enum vm_type;
 
 struct anon_page {
-  void *aux;
+  vm_initializer* init;
+  struct lazy_aux* aux;
 };
 
 void vm_anon_init (void);
