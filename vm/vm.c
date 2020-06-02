@@ -272,11 +272,18 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 		void* aux = NULL;
 		switch(p->uninit.type){
 			case VM_ANON :
+				if(p->uninit.aux != NULL){
+					aux = malloc(sizeof(struct lazy_aux));
+					memcpy(aux, p->uninit.aux, sizeof(struct lazy_aux));
+				}
+				break;
 			case VM_FILE :
 				if(p->uninit.aux != NULL){
 					aux = malloc(sizeof(struct lazy_aux));
 					memcpy(aux, p->uninit.aux, sizeof(struct lazy_aux));
 				}
+				struct file* newfile = file_reopen(aux->executable);
+				aux->executable = newfile;
 				break;
 			default :
 				break;
@@ -299,7 +306,6 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 
 void spt_free_page(struct hash_elem* e, void* aux UNUSED){
 	struct page* page = hash_entry(e, struct page, hash_elem);
-	//printf("destroying page 0x%X..\n", page->va);
 	destroy(page);
 	free(page);
 }
