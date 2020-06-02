@@ -92,6 +92,7 @@ void check_address(void* addr){
 	}
 #else
 	//VM : case 3. UNMAPPED pointer. check if "addr"'s corresponding page exists in current thread's Supplemental Page Table.
+	printf("Checking addr : 0x%X..\n", addr);
 	struct page* page = spt_find_page(&thread_current()->spt, pg_round_down(addr));
 	if(page == NULL){	//Stack Growth from a SYSCALL.
 		bool accessing_stack = ((addr < USER_STACK) && (USER_STACK - (int) pg_round_down(addr)) <= (PGSIZE << 8) && (uintptr_t)addr >= (thread_current()->syscall_rsp - 64));
@@ -414,6 +415,7 @@ void munmap (void *addr){
 	}
 	lock_acquire(&filesys_lock);
 	if(page_get_type(page) == VM_FILE){
+		printf("page is a file-mapped page.\n");
 		spt_remove_page(&thread_current()->spt, page);
 	}
 	else{
