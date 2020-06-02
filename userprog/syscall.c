@@ -359,13 +359,14 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 		return NULL;
 	}
 	//2. Get the file "FD".
-	struct file* target;
+	struct file* FILE;
 	lock_acquire(&filesys_lock);
-	target = process_get_file(fd);
-	if(target == NULL){
+	FILE = process_get_file(fd);
+	if(FILE == NULL){
 		lock_release(&filesys_lock);
 		return NULL;
 	}
+	struct file* target = file_reopen(FILE);
 	lock_release(&filesys_lock);
 	//3. FAIL if file length is 0.
 	if(file_length(target) == 0){
@@ -401,6 +402,18 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 		ofs += PGSIZE;
 	}
 	return addr;
+}
+
+//munmap : Unmaps the mapping for the address range "addr".
+void munmap (void *addr){
+	struct page* page = spt_find_page(&thread_current()->spt, addr);
+	if(page != NULL){
+		printf("page not found in SPT.\n");
+		return;
+	}
+	if(page_get_type(page) == VM_FILE){
+		
+	}
 }
 #endif
 /* ENDOFNEWCODE*/
@@ -588,7 +601,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 #ifdef VM
 		case SYS_MMAP:
 		{
-			printf("syscall num : MMAP\n");
+			//printf("syscall num : MMAP\n");
 			//5 arguments. addr, length, writable, fd, offset);
 			void* addr = (void*) f->R.rdi;
 			size_t length = (size_t) f->R.rsi;
@@ -596,7 +609,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			int fd = (int) f->R.r10;
 			off_t offset = (off_t) f->R.r8;
 			void* result;
-			printf("addr : 0x%X, length : %d, writable : %d, fd : %d, offset : %d\n", addr, length, writable, fd, offset);
+			//printf("addr : 0x%X, length : %d, writable : %d, fd : %d, offset : %d\n", addr, length, writable, fd, offset);
 			
 			result = mmap(addr, length, writable, fd, offset);
 			f->R.rax = (uint64_t) result;
