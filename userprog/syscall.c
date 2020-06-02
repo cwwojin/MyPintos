@@ -329,11 +329,9 @@ tid_t fork (const char *thread_name, struct intr_frame* if_){
 //mmap : Maps "length" bytes of the file "fd" starting from "offset", into VA space at "addr".
 void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 	void* result = NULL;
-	//1. FAIL if addr isn't page-aligned or is 0.
-	if(addr == 0){
-		return NULL;
-	}
-	if(addr % PGSIZE != 0){
+	//1. FAIL if addr isn't page-aligned or is 0, or Length is 0.
+	if(addr == 0 || (addr % PGSIZE) != 0 || length == 0){
+		printf("addr : 0x%X, offset : %d, LENGTH : %d\n",addr, addr % PGSIZE, length);
 		return NULL;
 	}
 	//2. Get the file "FD".
@@ -344,9 +342,14 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 		lock_release(&filesys_lock);
 		return NULL;
 	}
-	lock_release(&filesys_lock);
 	//3. FAIL if file length is 0.
+	if(file_length(target) == 0){
+		return NULL;
+	}
+	//4. Check how many pages needed & where. If any page overlaps with current spt pages, then FAIL.
+	//spt_find_page(&thread_current()->spt, addr);
 	
+	lock_release(&filesys_lock);
 	return result;
 }
 #endif
