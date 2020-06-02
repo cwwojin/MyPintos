@@ -2,6 +2,7 @@
 
 #include "vm/vm.h"
 #include "devices/disk.h"
+#include "threads/malloc.h"
 
 /* DO NOT MODIFY BELOW LINE */
 static struct disk *swap_disk;
