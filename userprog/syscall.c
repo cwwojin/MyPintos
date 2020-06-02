@@ -112,9 +112,12 @@ void check_address(void* addr){
 }
 
 #ifdef VM
-static bool write_permission(void* addr){
+static void write_permission(void* addr){
 	struct page* page = spt_find_page(&thread_current()->spt, pg_round_down(addr));
-	return page->writable;
+	if(!page->writable){
+		printf("Page is write-protected : 0x%X\n", pg_round_down(addr));
+		exit(-1);
+	}
 }
 #endif VM
 
@@ -235,6 +238,9 @@ int write (int fd, const void *buffer, unsigned size){
 	for(i=0; i< size; i++){
 		//check validity of address.
 		check_address((void*) (buffer + i));
+#ifdef VM
+		write_permission((void*) (buffer + i));
+#endif
 	}
 	int result = -1;
 	struct file* target;
