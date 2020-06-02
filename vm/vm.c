@@ -283,7 +283,7 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 					memcpy(aux, p->uninit.aux, sizeof(struct lazy_aux));
 				}
 				struct file* newfile = file_reopen(((struct lazy_aux*) aux)->executable);
-				aux->executable = newfile;
+				((struct lazy_aux*) aux)->executable = newfile;
 				break;
 			default :
 				break;
