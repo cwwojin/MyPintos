@@ -505,6 +505,18 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			close(fd);
 			break;
 		}/* Close a file. */
+#ifdef VM
+		case SYS_MMAP:
+		{
+			printf("syscall num : MMAP\n");
+			break;
+		}
+		case SYS_MUNMAP:
+		{
+			printf("syscall num : MUNMAP\n");
+			break;
+		}
+#endif
 		default:
 		{
 			printf("Invalid system call number : %d\n", syscall_num);
