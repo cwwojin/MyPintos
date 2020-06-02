@@ -91,8 +91,8 @@ void check_address(void* addr){
 	}
 #else
 	//VM : case 3. UNMAPPED pointer. check if "addr"'s corresponding page exists in current thread's Supplemental Page Table.
-	if(spt_find_page(&thread_current()->spt, pg_round_down(addr)) == NULL){
-		//Stack Growth from a SYSCALL.
+	struct page* page = spt_find_page(&thread_current()->spt, pg_round_down(addr));
+	if(page == NULL){	//Stack Growth from a SYSCALL.
 		bool accessing_stack = ((addr < USER_STACK) && (USER_STACK - (int) pg_round_down(addr)) <= (PGSIZE << 8) && (uintptr_t)addr >= (thread_current()->syscall_rsp - 64));
 		if(accessing_stack){
 			bool success;
@@ -107,6 +107,10 @@ void check_address(void* addr){
 		else{	//True invalid pointer.
 			exit(-1);
 		}
+	}
+	if(!page->writable){
+		printf("page is write-protected.\n");
+		exit(-1);
 	}
 #endif
 }
