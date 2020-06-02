@@ -380,7 +380,7 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 		}
 	}
 	//5. Allocate file-mapped pages.
-	while(length > 0){
+	while(read_bytes > 0){
 		size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
 		size_t page_zero_bytes = PGSIZE - page_read_bytes;
 		/* set up AUX. */
