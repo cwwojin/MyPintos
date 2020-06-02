@@ -608,7 +608,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		case SYS_MMAP:
 		{
 			//printf("syscall num : MMAP\n");
-			//5 arguments. addr, length, writable, fd, offset);
+			//5 arguments. addr, length, writable, fd, offset.
 			void* addr = (void*) f->R.rdi;
 			size_t length = (size_t) f->R.rsi;
 			int writable = (int) f->R.rdx;
@@ -625,7 +625,10 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		case SYS_MUNMAP:
 		{
 			printf("syscall num : MUNMAP\n");
-			exit(-1);
+			//one argument. addr.
+			void* addr = (void*) f->R.rdi;
+			munmap(addr);
+			//exit(-1);
 			break;
 		}
 #endif
