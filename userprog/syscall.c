@@ -351,9 +351,10 @@ static bool file_lazy_load (struct page *page, void *aux) {
 void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 	void* upage = addr;
 	off_t ofs = offset;
+	size_t read_bytes;
 	//1. FAIL if addr isn't page-aligned or is 0, or Length is 0.
-	if(addr == 0 || ((int)addr % PGSIZE) != 0 || !is_user_vaddr(addr) || length == 0){
-		printf("addr : 0x%X, offset : %d, LENGTH : %d\n",addr, (int)addr % PGSIZE, length);
+	if(addr == 0 || ((int)addr % PGSIZE) != 0 || !is_user_vaddr(addr) || length == 0 || ((int)offset % PGSIZE) != 0){
+		printf("addr : 0x%X, addr%PGSIZE : %d, offset : %d, LENGTH : %d\n",addr, (int)addr % PGSIZE, offset, length);
 		return NULL;
 	}
 	//2. Get the file "FD".
@@ -370,15 +371,16 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 		return NULL;
 	}
 	//4. Check how many pages needed & where. If any page overlaps with current spt pages, then FAIL.
+	read_bytes = length <= file_length(target) ? length : file_length(target);
 	int i;
-	for(i=0; i < length/PGSIZE + (length % PGSIZE != 0); i++){
+	for(i=0; i < read_bytes/PGSIZE + (read_bytes % PGSIZE != 0); i++){
 		if(spt_find_page(&thread_current()->spt, addr + i * PGSIZE) != NULL){
 			return NULL;
 		}
 	}
 	//5. Allocate file-mapped pages.
 	while(length > 0){
-		size_t page_read_bytes = length < PGSIZE ? length : PGSIZE;
+		size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
 		size_t page_zero_bytes = PGSIZE - page_read_bytes;
 		/* set up AUX. */
 		void *aux = NULL;
@@ -393,7 +395,7 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 			return NULL;
 		}
 		/* Advance. */
-		length -= page_read_bytes;
+		read_bytes -= page_read_bytes;
 		upage += PGSIZE;
 		ofs += PGSIZE;
 	}
