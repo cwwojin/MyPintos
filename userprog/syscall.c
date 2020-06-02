@@ -108,13 +108,15 @@ void check_address(void* addr){
 			exit(-1);
 		}
 	}
-	if(!page->writable){
-		printf("page is write-protected.\n");
-		exit(-1);
-	}
 #endif
 }
 
+#ifdef VM
+static bool write_permission(void* addr){
+	struct page* page = spt_find_page(&thread_current()->spt, pg_round_down(addr));
+	return page->writable;
+}
+#endif VM
 
 //FILESYS - create : create a file with given name & size.
 bool create(const char *file, unsigned initial_size){
@@ -312,42 +314,6 @@ tid_t fork (const char *thread_name, struct intr_frame* if_){
 	result = process_fork(thread_name, if_);
 	return result;
 }
-
-//PROJECT2 EXTRA - DUP2 : Duplicate a file descriptor.
-int dup2(oldfd, newfd){
-	int result = -1;
-	/*
-	struct file* oldfile;
-	
-	lock_acquire(&filesys_lock);
-	oldfile = process_get_file(oldfd);
-	if(oldfile == NULL){		//oldfd is not valid.
-		lock_release(&filesys_lock);
-		return -1;
-	}
-	if(newfd == oldfd){		//oldfd is valid, but newfd is same as oldfd.
-		lock_release(&filesys_lock);
-		return newfd;
-	}
-	//oldfd is valid & newfd is different from oldfd.
-	if(process_get_file(newfd) != NULL){	//newfd is already an open file descriptor.
-		process_close_file(newfd);
-	}
-	//make a new file descriptor.
-	struct fd* newfile_desc = malloc(sizeof(struct fd));
-	if(newfile_desc == NULL){	//allocation failed.
-		lock_release(&filesys_lock);
-		return -1;
-	}
-	newfile_desc->file = oldfile;
-	newfile_desc->fd_num = newfd;
-	list_push_back(&thread_current()->fd_table, &newfile_desc->elem);
-	
-	
-	lock_release(&filesys_lock);
-	*/
-	return result;
-}
 /* ENDOFNEWCODE*/
 
 
@@ -365,7 +331,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 #endif
 	//get the system call number from "rax".
 	syscall_num = (int) f->R.rax;
-	//printf("systemcall number : %d\n", syscall_num);
+	printf("systemcall number : %d\n", syscall_num);
 	switch(syscall_num){
 		case SYS_HALT:
 		{
@@ -530,20 +496,6 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			close(fd);
 			break;
 		}/* Close a file. */
-		case SYS_DUP2:
-		{
-			//2 arguments. oldfd, newfd.
-			int oldfd;
-			int newfd;
-			int result;
-			oldfd = f->R.rdi;
-			newfd = f->R.rsi;
-			
-			result = dup2(oldfd, newfd);
-			f->R.rax = (uint64_t) result;
-			break;
-		}/* Duplicate a file descriptor. EXTRA!!! */
-		
 		default:
 		{
 			printf("Invalid system call number : %d\n", syscall_num);
