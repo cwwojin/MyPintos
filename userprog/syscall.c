@@ -323,6 +323,13 @@ tid_t fork (const char *thread_name, struct intr_frame* if_){
 	result = process_fork(thread_name, if_);
 	return result;
 }
+
+#ifdef VM
+//mmap : Maps "length" bytes of the file "fd" starting from "offset", into VA space at "addr".
+void *mmap (void *addr, size_t length, int writable, int fd, off_t offset){
+	
+}
+#endif
 /* ENDOFNEWCODE*/
 
 
@@ -509,11 +516,13 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		case SYS_MMAP:
 		{
 			printf("syscall num : MMAP\n");
+			exit(-1);
 			break;
 		}
 		case SYS_MUNMAP:
 		{
 			printf("syscall num : MUNMAP\n");
+			exit(-1);
 			break;
 		}
 #endif
