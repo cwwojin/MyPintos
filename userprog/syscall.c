@@ -333,6 +333,7 @@ static bool file_lazy_load (struct page *page, void *aux) {
 	size_t page_zero_bytes = ((struct lazy_aux*)aux)->page_zero_bytes;
 	off_t ofs = ((struct lazy_aux*)aux)->offset;
 	struct file* file = ((struct lazy_aux*)aux)->executable;
+	printf("LOADING addr : 0x%X, read_bytes : %d, zero_bytes : %d, ofs : %d\n", page->va, page_read_bytes, page_zero_bytes, ofs);
 	if (kpage == NULL)
 		return false;
 	// Load this page.
