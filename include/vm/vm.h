@@ -66,6 +66,7 @@ struct lazy_aux {
 	size_t page_read_bytes;
 	size_t page_zero_bytes;
 	off_t offset;
+	bool next_page;		//is the NEXT page (addr + PGSIZE) also a file_page mapped to the same file?
 };
 
 /* The representation of "frame" */
