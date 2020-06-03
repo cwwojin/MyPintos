@@ -366,7 +366,6 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 		lock_release(&filesys_lock);
 		return NULL;
 	}
-	struct file* target = file_reopen(FILE);
 	lock_release(&filesys_lock);
 	//3. FAIL if file length is 0.
 	if(file_length(target) == 0){
@@ -382,6 +381,7 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 	}
 	//5. Allocate file-mapped pages.
 	while(read_bytes > 0){
+		struct file* target = file_reopen(FILE);	//all PAGES get different file STRUCTS w/ file_reopen().
 		size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
 		size_t page_zero_bytes = PGSIZE - page_read_bytes;
 		/* set up AUX. */
@@ -411,12 +411,6 @@ void munmap (void *addr){
 	struct page* page = spt_find_page(&thread_current()->spt, uaddr);
 	lock_acquire(&filesys_lock);
 	while(page != NULL){
-		/*
-		if(page == NULL){
-			printf("page addr : 0x%X not found in spt.\n", uaddr);
-			break;
-		}
-		*/
 		if(page_get_type(page) == VM_FILE){
 			printf("ADDR : 0x%X, next page? : %d\n", uaddr, page->file.next_page);
 			next_page = page->file.next_page;
