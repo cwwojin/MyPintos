@@ -391,6 +391,7 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 		AUX->page_read_bytes = page_read_bytes;
 		AUX->page_zero_bytes = page_zero_bytes;
 		AUX->offset = ofs;
+		AUX->next_page = read_bytes > PGSIZE ? true : false;
 		aux = AUX;
 		if (!vm_alloc_page_with_initializer (VM_FILE, upage, writable, file_lazy_load, aux)){
 			return NULL;
@@ -406,12 +407,12 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 //munmap : Unmaps the mapping for the address range "addr".
 void munmap (void *addr){
 	struct page* page = spt_find_page(&thread_current()->spt, addr);
-	//printf("ADDR : 0x%X\n", addr);
 	if(page == NULL){
 		return;
 	}
 	lock_acquire(&filesys_lock);
 	if(page_get_type(page) == VM_FILE){
+		//printf("ADDR : 0x%X, next page? : %d\n", addr, page->file.next_page);
 		spt_remove_page(&thread_current()->spt, page);
 	}
 	lock_release(&filesys_lock);
