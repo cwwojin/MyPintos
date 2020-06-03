@@ -55,9 +55,10 @@ static void
 file_map_destroy (struct page *page) {
 	struct file_page *file_page UNUSED = &page->file;
 	if(pml4_is_dirty(thread_current()->pml4, page->va)){	//Write back contents to file, if DIRTY.
-		printf("page addr : 0x%X, is DIRTY? : %d\n", page->va, pml4_is_dirty(thread_current()->pml4, page->va));
 		off_t written = file_write_at(file_page->file, page->va, file_page->read_bytes, file_page->aux->offset);
-		printf("read_bytes : %d, offset : %d, WRITTEN : %d bytes.\n", file_page->read_bytes, file_page->aux->offset, written);
+		if(written != file_page->read_bytes){
+			printf("read_bytes : %d, offset : %d, WRITTEN : %d bytes.\n", file_page->read_bytes, file_page->aux->offset, written);
+		}
 	}
 	if(file_page->aux != NULL){	//free the LAZY_AUX.
 		free(file_page->aux);
