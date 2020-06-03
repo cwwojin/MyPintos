@@ -12,6 +12,7 @@ struct file_page {
 	enum vm_type type;
 	struct file* file;
 	size_t read_bytes;
+	bool next_page;		//is the NEXT page (addr + PGSIZE) also a file_page mapped to the same file?
 };
 
 void vm_file_init (void);
