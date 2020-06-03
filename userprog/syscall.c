@@ -355,7 +355,7 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 	size_t read_bytes;
 	//1. FAIL if addr isn't page-aligned or is 0, or Length is 0.
 	printf("addr : 0x%X, LENGTH : %d\n",addr, length);
-	if(addr == 0 || ((int)addr % PGSIZE) != 0 || is_kernel_vaddr(addr) || length <= 0 || ((int)offset % PGSIZE) != 0){
+	if(addr == 0 || ((int)addr % PGSIZE) != 0 || is_kernel_vaddr(addr) || (int) length <= 0 || ((int)offset % PGSIZE) != 0){
 		printf("FAIL @ addr : 0x%X, PGSIZE : %d, offset : %d, LENGTH : %d\n",addr, (int)addr % PGSIZE, offset, length);
 		return NULL;
 	}
