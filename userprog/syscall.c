@@ -406,14 +406,30 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 
 //munmap : Unmaps the mapping for the address range "addr".
 void munmap (void *addr){
-	struct page* page = spt_find_page(&thread_current()->spt, addr);
-	if(page == NULL){
-		return;
-	}
+	void* uaddr = addr;
+	struct page* page = spt_find_page(&thread_current()->spt, uaddr);
 	lock_acquire(&filesys_lock);
-	if(page_get_type(page) == VM_FILE){
-		//printf("ADDR : 0x%X, next page? : %d\n", addr, page->file.next_page);
-		spt_remove_page(&thread_current()->spt, page);
+	while(page != NULL){
+		/*
+		if(page == NULL){
+			printf("page addr : 0x%X not found in spt.\n", uaddr);
+			break;
+		}
+		*/
+		if(page_get_type(page) == VM_FILE){
+			printf("ADDR : 0x%X, next page? : %d\n", uaddr, page->file.next_page);
+			spt_remove_page(&thread_current()->spt, page);
+		}
+		else{
+			printf("page addr : 0x%X is not a file-mapped page.\n", uaddr);
+			break;
+		}
+		if(!page->next_page){
+			printf("Last page!\n");
+			break;
+		}
+		uaddr += PGSIZE;
+		page = spt_find_page(&thread_current()->spt, uaddr);
 	}
 	lock_release(&filesys_lock);
 }
