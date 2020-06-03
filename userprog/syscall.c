@@ -412,7 +412,7 @@ void munmap (void *addr){
 	lock_acquire(&filesys_lock);
 	while(page != NULL){
 		if(page_get_type(page) == VM_FILE){
-			printf("ADDR : 0x%X, next page? : %d\n", uaddr, page->file.next_page);
+			//printf("ADDR : 0x%X, next page? : %d\n", uaddr, page->file.next_page);
 			next_page = page->file.next_page;
 			spt_remove_page(&thread_current()->spt, page);
 		}
@@ -421,7 +421,6 @@ void munmap (void *addr){
 			break;
 		}
 		if(!next_page){
-			printf("Last page!\n");
 			break;
 		}
 		uaddr += PGSIZE;
