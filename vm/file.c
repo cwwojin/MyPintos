@@ -4,6 +4,7 @@
 #include "filesys/file.h"
 
 #include "threads/malloc.h"
+#include "threads/mmu.h"
 
 static bool file_map_swap_in (struct page *page, void *kva);
 static bool file_map_swap_out (struct page *page);
