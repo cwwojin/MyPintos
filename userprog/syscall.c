@@ -368,7 +368,7 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 	}
 	lock_release(&filesys_lock);
 	//3. FAIL if file length is 0.
-	if(file_length(target) == 0){
+	if(file_length(FILE) == 0){
 		return NULL;
 	}
 	//4. Check how many pages needed & where. If any page overlaps with current spt pages, then FAIL.
