@@ -54,6 +54,8 @@ file_map_destroy (struct page *page) {
 	if(file_page->aux != NULL){	//free the LAZY_AUX.
 		free(file_page->aux);
 	}
+	//bool pml4_is_dirty (uint64_t *pml4, const void *vpage)
+	printf("page addr : 0x%X, is DIRTY? : %d\n", page->va, pml4_is_dirty(thread_current()->pml4, page->va));
 	if(file_page->file != NULL){	//close the file.
 		file_close(file_page->file);
 	}
