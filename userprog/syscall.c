@@ -242,9 +242,6 @@ int write (int fd, const void *buffer, unsigned size){
 	for(i=0; i< size; i++){
 		//check validity of address.
 		check_address((void*) (buffer + i));
-#ifdef VM
-		//write_permission((void*) (buffer + i));
-#endif
 	}
 	int result = -1;
 	struct file* target;
