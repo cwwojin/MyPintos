@@ -108,9 +108,11 @@ spt_insert_page (struct supplemental_page_table *spt UNUSED,
 
 void
 spt_remove_page (struct supplemental_page_table *spt, struct page *page) {
-	if(hash_delete (&spt->hash, &page->hash_elem) != NULL){
+	if(hash_delete (&spt->hash, &page->hash_elem) == NULL){
+		printf("Deletion failed.\n");
 		return;
 	}
+	printf("Deletion success.\n");
 	vm_dealloc_page (page);
 	//return true;
 }
