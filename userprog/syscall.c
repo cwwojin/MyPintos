@@ -372,7 +372,7 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 		return NULL;
 	}
 	//4. Check how many pages needed & where. If any page overlaps with current spt pages, then FAIL.
-	read_bytes = length <= file_length(target) ? length : file_length(target);
+	read_bytes = length <= file_length(FILE) ? length : file_length(FILE);
 	int i;
 	for(i=0; i < read_bytes/PGSIZE + (read_bytes % PGSIZE != 0); i++){
 		if(spt_find_page(&thread_current()->spt, addr + i * PGSIZE) != NULL){
