@@ -32,11 +32,7 @@ file_map_initializer (struct page *page, enum vm_type type, void *kva) {
 	file_page->type = page->uninit.type;
 	struct lazy_aux* AUX = page->uninit.aux;
 	file_page->file = AUX != NULL ? AUX->executable : NULL;
-	/*
-	if(AUX != NULL){
-		file_page->file = AUX->executable;
-	}
-	*/
+	file_page->next_page = AUX->next_page;
 }
 
 /* Swap in the page by read contents from the file. */
