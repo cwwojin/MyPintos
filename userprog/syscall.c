@@ -407,6 +407,7 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 //munmap : Unmaps the mapping for the address range "addr".
 void munmap (void *addr){
 	void* uaddr = addr;
+	bool next_page;
 	struct page* page = spt_find_page(&thread_current()->spt, uaddr);
 	lock_acquire(&filesys_lock);
 	while(page != NULL){
@@ -418,13 +419,14 @@ void munmap (void *addr){
 		*/
 		if(page_get_type(page) == VM_FILE){
 			printf("ADDR : 0x%X, next page? : %d\n", uaddr, page->file.next_page);
+			next_page = page->file.next_page;
 			spt_remove_page(&thread_current()->spt, page);
 		}
 		else{
 			printf("page addr : 0x%X is not a file-mapped page.\n", uaddr);
 			break;
 		}
-		if(!page->next_page){
+		if(!next_page){
 			printf("Last page!\n");
 			break;
 		}
