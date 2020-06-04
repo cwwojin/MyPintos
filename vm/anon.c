@@ -18,11 +18,14 @@ static const struct page_operations anon_ops = {
 	.type = VM_ANON,
 };
 
+static struct list swap_list;	//swap table.
+
 /* Initialize the data for anonymous pages */
 void
 vm_anon_init (void) {
 	/* TODO: Set up the swap_disk. */
 	swap_disk = disk_get (1,1);	//1:1 - swap
+	list_init(&swap_list);
 }
 
 /* Initialize the file mapping */
