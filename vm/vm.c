@@ -22,6 +22,7 @@ vm_init (void) {
 	register_inspect_intr ();
 	/* DO NOT MODIFY UPPER LINES. */
 	/* TODO: Your code goes here. */
+	list_init(&frame_list);
 }
 
 /* Get the type of the page. This function is useful if you want to know the
@@ -149,7 +150,16 @@ vm_get_frame (void) {
 		if(frame != NULL){
 			frame->kva = new;
 			frame->page = NULL;
+			list_push_back(&frame_list, &frame->elem);
 		}
+	}
+	else{	//Evict a frame and retrieve it. Use the page @ frame->kva.
+		/*
+		frame = vm_evict_frame();
+		if(frame != NULL){
+			frame->page = NULL;
+		}
+		*/	
 	}
 
 	ASSERT (frame != NULL);
