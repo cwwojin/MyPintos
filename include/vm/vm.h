@@ -4,6 +4,7 @@
 #include "threads/palloc.h"
 
 #include <hash.h>
+#include <list.h>
 
 enum vm_type {
 	/* page not initialized */
@@ -73,6 +74,8 @@ struct lazy_aux {
 struct frame {
 	void *kva;
 	struct page *page;
+	int cnt;
+	struct list_elem elem;
 };
 
 /* The function table for page operations.
