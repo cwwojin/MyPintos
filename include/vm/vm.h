@@ -70,6 +70,8 @@ struct lazy_aux {
 	bool next_page;		//is the NEXT page (addr + PGSIZE) also a file_page mapped to the same file?
 };
 
+struct list frame_list;	//Frame Table : List of all frames.
+
 /* The representation of "frame" */
 struct frame {
 	void *kva;
