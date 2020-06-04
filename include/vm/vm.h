@@ -74,7 +74,7 @@ struct lazy_aux {
 struct frame {
 	void *kva;
 	struct page *page;
-	int cnt;
+	int cnt;		//For 2nd-chance algorithm.
 	struct list_elem elem;
 };
 
