@@ -11,17 +11,17 @@ enum vm_type;
 
 #define SECTORS_PER_PAGE  (PGSIZE / DISK_SECTOR_SIZE)
 
-struct anon_page {
-  vm_initializer* init;
-  struct lazy_aux* aux;
-  enum vm_type type;
-  uint32_t slotNo;
-};
-
 struct swap_slot{  //This is an entry in the swap table.
   struct list_elem elem;
   bool free;
   uint32_t slotNo;  //Slot number : This corresponds to the swap disk's sector #(slotNo * 8). 
+};
+
+struct anon_page {
+  vm_initializer* init;
+  struct lazy_aux* aux;
+  enum vm_type type;
+  struct swap_slot* slot;
 };
 
 
