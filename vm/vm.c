@@ -147,7 +147,6 @@ vm_evict_frame (void) {
 	}
 	//USE : void pml4_clear_page (uint64_t *pml4, void *upage)
 	pml4_clear_page(victim_owner->pml4, victim_page->va);
-
 	return victim;
 }
 
@@ -171,14 +170,12 @@ vm_get_frame (void) {
 		}
 	}
 	else{	//Evict a frame and retrieve it. Use the page @ frame->kva.
-		/*
 		frame = vm_evict_frame();
 		if(frame != NULL){
 			frame->page = NULL;
 			frame->owner = thread_current();
 			list_push_back(&frame_list, &frame->elem);
 		}
-		*/	
 	}
 
 	ASSERT (frame != NULL);
