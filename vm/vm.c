@@ -119,14 +119,15 @@ void vm_sweep_frame_table(void){
 	struct list_elem* e;
 	for(e = list_begin(&frame_list); e != list_end(&frame_list); e = list_next(e)){
 		struct frame* frame = list_entry(e, struct frame, elem);
+		struct thread* owner = frame->owner;
 		//USE : pml4_is_accessed(*pml4, *vpage), pml4_set_accessed(*pml4, *vpage, bool accessed)
-		if(pml4_is_accessed(thread_current()->pml4, frame->kva)){
+		if(pml4_is_accessed(owner->pml4, frame->kva)){
 			frame->cnt = 0;
-			pml4_set_accessed(thread_current()->pml4, frame->kva, false);
+			pml4_set_accessed(owner->pml4, frame->kva, false);
 		}
 		else{
 			frame->cnt++;
-			pml4_set_accessed(thread_current()->pml4, frame->kva, false);
+			pml4_set_accessed(owner->pml4, frame->kva, false);
 		}
 	}
 }
@@ -165,6 +166,8 @@ vm_get_frame (void) {
 		if(frame != NULL){
 			frame->kva = new;
 			frame->page = NULL;
+			frame->cnt = 0;
+			frame->owner = thread_current();
 			list_push_back(&frame_list, &frame->elem);
 		}
 	}
@@ -173,6 +176,8 @@ vm_get_frame (void) {
 		frame = vm_evict_frame();
 		if(frame != NULL){
 			frame->page = NULL;
+			frame->cnt = 0;
+			frame->owner = thread_current();
 		}
 		*/	
 	}
