@@ -68,6 +68,7 @@ uninit_destroy (struct page *page) {
 	 * TODO: If you don't have anything to do, just return. */
 	switch(VM_TYPE(uninit->type)){
 		case VM_ANON :	//free the LAZY_AUX passed from lazy-loading.
+		case VM_FILE :
 			if(uninit->aux != NULL){
 				free((struct lazy_aux*)uninit->aux);
 			}
@@ -75,4 +76,5 @@ uninit_destroy (struct page *page) {
 		default :
 			break;
 	}
+	pml4_clear_page(thread_current()->pml4, page->va);
 }
