@@ -10,6 +10,8 @@
 #include "vm/uninit.h"
 #include <debug.h>
 
+static struct frame_lock;	//frame table lock.
+
 /* Initializes the virtual memory subsystem by invoking each subsystem's
  * intialize codes. */
 void
@@ -23,6 +25,7 @@ vm_init (void) {
 	/* DO NOT MODIFY UPPER LINES. */
 	/* TODO: Your code goes here. */
 	list_init(&frame_list);
+	lock_init(&frame_lock);
 }
 
 /* Get the type of the page. This function is useful if you want to know the
@@ -137,6 +140,20 @@ static struct frame *
 vm_get_victim (void) {
 	struct frame *victim = NULL;
 	 /* TODO: The policy for eviction is up to you. */
+	//2nd-chance algorithm : look through the frame table, choose for eviction if : CNT >= 2 && unused!!
+	lock_acquire(&frame_lock);
+	struct list_elem* e;
+	for(e = list_begin(&frame_list); e != list_end(&frame_list); e = list_next(e)){
+		struct frame* frame = list_entry(e, struct frame, elem);
+		struct thread* owner = frame->owner;
+		if(!pml4_is_accessed(owner->pml4, frame->kva) && frame->cnt >= 2){
+			victim = frame;
+		}
+	}
+	if(victim == NULL){
+		printf("No frame is chosen as victim!!\n");
+	}
+	lock_release(&frame_lock);
 
 	return victim;
 }
