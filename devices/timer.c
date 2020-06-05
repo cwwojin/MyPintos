@@ -195,8 +195,10 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 			mlfqs_recalc_threads();
 		}
 	}
+	/* NEWCODE FOR VM : 2nd-CHANCE ALGORITHM!! */
+	vm_sweep_frame_table();
+	
 	intr_set_level (old_level);
-	/* NEWCODE */
 	//call alarm function.
 	timer_alarm();
 }
