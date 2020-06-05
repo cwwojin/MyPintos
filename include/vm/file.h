@@ -13,6 +13,7 @@ struct file_page {
 	struct file* file;
 	size_t read_bytes;
 	bool next_page;		//is the NEXT page (addr + PGSIZE) also a file_page mapped to the same file?
+	bool swapped_out;	//was this page swapped-out before?
 };
 
 void vm_file_init (void);
