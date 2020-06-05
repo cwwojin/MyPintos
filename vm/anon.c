@@ -52,11 +52,11 @@ anon_initializer (struct page *page, enum vm_type type, void *kva) {
 	anon_page->slot = NULL;
 }
 
-/* Get an available swap slot. if None exist and total slots < nSlots, then allocate a NEW one. */
+/* Get an available swap slot. allocate a NEW one. */
 static struct swap_slot* get_available_slot(void){
 	struct list_elem* e;
 	struct swap_slot* target = NULL;
-	printf("Trying to get an available swap_slot..\n");
+	//printf("Trying to get an available swap_slot..\n");
 	lock_acquire(&swap_lock);
 	for(e = list_begin(&swap_list); e != list_end(&swap_list); e = list_next(e)){
 		struct swap_slot* slot = list_entry(e, struct swap_slot, elem);
@@ -69,7 +69,6 @@ static struct swap_slot* get_available_slot(void){
 	if(target == NULL){	//None of the slots were available, allocate a NEW one.
 		int size = (int) list_size(&swap_list);
 		if(size > nSlots){
-			printf("No more swap-slots!!!\n");
 			lock_release(&swap_lock);
 			return NULL;
 		}
@@ -77,7 +76,7 @@ static struct swap_slot* get_available_slot(void){
 		target->free = false;
 		target->slotNo = size;
 		list_push_back(&swap_list, &target->elem);
-		printf("Added new swap-slot No.%d\n", target->slotNo);
+		//printf("Added new swap-slot No.%d\n", target->slotNo);
 	}
 	lock_release(&swap_lock);
 	return target;
@@ -93,9 +92,7 @@ anon_swap_in (struct page *page, void *kva) {
 		return true;
 	}
 	disk_sector_t sec_no = slot->slotNo * SECTORS_PER_PAGE;		//set sector Number : slotNo * 8
-	printf("Swapping in ANON-PAGE 0x%X from swap slot %d <-> sector %d\n", page->va, slot->slotNo, sec_no);
-	//Use VA or KVA??
-	//void* buffer = page->va;
+	//printf("Swapping in ANON-PAGE 0x%X from swap slot %d <-> sector %d\n", page->va, slot->slotNo, sec_no);
 	void* buffer = page->frame->kva;
 	for(i = 0; i < SECTORS_PER_PAGE; i++){	//USE : void disk_read (struct disk *d, disk_sector_t sec_no, void *buffer)
 		disk_read(swap_disk, sec_no, buffer);
@@ -118,9 +115,7 @@ anon_swap_out (struct page *page) {
 		return false;
 	}
 	disk_sector_t sec_no = slot->slotNo * SECTORS_PER_PAGE;		//set sector Number : slotNo * 8
-	printf("Swapping out ANON-PAGE 0x%X to swap slot %d <-> sector %d\n", page->va, slot->slotNo, sec_no);
-	//Use VA or KVA??
-	//void* buffer = page->va;
+	//printf("Swapping out ANON-PAGE 0x%X to swap slot %d <-> sector %d\n", page->va, slot->slotNo, sec_no);
 	void* buffer = page->frame->kva;
 	for(i = 0; i < SECTORS_PER_PAGE; i++){	//USE : void disk_write (struct disk *d, disk_sector_t sec_no, const void *buffer)
 		disk_write(swap_disk, sec_no, buffer);
