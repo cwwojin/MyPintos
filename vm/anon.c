@@ -133,4 +133,5 @@ anon_destroy (struct page *page) {
 	if(anon_page->aux != NULL){
 		free(anon_page->aux);
 	}
+	pml4_clear_page(thread_current()->pml4, page->va);
 }
