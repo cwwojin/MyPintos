@@ -342,7 +342,7 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 					printf("SPT_COPY : failed to claim page.\n");
 					return false;
 				}
-				memcpy(newp->frame->kva, p->frame->kva, PGSIZE);
+				//memcpy(newp->frame->kva, p->frame->kva, PGSIZE);
 			}
 			else{
 				pml4_set_page(thread_current()->pml4, newp->va, p->frame->kva, false);
