@@ -56,6 +56,7 @@ anon_initializer (struct page *page, enum vm_type type, void *kva) {
 static struct swap_slot* get_available_slot(void){
 	struct list_elem* e;
 	struct swap_slot* target = NULL;
+	printf("Trying to get an available swap_slot..\n");
 	lock_acquire(&swap_lock);
 	for(e = list_begin(&swap_list); e != list_end(&swap_list); e = list_next(e)){
 		struct swap_slot* slot = list_entry(e, struct swap_slot, elem);
