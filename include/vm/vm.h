@@ -77,7 +77,6 @@ struct list frame_list;	//Frame Table : List of all frames.
 struct frame {
 	void *kva;
 	struct page *page;
-	int cnt;		//For 2nd-chance algorithm.
 	struct thread* owner;	//Owner of this frame.
 	struct list_elem elem;
 };
