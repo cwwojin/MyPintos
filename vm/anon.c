@@ -3,6 +3,7 @@
 #include "vm/vm.h"
 #include "devices/disk.h"
 #include "threads/malloc.h"
+#include "threads/synch.h"
 
 /* DO NOT MODIFY BELOW LINE */
 static struct disk *swap_disk;
@@ -19,6 +20,7 @@ static const struct page_operations anon_ops = {
 };
 
 static struct list swap_list;	//swap table.
+static struct lock swap_lock;	//swap lock -> use this when modifying swap slots.
 
 /* Initialize the data for anonymous pages */
 void
@@ -26,6 +28,7 @@ vm_anon_init (void) {
 	/* TODO: Set up the swap_disk. */
 	swap_disk = disk_get (1,1);	//1:1 - swap
 	list_init(&swap_list);
+	lock_init(&swap_lock);
 }
 
 /* Initialize the file mapping */
