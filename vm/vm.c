@@ -337,7 +337,7 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 			//printf("Copying page : 0x%X <-> KVA : 0x%X mapping..\n", p->va, p->frame->kva);
 			//pml4_set_page(thread_current()->pml4, newp->va, p->frame->kva, false);
 			
-			if(!p->writable){	//stack page!!
+			if(p->writable){	//stack page!!
 				printf("Copying WRITE-PROTECTED page : 0x%X..\n", p->va);
 				if(!vm_do_claim_page(newp)){
 					printf("SPT_COPY : failed to claim page.\n");
