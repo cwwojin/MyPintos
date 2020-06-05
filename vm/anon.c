@@ -56,6 +56,7 @@ anon_initializer (struct page *page, enum vm_type type, void *kva) {
 static struct swap_slot* get_available_slot(void){
 	struct list_elem* e;
 	struct swap_slot* target = NULL;
+	lock_acquire(&swap_lock);
 	for(e = list_begin(&swap_list); e != list_end(&swap_list); e = list_next(e)){
 		struct swap_slot* slot = list_entry(e, struct swap_slot, elem);
 		if(slot->free){	//This slot is FREE. choose this.
@@ -68,12 +69,16 @@ static struct swap_slot* get_available_slot(void){
 		int size = (int) list_size(&swap_list);
 		if(size > nSlots){
 			printf("No more swap-slots!!!\n");
+			lock_release(&swap_lock);
 			return NULL;
 		}
 		target = malloc(sizeof(struct swap_slot));
 		target->free = false;
 		target->slotNo = size;
+		list_push_back(&swap_list, &target->elem);
+		printf("Added new swap-slot No.%d\n", target->slotNo);
 	}
+	lock_release(&swap_lock);
 	ASSERT(target != NULL);
 	return target;
 }
