@@ -79,7 +79,6 @@ static struct swap_slot* get_available_slot(void){
 		printf("Added new swap-slot No.%d\n", target->slotNo);
 	}
 	lock_release(&swap_lock);
-	ASSERT(target != NULL);
 	return target;
 }
 
@@ -88,7 +87,23 @@ static bool
 anon_swap_in (struct page *page, void *kva) {
 	struct anon_page *anon_page = &page->anon;
 	int i;
-	struct swap_slot* slot = anon_page->slot;
+	struct swap_slot* slot = anon_page->slot;	//get the slot.
+	if(slot == NULL){				//This page wasn't swapped out. Finish here.
+		return true;
+	}
+	disk_sector_t sec_no = slot->slotNo * SECTORS_PER_PAGE;		//set sector Number : slotNo * 8
+	printf("Swapping in ANON-PAGE 0x%X from swap slot %d <-> sector %d\n", page->va, slot->slotNo, sec_no);
+	//Use VA or KVA??
+	//void* buffer = page->va;
+	void* buffer = page->frame->kva;
+	for(i = 0; i < SECTORS_PER_PAGE; i++){	//USE : void disk_read (struct disk *d, disk_sector_t sec_no, void *buffer)
+		disk_read(swap_disk, sec_no, buffer);
+		buffer += DISK_SECTOR_SIZE;
+		sec_no++;
+	}
+	slot->free = true;				//set this slot FREE.
+	anon_page->slot = NULL;				//This page is no longer linked to a swap-slot.
+	return true;
 }
 
 /* Swap out the page by writing contents to the swap disk. */
@@ -97,6 +112,10 @@ anon_swap_out (struct page *page) {
 	struct anon_page *anon_page = &page->anon;
 	int i;
 	struct swap_slot* slot = get_available_slot();			//get a swap slot;
+	if(slot == NULL){
+		printf("ANON-PAGE 0x%X Failed to get a swap-slot!!\n", page->va);
+		return false;
+	}
 	disk_sector_t sec_no = slot->slotNo * SECTORS_PER_PAGE;		//set sector Number : slotNo * 8
 	printf("Swapping out ANON-PAGE 0x%X to swap slot %d <-> sector %d\n", page->va, slot->slotNo, sec_no);
 	//Use VA or KVA??
