@@ -334,10 +334,9 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 		struct page* newp = spt_find_page(dst, p->va);
 		if(p->frame != NULL){
 			/* COPY-ON-WRITE : Instead of claiming page here, just add the pml4 mapping & set write-protected!! */
-			//printf("Copying page : 0x%X <-> KVA : 0x%X mapping..\n", p->va, p->frame->kva);
 			//pml4_set_page(thread_current()->pml4, newp->va, p->frame->kva, false);
 			if(newp->uninit.type == VM_MARKER_0 + VM_ANON){	//stack page!!
-				printf("Copying page : 0x%X..\n", newp->va);
+				//printf("Copying page : 0x%X..\n", newp->va);
 				if(!vm_do_claim_page(newp)){
 					printf("SPT_COPY : failed to claim page.\n");
 					return false;
