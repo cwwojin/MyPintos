@@ -327,7 +327,7 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 			default :
 				break;
 		}
-		if(!vm_alloc_page_with_initializer(page_get_type(p), p->va, p->writable, p->uninit.init, aux)){
+		if(!vm_alloc_page_with_initializer(p->uninit.type, p->va, p->writable, p->uninit.init, aux)){	//page_get_type(p)
 			printf("SPT_COPY : failed to allocate page.\n");
 			return false;
 		}
@@ -335,7 +335,20 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 		if(p->frame != NULL){
 			/* COPY-ON-WRITE : Instead of claiming page here, just add the pml4 mapping & set write-protected!! */
 			//printf("Copying page : 0x%X <-> KVA : 0x%X mapping..\n", p->va, p->frame->kva);
-			pml4_set_page(thread_current()->pml4, newp->va, p->frame->kva, false);
+			//pml4_set_page(thread_current()->pml4, newp->va, p->frame->kva, false);
+			
+			if(p->uninit.type & VM_MARKER_0 == VM_MARKER_0){	//stack page!!
+				printf("Copying STACK page : 0x%X..\n", p->va);
+				if(!vm_do_claim_page(newp)){
+					printf("SPT_COPY : failed to claim page.\n");
+					return false;
+				}
+				memcpy(newp->frame->kva, p->frame->kva, PGSIZE);
+			}
+			else{
+				pml4_set_page(thread_current()->pml4, newp->va, p->frame->kva, false);
+			}
+			//STACK PAGE : claim immediately!!
 			/*
 			if(!vm_do_claim_page(newp)){
 				printf("SPT_COPY : failed to claim page.\n");
