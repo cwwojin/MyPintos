@@ -142,7 +142,9 @@ vm_evict_frame (void) {
 	ASSERT(victim != NULL);
 	struct page* victim_page = victim->page;
 	struct thread* victim_owner = victim->owner;
-	swap_out(victim_page);
+	if(!swap_out(victim_page)){
+		return NULL;
+	}
 	//USE : void pml4_clear_page (uint64_t *pml4, void *upage)
 	pml4_clear_page(victim_owner->pml4, victim_page->va);
 
