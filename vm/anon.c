@@ -93,7 +93,7 @@ anon_swap_in (struct page *page, void *kva) {
 		return true;
 	}
 	disk_sector_t sec_no = slot->slotNo * SECTORS_PER_PAGE;		//set sector Number : slotNo * 8
-	printf("Swapping in ANON-PAGE 0x%X from swap slot %d <-> sector %d\n", page->va, slot->slotNo, sec_no);
+	//printf("Swapping in ANON-PAGE 0x%X from swap slot %d <-> sector %d\n", page->va, slot->slotNo, sec_no);
 	void* buffer = page->frame->kva;
 	for(i = 0; i < SECTORS_PER_PAGE; i++){	//USE : void disk_read (struct disk *d, disk_sector_t sec_no, void *buffer)
 		disk_read(swap_disk, sec_no, buffer);
