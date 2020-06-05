@@ -74,9 +74,11 @@ file_map_swap_out (struct page *page) {
 		off_t written = file_write_at(file_page->file, page->va, file_page->read_bytes, file_page->aux->offset);
 		if(written != file_page->read_bytes){
 			printf("SWAP-OUT page 0x%X -> read_bytes : %d, offset : %d, WRITTEN : %d bytes.\n", page->va, file_page->read_bytes, file_page->aux->offset, written);
+			return false;
 		}
 	}
 	file_page->swapped_out = true;				//mark TRUE for later SWAP-IN's.
+	return true;
 }
 
 /* Destory the file mapped page. PAGE will be freed by the caller. */
