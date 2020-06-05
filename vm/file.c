@@ -57,7 +57,7 @@ file_map_swap_in (struct page *page, void *kva) {
 	file_seek(file, ofs);
 	int read = file_read (file, kpage, page_read_bytes);
 	if (read != (int) page_read_bytes) {
-		printf("load failed @ page 0x%X, read %d bytes instead of %d..\n", page->va, read, page_read_bytes);
+		//printf("load failed @ page 0x%X, read %d bytes instead of %d..\n", page->va, read, page_read_bytes);
 		return false;
 	}
 	memset (kpage + page_read_bytes, 0, page_zero_bytes);
@@ -73,7 +73,7 @@ file_map_swap_out (struct page *page) {
 	if(pml4_is_dirty(thread_current()->pml4, page->va)){	//Write back contents to file, if DIRTY.
 		off_t written = file_write_at(file_page->file, page->va, file_page->read_bytes, file_page->aux->offset);
 		if(written != file_page->read_bytes){
-			printf("SWAP-OUT page 0x%X -> read_bytes : %d, offset : %d, WRITTEN : %d bytes.\n", page->va, file_page->read_bytes, file_page->aux->offset, written);
+			//printf("SWAP-OUT page 0x%X -> read_bytes : %d, offset : %d, WRITTEN : %d bytes.\n", page->va, file_page->read_bytes, file_page->aux->offset, written);
 			return false;
 		}
 	}
@@ -88,7 +88,7 @@ file_map_destroy (struct page *page) {
 	if(pml4_is_dirty(thread_current()->pml4, page->va)){	//Write back contents to file, if DIRTY.
 		off_t written = file_write_at(file_page->file, page->va, file_page->read_bytes, file_page->aux->offset);
 		if(written != file_page->read_bytes){
-			printf("read_bytes : %d, offset : %d, WRITTEN : %d bytes.\n", file_page->read_bytes, file_page->aux->offset, written);
+			//printf("read_bytes : %d, offset : %d, WRITTEN : %d bytes.\n", file_page->read_bytes, file_page->aux->offset, written);
 		}
 	}
 	if(file_page->aux != NULL){	//free the LAZY_AUX.
