@@ -126,10 +126,6 @@ vm_get_victim (void) {
 	lock_acquire(&frame_lock);
 	victim = list_entry(list_pop_front(&frame_list), struct frame, elem);
 	lock_release(&frame_lock);
-	if(victim == NULL){
-		printf("No frame is chosen as victim!!\n");
-	}
-
 	return victim;
 }
 
@@ -178,7 +174,6 @@ vm_get_frame (void) {
 			list_push_back(&frame_list, &frame->elem);
 		}
 	}
-
 	ASSERT (frame != NULL);
 	ASSERT (frame->page == NULL);
 	return frame;
@@ -198,7 +193,6 @@ vm_stack_growth (void *addr UNUSED) {
 /* Handle the fault on write_protected page */
 static bool
 vm_handle_wp (struct page *page UNUSED) {
-	//printf("writable : %d\n", page->writable);
 	return page->writable;
 }
 
@@ -211,7 +205,6 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	bool accessing_stack;
 	bool success;
 	/* TODO: Validate the fault */
-	//printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
 	page = spt_find_page(spt, pg_round_down(addr));
 	if(page == NULL){	//the page is INVALID.
 		accessing_stack = ((addr < USER_STACK) && (USER_STACK - (int) pg_round_down(addr)) <= (PGSIZE << 8) && (uintptr_t)addr >= (f->rsp - 64));
