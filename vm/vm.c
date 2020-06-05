@@ -10,7 +10,7 @@
 #include "vm/uninit.h"
 #include <debug.h>
 
-static struct frame_lock;	//frame table lock.
+static struct lock frame_lock;	//frame table lock.
 
 /* Initializes the virtual memory subsystem by invoking each subsystem's
  * intialize codes. */
