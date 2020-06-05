@@ -47,7 +47,7 @@ file_map_swap_in (struct page *page, void *kva) {
 		return true;
 	}
 	uint8_t *kpage = page->frame->kva;
-	struct lazy_aux* auz = page->uninit.aux;
+	struct lazy_aux* aux = page->uninit.aux;
 	size_t page_read_bytes = aux->page_read_bytes;
 	size_t page_zero_bytes = aux->page_zero_bytes;
 	off_t ofs = aux->offset;
