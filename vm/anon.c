@@ -87,12 +87,28 @@ static struct swap_slot* get_available_slot(void){
 static bool
 anon_swap_in (struct page *page, void *kva) {
 	struct anon_page *anon_page = &page->anon;
+	int i;
+	struct swap_slot* slot = anon_page->slot;
 }
 
 /* Swap out the page by writing contents to the swap disk. */
 static bool
 anon_swap_out (struct page *page) {
 	struct anon_page *anon_page = &page->anon;
+	int i;
+	struct swap_slot* slot = get_available_slot();			//get a swap slot;
+	disk_sector_t sec_no = slot->slotNo * SECTORS_PER_PAGE;		//set sector Number : slotNo * 8
+	printf("Swapping out ANON-PAGE 0x%X to swap slot %d <-> sector %d\n", page->va, slot->slotNo, sec_no);
+	//Use VA or KVA??
+	//void* buffer = page->va;
+	void* buffer = page->frame->kva;
+	for(i = 0; i < SECTORS_PER_PAGE; i++){	//USE : void disk_write (struct disk *d, disk_sector_t sec_no, const void *buffer)
+		disk_write(swap_disk, sec_no, buffer);
+		buffer += DISK_SECTOR_SIZE;
+		sec_no++;
+	}
+	anon_page->slot = slot;		//save slot to anon_page.
+	return true;
 }
 
 /* Destroy the anonymous page. PAGE will be freed by the caller. */
