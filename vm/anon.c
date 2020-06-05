@@ -56,7 +56,6 @@ anon_initializer (struct page *page, enum vm_type type, void *kva) {
 static struct swap_slot* get_available_slot(void){
 	struct list_elem* e;
 	struct swap_slot* target = NULL;
-	//printf("Trying to get an available swap_slot..\n");
 	lock_acquire(&swap_lock);
 	for(e = list_begin(&swap_list); e != list_end(&swap_list); e = list_next(e)){
 		struct swap_slot* slot = list_entry(e, struct swap_slot, elem);
@@ -112,14 +111,11 @@ anon_swap_out (struct page *page) {
 	int i;
 	struct swap_slot* slot = get_available_slot();			//get a swap slot;
 	if(slot == NULL){
-		printf("ANON-PAGE 0x%X Failed to get a swap-slot!!\n", page->va);
+		//printf("ANON-PAGE 0x%X Failed to get a swap-slot!!\n", page->va);
 		return false;
 	}
 	disk_sector_t sec_no = slot->slotNo * SECTORS_PER_PAGE;		//set sector Number : slotNo * 8
 	//printf("Swapping out ANON-PAGE 0x%X to swap slot %d <-> sector %d\n", page->va, slot->slotNo, sec_no);
-	if(page->va == 0xABB000){
-		printf("Swapping out ANON-PAGE 0x%X to swap slot %d <-> sector %d\n", page->va, slot->slotNo, sec_no);
-	}
 	void* buffer = page->frame->kva;
 	for(i = 0; i < SECTORS_PER_PAGE; i++){	//USE : void disk_write (struct disk *d, disk_sector_t sec_no, const void *buffer)
 		disk_write(swap_disk, sec_no, buffer);
