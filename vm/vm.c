@@ -178,8 +178,8 @@ vm_get_frame (void) {
 		}
 	}
 
-	ASSERT (frame != NULL);
-	ASSERT (frame->page == NULL);
+	//ASSERT (frame != NULL);
+	//ASSERT (frame->page == NULL);
 	return frame;
 }
 
@@ -255,6 +255,18 @@ vm_claim_page (void *va UNUSED) {
 static bool
 vm_do_claim_page (struct page *page) {
 	struct frame *frame = vm_get_frame ();
+	if(frame == NULL){
+		printf("page 0x%X failed to get a frame!\n",page->va);
+		switch(vm_get_type(page)){
+			case VM_ANON:
+				printf("ANON, slotNo : %d\n", page->anon.slot == NULL ? page->anon.slot->slotNo : -1);
+				break;
+			case VM_FILE:
+				printf("FILE, swapped-out? : %d\n", page->file.swapped_out);
+				break;
+		}
+		ASSERT(frame != NULL);
+	}
 
 	/* Set links */
 	frame->page = page;
