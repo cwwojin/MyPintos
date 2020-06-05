@@ -72,7 +72,7 @@ struct lazy_aux {
 
 struct list frame_list;	//Frame Table : List of all frames.
 
-#include "threads/thread.h"
+//#include "threads/thread.h"
 /* The representation of "frame" */
 struct frame {
 	void *kva;
@@ -105,7 +105,7 @@ struct supplemental_page_table {
 	struct hash hash;
 };
 
-//#include "threads/thread.h"
+#include "threads/thread.h"
 void supplemental_page_table_init (struct supplemental_page_table *spt);
 bool supplemental_page_table_copy (struct supplemental_page_table *dst,
 		struct supplemental_page_table *src);
