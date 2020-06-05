@@ -73,6 +73,7 @@ static struct swap_slot* get_available_slot(void){
 			return NULL;
 		}
 		target = malloc(sizeof(struct swap_slot));
+		ASSERT(target != NULL);
 		target->free = false;
 		target->slotNo = size;
 		list_push_back(&swap_list, &target->elem);
@@ -115,7 +116,7 @@ anon_swap_out (struct page *page) {
 		return false;
 	}
 	disk_sector_t sec_no = slot->slotNo * SECTORS_PER_PAGE;		//set sector Number : slotNo * 8
-	//printf("Swapping out ANON-PAGE 0x%X to swap slot %d <-> sector %d\n", page->va, slot->slotNo, sec_no);
+	printf("Swapping out ANON-PAGE 0x%X to swap slot %d <-> sector %d\n", page->va, slot->slotNo, sec_no);
 	void* buffer = page->frame->kva;
 	for(i = 0; i < SECTORS_PER_PAGE; i++){	//USE : void disk_write (struct disk *d, disk_sector_t sec_no, const void *buffer)
 		disk_write(swap_disk, sec_no, buffer);
