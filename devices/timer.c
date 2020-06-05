@@ -196,7 +196,9 @@ timer_interrupt (struct intr_frame *args UNUSED) {
 		}
 	}
 	/* NEWCODE FOR VM : 2nd-CHANCE ALGORITHM!! */
-	vm_sweep_frame_table();
+	if(ticks % TIMER_FREQ == 0){
+		vm_sweep_frame_table();
+	}
 	
 	intr_set_level (old_level);
 	//call alarm function.
