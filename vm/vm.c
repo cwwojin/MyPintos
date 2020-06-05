@@ -219,6 +219,7 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	/* TODO: Your code goes here */
 	if(write){
 		if(!vm_handle_wp(page)){	//Check if write-protected page.
+			printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
 			return false;
 		}
 	}
@@ -313,6 +314,9 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 		}
 		struct page* newp = spt_find_page(dst, p->va);
 		if(p->frame != NULL){
+			/* COPY-ON-WRITE : Instead of claiming page here, just add the pml4 mapping & set write-protected!! */
+			/*
+			*/
 			if(!vm_do_claim_page(newp)){
 				printf("SPT_COPY : failed to claim page.\n");
 				return false;
