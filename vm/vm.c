@@ -117,43 +117,19 @@ spt_remove_page (struct supplemental_page_table *spt, struct page *page) {
 	}
 }
 
-/* NEWCODE : sweep through the frame table, increment CNT if not used. */
-void vm_sweep_frame_table(void){
-	struct list_elem* e;
-	for(e = list_begin(&frame_list); e != list_end(&frame_list); e = list_next(e)){
-		struct frame* frame = list_entry(e, struct frame, elem);
-		struct thread* owner = frame->owner;
-		//USE : pml4_is_accessed(*pml4, *vpage), pml4_set_accessed(*pml4, *vpage, bool accessed)
-		if(pml4_is_accessed(owner->pml4, frame->kva)){
-			frame->cnt = 0;
-			pml4_set_accessed(owner->pml4, frame->kva, false);
-		}
-		else{
-			frame->cnt++;
-			pml4_set_accessed(owner->pml4, frame->kva, false);
-		}
-	}
-}
-
 /* Get the struct frame, that will be evicted. */
 static struct frame *
 vm_get_victim (void) {
 	struct frame *victim = NULL;
 	 /* TODO: The policy for eviction is up to you. */
-	//2nd-chance algorithm : look through the frame table, choose for eviction if : CNT >= 2 && unused!!
+	//policy : FIFO.
 	lock_acquire(&frame_lock);
-	struct list_elem* e;
-	for(e = list_begin(&frame_list); e != list_end(&frame_list); e = list_next(e)){
-		struct frame* frame = list_entry(e, struct frame, elem);
-		struct thread* owner = frame->owner;
-		if(!pml4_is_accessed(owner->pml4, frame->kva) && frame->cnt >= 2){
-			victim = frame;
-		}
-	}
+	struct frame* frame = list_entry(list_pop_front(&frame_list), struct frame, elem);
+	victim = frame;
+	lock_release(&frame_lock);
 	if(victim == NULL){
 		printf("No frame is chosen as victim!!\n");
 	}
-	lock_release(&frame_lock);
 
 	return victim;
 }
@@ -162,10 +138,16 @@ vm_get_victim (void) {
  * Return NULL on error.*/
 static struct frame *
 vm_evict_frame (void) {
-	struct frame *victim UNUSED = vm_get_victim ();
+	struct frame* victim = vm_get_victim ();
 	/* TODO: swap out the victim and return the evicted frame. */
+	ASSERT(victim != NULL);
+	struct page* victim_page = victim->page;
+	swap_out(victim_page);
+	
+	//pml4_set_clear();
+	
 
-	return NULL;
+	return victim;
 }
 
 /* palloc() and get frame. If there is no available page, evict the page
@@ -183,7 +165,6 @@ vm_get_frame (void) {
 		if(frame != NULL){
 			frame->kva = new;
 			frame->page = NULL;
-			frame->cnt = 0;
 			frame->owner = thread_current();
 			list_push_back(&frame_list, &frame->elem);
 		}
@@ -193,8 +174,8 @@ vm_get_frame (void) {
 		frame = vm_evict_frame();
 		if(frame != NULL){
 			frame->page = NULL;
-			frame->cnt = 0;
 			frame->owner = thread_current();
+			list_push_back(&frame_list, &frame->elem);
 		}
 		*/	
 	}
