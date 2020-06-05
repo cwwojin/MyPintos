@@ -112,8 +112,23 @@ spt_remove_page (struct supplemental_page_table *spt, struct page *page) {
 	if(hash_delete (&spt->hash, &page->hash_elem) != NULL){
 		vm_dealloc_page (page);
 	}
-	//vm_dealloc_page (page);
-	//return true;
+}
+
+/* NEWCODE : sweep through the frame table, increment CNT if not used. */
+void vm_sweep_frame_table(void){
+	struct list_elem* e;
+	for(e = list_begin(&frame_list); e != list_end(&frame_list); e = list_next(e)){
+		struct frame* frame = list_entry(e, struct frame, elem);
+		//USE : pml4_is_accessed(*pml4, *vpage), pml4_set_accessed(*pml4, *vpage, bool accessed)
+		if(pml4_is_accessed(thread_current()->pml4, frame->kva)){
+			frame->cnt = 0;
+			pml4_set_accessed(thread_current()->pml4, frame->kva, false);
+		}
+		else{
+			frame->cnt++;
+			pml4_set_accessed(thread_current()->pml4, frame->kva, false);
+		}
+	}
 }
 
 /* Get the struct frame, that will be evicted. */
