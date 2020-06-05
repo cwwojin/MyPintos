@@ -194,16 +194,15 @@ vm_stack_growth (void *addr UNUSED) {
 static bool
 vm_handle_wp (struct page *page UNUSED) {
 	//return page->writable;
-	
 	if(!page->writable){	//Check if write-protected page.
 		return false;
 	}
 	else{				//Writable is TRUE, so this is a COPY-ON-WRITE!!
-		printf("COW fault @ PAGE 0x%X, writable : %d\n", page->va, page->writable);
+		//printf("COW fault @ PAGE 0x%X, writable : %d\n", page->va, page->writable);
 		void* old_kva = pml4_get_page(thread_current()->pml4, page->va);
 		pml4_clear_page(thread_current()->pml4, page->va);	//Remove mapping.
 		if(!vm_do_claim_page(page)){
-			printf("Claim failed!!\n");
+			//printf("Claim failed!!\n");
 			return false;
 		}
 		ASSERT(page->frame != NULL);
@@ -235,15 +234,11 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	}
 	/* TODO: Your code goes here */
 	if(write && !not_present){
-		printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
+		//printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
 		return vm_handle_wp(page);
 		/*
 		if(!vm_handle_wp(page)){	//Check if write-protected page.
 			return false;
-		}
-		else{				//Writable is TRUE, so this is a COPY-ON-WRITE!!
-			printf("COW fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
-			pml4_clear_page(thread_current()->pml4, pg_round_down(addr));	//Remove mapping.
 		}
 		*/
 	}
@@ -339,21 +334,8 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 		struct page* newp = spt_find_page(dst, p->va);
 		if(p->frame != NULL){
 			/* COPY-ON-WRITE : Instead of claiming page here, just add the pml4 mapping & set write-protected!! */
-			printf("Copying page : 0x%X <-> KVA : 0x%X mapping..\n", p->va, p->frame->kva);
+			//printf("Copying page : 0x%X <-> KVA : 0x%X mapping..\n", p->va, p->frame->kva);
 			pml4_set_page(thread_current()->pml4, newp->va, p->frame->kva, false);
-			/*
-			if(p->writable){
-				printf("Copying page : 0x%X <-> KVA : 0x%X mapping..\n", p->va, p->frame->kva);
-				pml4_set_page(thread_current()->pml4, newp->va, p->frame->kva, false);
-			}
-			else{		//Write-protected pages should be copied as usual!!
-				if(!vm_do_claim_page(newp)){
-					printf("SPT_COPY : failed to claim page.\n");
-					return false;
-				}
-				memcpy(newp->frame->kva, p->frame->kva, PGSIZE);
-			}
-			*/
 			/*
 			if(!vm_do_claim_page(newp)){
 				printf("SPT_COPY : failed to claim page.\n");
