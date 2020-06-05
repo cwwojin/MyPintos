@@ -234,7 +234,7 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 		}
 	}
 	/* TODO: Your code goes here */
-	if(write){
+	if(write && !not_present){
 		printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
 		return vm_handle_wp(page);
 		/*
