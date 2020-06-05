@@ -143,6 +143,7 @@ vm_evict_frame (void) {
 	struct page* victim_page = victim->page;
 	struct thread* victim_owner = victim->owner;
 	if(!swap_out(victim_page)){
+		printf("swap-out failed at victim page 0x%X\n",victim_page->va);
 		return NULL;
 	}
 	//USE : void pml4_clear_page (uint64_t *pml4, void *upage)
