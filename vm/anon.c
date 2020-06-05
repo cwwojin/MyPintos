@@ -57,7 +57,7 @@ static struct swap_slot* get_available_slot(void){
 	struct list_elem* e;
 	struct swap_slot* target = NULL;
 	for(e = list_begin(&swap_list); e != list_end(&swap_list); e = list_next(e)){
-		slot = list_entry(e, struct swap_slot, elem);
+		struct swap_slot* slot = list_entry(e, struct swap_slot, elem);
 		if(slot->free){	//This slot is FREE. choose this.
 			slot->free = false;
 			target = slot;
