@@ -257,7 +257,7 @@ vm_do_claim_page (struct page *page) {
 	struct frame *frame = vm_get_frame ();
 	if(frame == NULL){
 		printf("page 0x%X failed to get a frame!\n",page->va);
-		switch(vm_get_type(page)){
+		switch(page_get_type(page)){
 			case VM_ANON:
 				printf("ANON, slotNo : %d\n", page->anon.slot == NULL ? page->anon.slot->slotNo : -1);
 				break;
