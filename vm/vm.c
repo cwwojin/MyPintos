@@ -124,8 +124,7 @@ vm_get_victim (void) {
 	 /* TODO: The policy for eviction is up to you. */
 	//policy : FIFO.
 	lock_acquire(&frame_lock);
-	struct frame* frame = list_entry(list_pop_front(&frame_list), struct frame, elem);
-	victim = frame;
+	victim = list_entry(list_pop_front(&frame_list), struct frame, elem);
 	lock_release(&frame_lock);
 	if(victim == NULL){
 		printf("No frame is chosen as victim!!\n");
@@ -142,10 +141,10 @@ vm_evict_frame (void) {
 	/* TODO: swap out the victim and return the evicted frame. */
 	ASSERT(victim != NULL);
 	struct page* victim_page = victim->page;
+	struct thread* victim_owner = victim->owner;
 	swap_out(victim_page);
-	
-	//pml4_set_clear();
-	
+	//USE : void pml4_clear_page (uint64_t *pml4, void *upage)
+	pml4_clear_page(victim_owner->pml4, page->va);
 
 	return victim;
 }
