@@ -97,7 +97,7 @@ file_map_destroy (struct page *page) {
 	if(file_page->file != NULL){	//close the file.
 		file_close(file_page->file);
 	}
-	pml4_clear_page(thread_current()->pml4, page->va);
+	//pml4_clear_page(thread_current()->pml4, page->va);
 }
 
 /* Do the mmap */
