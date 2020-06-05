@@ -21,6 +21,7 @@ static const struct page_operations anon_ops = {
 
 static struct list swap_list;	//swap table.
 static struct lock swap_lock;	//swap lock -> use this when modifying swap slots.
+static void swap_init(void);
 
 /* Initialize the data for anonymous pages */
 void
@@ -29,6 +30,12 @@ vm_anon_init (void) {
 	swap_disk = disk_get (1,1);	//1:1 - swap
 	list_init(&swap_list);
 	lock_init(&swap_lock);
+	swap_init();
+}
+
+static void swap_init(void){	//initialize all swap table slots.
+	int nSlots = ((int) disk_size(swap_disk)) / SECTORS_PER_PAGE;
+	printf("nSlots : %d\n",nSlots);
 }
 
 /* Initialize the file mapping */
