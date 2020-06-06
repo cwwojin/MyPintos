@@ -275,6 +275,7 @@ vm_do_claim_page (struct page *page) {
 
 	/* TODO: Insert page table entry to map page's VA to frame's PA. */
 	pml4_set_page(thread_current()->pml4, page->va, frame->kva, page->writable);
+	printf("thread %d claimed page 0x%X\n",thread_current()->tid, page->va);
 
 	return swap_in (page, frame->kva);
 }
@@ -336,7 +337,7 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 			/* COPY-ON-WRITE : Instead of claiming page here, just add the pml4 mapping & set write-protected!! */
 			//pml4_set_page(thread_current()->pml4, newp->va, p->frame->kva, false);
 			if(newp->uninit.type == VM_MARKER_0 + VM_ANON){	//stack page!!
-				//printf("Copying page : 0x%X..\n", newp->va);
+				printf("Copying page : 0x%X..\n", newp->va);
 				if(!vm_do_claim_page(newp)){
 					printf("SPT_COPY : failed to claim page.\n");
 					return false;
