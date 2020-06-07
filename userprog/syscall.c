@@ -28,7 +28,7 @@ void syscall_entry (void);
 void syscall_handler (struct intr_frame *);
 
 /* lock for filesys. */
-struct lock filesys_lock;
+//struct lock filesys_lock;
 
 /* System call.
  *
