@@ -29,11 +29,10 @@ bool
 file_map_initializer (struct page *page, enum vm_type type, void *kva) {
 	/* Set up the handler */
 	page->operations = &file_ops;
-
 	struct file_page *file_page = &page->file;
 	file_page->init = page->uninit.init;
 	file_page->aux = page->uninit.aux;
-	file_page->type = page->uninit.type;
+	file_page->type = type;
 	struct lazy_aux* AUX = page->uninit.aux;
 	file_page->file = AUX != NULL ? AUX->executable : NULL;
 	file_page->next_page = AUX->next_page;
