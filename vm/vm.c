@@ -163,6 +163,7 @@ vm_get_frame (void) {
 			frame->kva = new;
 			frame->page = NULL;
 			frame->owner = thread_current();
+			frame->cnt = 1;
 			list_push_back(&frame_list, &frame->elem);
 		}
 	}
@@ -171,6 +172,7 @@ vm_get_frame (void) {
 		if(frame != NULL){
 			frame->page = NULL;
 			frame->owner = thread_current();
+			frame->cnt = 1;
 			list_push_back(&frame_list, &frame->elem);
 		}
 	}
@@ -202,7 +204,6 @@ vm_handle_wp (struct page *page UNUSED) {
 		void* old_kva = pml4_get_page(thread_current()->pml4, page->va);
 		pml4_clear_page(thread_current()->pml4, page->va);	//Remove mapping.
 		if(!vm_do_claim_page(page)){
-			//printf("Claim failed!!\n");
 			return false;
 		}
 		ASSERT(page->frame != NULL);
@@ -234,13 +235,7 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	}
 	/* TODO: Your code goes here */
 	if(write && !not_present){
-		//printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
 		return vm_handle_wp(page);
-		/*
-		if(!vm_handle_wp(page)){	//Check if write-protected page.
-			return false;
-		}
-		*/
 	}
 
 	return vm_do_claim_page (page);
@@ -336,18 +331,9 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 		if(p->frame != NULL){
 			/* COPY-ON-WRITE : Instead of claiming page here, just add the pml4 mapping & set write-protected!! */
 			pml4_set_page(thread_current()->pml4, newp->va, p->frame->kva, false);
-			/*
-			if(newp->uninit.type == VM_ANON){	//Which pages to copy?
-				printf("Copying page : 0x%X..\n", newp->va);
-				if(!vm_do_claim_page(newp)){
-					printf("SPT_COPY : failed to claim page.\n");
-					return false;
-				}
-				memcpy(newp->frame->kva, p->frame->kva, PGSIZE);
-			}
-			else{
-				pml4_set_page(thread_current()->pml4, newp->va, p->frame->kva, false);
-			}*/
+			pml4_clear_page(p->frame->owner->pml4, p->va);
+			pml4_set_page(p->frame->owner->pml4, p->va,p->frame->kva,false);
+			p->frame->cnt++;
 		}
 	}
 	return true;
