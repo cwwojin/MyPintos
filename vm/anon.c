@@ -123,6 +123,7 @@ anon_swap_out (struct page *page) {
 		sec_no++;
 	}
 	anon_page->slot = slot;		//save slot to anon_page.
+	page->frame = NULL;
 	return true;
 }
 
@@ -132,6 +133,9 @@ anon_destroy (struct page *page) {
 	struct anon_page *anon_page = &page->anon;
 	if(anon_page->aux != NULL){
 		free(anon_page->aux);
+	}
+	if(page->frame != NULL){
+		vm_dealloc_frame(page->frame);
 	}
 	//pml4_clear_page(thread_current()->pml4, page->va);
 }
