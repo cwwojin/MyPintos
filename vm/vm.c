@@ -200,6 +200,7 @@ vm_handle_wp (struct page *page UNUSED) {
 		void* KVA = pml4_get_page(thread_current()->pml4, page->va);
 		pml4_clear_page(thread_current()->pml4, page->va);
 		pml4_set_page(thread_current()->pml4, page->va, KVA, true);
+		return true;
 	}
 	else{				//Writable is TRUE, so this is a COPY-ON-WRITE!!
 		//printf("COW fault @ thread %d, PAGE 0x%X, writable : %d, \n", thread_current()->tid, page->va, page->writable);
@@ -288,12 +289,12 @@ vm_do_claim_page (struct page *page) {
 
 /* NEWCODE : Functions for supplemental page table's hash table. */
 /* Returns a hash value for page p. */
-unsigned page_hash (const struct hash_elem *p_, void *aux UNUSED) {
+static unsigned page_hash (const struct hash_elem *p_, void *aux UNUSED) {
 	const struct page *p = hash_entry (p_, struct page, hash_elem);
 	return hash_bytes (&p->va, sizeof p->va);
 }
 /* Returns true if page a precedes page b. */
-bool page_less (const struct hash_elem *a_, const struct hash_elem *b_, void *aux UNUSED) {
+static bool page_less (const struct hash_elem *a_, const struct hash_elem *b_, void *aux UNUSED) {
 	const struct page *a = hash_entry (a_, struct page, hash_elem);
 	const struct page *b = hash_entry (b_, struct page, hash_elem);
 	return a->va < b->va;
@@ -353,7 +354,7 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 	return true;
 }
 
-void spt_free_page(struct hash_elem* e, void* aux UNUSED){
+static void spt_free_page(struct hash_elem* e, void* aux UNUSED){
 	struct page* page = hash_entry(e, struct page, hash_elem);
 	destroy(page);
 	free(page);
