@@ -336,7 +336,9 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 			pml4_set_page(p->frame->owner->pml4, p->va,p->frame->kva,false);
 			p->frame->cnt++;
 		}
-		//else if(pml4_get_page(uint64_t *pml4, const void *uaddr))
+		else if(pml4_get_page(src->owner->pml4, p->va) != NULL){
+			printf("Thread %d's parent thread %d is sharing page 0x%X!!\n",thread_current()->tid, src->owner->tid, p->va);
+		}
 	}
 	return true;
 }
