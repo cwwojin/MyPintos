@@ -64,11 +64,11 @@ uninit_initialize (struct page *page, void *kva) {
 static void
 uninit_destroy (struct page *page) {
 	struct uninit_page *uninit UNUSED = &page->uninit;
+	struct lazy_aux* AUX = page->uninit.aux;
 	/* TODO: Fill this function.
 	 * TODO: If you don't have anything to do, just return. */
 	switch(VM_TYPE(uninit->type)){
 		case VM_FILE :		//writeback contents if DIRTY.
-			struct lazy_aux* AUX = page->uninit.aux;
 			if(pml4_get_page(thread_current()->pml4, page->va) != NULL && pml4_is_dirty(thread_current()->pml4, page->va)){
 				file_write_at(AUX->executable, page->va, AUX->page_read_bytes, AUX->offset);
 				pml4_set_dirty(thread_current()->pml4, page->va, false);
