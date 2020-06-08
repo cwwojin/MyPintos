@@ -410,7 +410,7 @@ void munmap (void *addr){
 	while(page != NULL){
 		if(page_get_type(page) == VM_FILE){
 			//next_page = page->file.next_page;
-			next_page = page->uninit.aux.next_page;
+			next_page = page->uninit.aux->next_page;
 			spt_remove_page(&thread_current()->spt, page);
 		}
 		else{
