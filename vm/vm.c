@@ -249,6 +249,13 @@ vm_dealloc_page (struct page *page) {
 	free (page);
 }
 
+/* Free the frame struct & remove it from frame table. */
+void
+vm_dealloc_frame (struct frame* frame){
+	list_remove(&frame->elem);
+	free(frame);
+}
+
 /* Claim the page that allocate on VA. */
 bool
 vm_claim_page (void *va UNUSED) {
@@ -337,9 +344,7 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 			p->frame->cnt++;
 		}
 		else if(pml4_get_page(src->owner->pml4, p->va) != NULL){
-			printf("Thread %d's parent thread %d is sharing page 0x%X!!\n",thread_current()->tid, src->owner->tid, p->va);
-			void* shared_kva = pml4_get_page(src->owner->pml4, p->va);
-			pml4_set_page(thread_current()->pml4, newp->va, shared_kva, false);
+			pml4_set_page(thread_current()->pml4, newp->va, pml4_get_page(src->owner->pml4, p->va), false);
 		}
 	}
 	return true;
