@@ -12,7 +12,6 @@
 #include "vm/uninit.h"
 #include "threads/malloc.h"
 #include "threads/mmu.h"
-#include "userprog/syscall.h"
 
 static bool uninit_initialize (struct page *page, void *kva);
 static void uninit_destroy (struct page *page);
@@ -72,9 +71,7 @@ uninit_destroy (struct page *page) {
 	switch(VM_TYPE(uninit->type)){
 		case VM_FILE :		//writeback contents if DIRTY.
 			if(pml4_get_page(thread_current()->pml4, page->va) != NULL && pml4_is_dirty(thread_current()->pml4, page->va)){
-				lock_acquire(&filesys_lock);
 				file_write_at(AUX->executable, page->va, AUX->page_read_bytes, AUX->offset);
-				lock_release(&filesys_lock);
 				pml4_set_dirty(thread_current()->pml4, page->va, false);
 			}
 		case VM_ANON :	//free the LAZY_AUX passed from lazy-loading.
