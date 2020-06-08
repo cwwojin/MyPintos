@@ -11,6 +11,7 @@
 #include "vm/vm.h"
 #include "vm/uninit.h"
 #include "threads/malloc.h"
+#include "threads/mmu.h"
 
 static bool uninit_initialize (struct page *page, void *kva);
 static void uninit_destroy (struct page *page);
@@ -77,6 +78,8 @@ uninit_destroy (struct page *page) {
 			if(uninit->aux != NULL){
 				free((struct lazy_aux*)uninit->aux);
 			}
+			break;
+		default:
 			break;
 	}
 	pml4_clear_page(thread_current()->pml4, page->va);
