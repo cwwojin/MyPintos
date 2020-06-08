@@ -72,7 +72,7 @@ file_map_swap_out (struct page *page) {
 	struct file_page *file_page = &page->file;
 	if(pml4_is_dirty(thread_current()->pml4, page->va)){	//Write back contents to file, if DIRTY.
 		off_t written = file_write_at(file_page->file, page->va, file_page->read_bytes, file_page->aux->offset);
-		if(written != file_page->read_bytes){
+		if((size_t) written != file_page->read_bytes){
 			//printf("SWAP-OUT page 0x%X -> read_bytes : %d, offset : %d, WRITTEN : %d bytes.\n", page->va, file_page->read_bytes, file_page->aux->offset, written);
 			return false;
 		}
