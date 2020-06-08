@@ -79,11 +79,6 @@ struct frame {
 	struct page *page;
 	struct thread* owner;	//Owner of this frame.
 	struct list_elem elem;
-	/* Project 3 Extra : Copy-on-Write */
-	uint32_t cnt;	/*Reference count. 
-			Allocate new memory for copy-on-write, IF cnt > 1. 
-			If cnt = 1, claim "ownership" of this frame by setting up links. 
-			cnt should always be >= 1!!*/
 };
 
 /* The function table for page operations.
