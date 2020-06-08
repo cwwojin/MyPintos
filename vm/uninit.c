@@ -67,13 +67,15 @@ uninit_destroy (struct page *page) {
 	/* TODO: Fill this function.
 	 * TODO: If you don't have anything to do, just return. */
 	switch(VM_TYPE(uninit->type)){
+		case VM_FILE :		//writeback contents if DIRTY.
+			if(pml4_get_page(thread_current()->pml4, page->va) != NULL && pml4_is_dirty(thread_current()->pml4, page->va)){
+				file_write_at(uninit->aux.executable, page->va, uninit->aux.page_read_bytes, uninit->aux.offset);
+				pml4_set_dirty(thread_current()->pml4, page->va, false);
+			}
 		case VM_ANON :	//free the LAZY_AUX passed from lazy-loading.
-		case VM_FILE :
 			if(uninit->aux != NULL){
 				free((struct lazy_aux*)uninit->aux);
 			}
-			break;
-		default :
 			break;
 	}
 	pml4_clear_page(thread_current()->pml4, page->va);
