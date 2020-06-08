@@ -78,6 +78,7 @@ file_map_swap_out (struct page *page) {
 		}
 	}
 	file_page->swapped_out = true;				//mark TRUE for later SWAP-IN's.
+	page->frame = NULL;
 	return true;
 }
 
@@ -96,6 +97,9 @@ file_map_destroy (struct page *page) {
 	}
 	if(file_page->file != NULL){	//close the file.
 		file_close(file_page->file);
+	}
+	if(page->frame != NULL){
+		vm_dealloc_frame(page->frame);
 	}
 	//pml4_clear_page(thread_current()->pml4, page->va);
 }
