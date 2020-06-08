@@ -195,7 +195,6 @@ vm_stack_growth (void *addr UNUSED) {
 /* Handle the fault on write_protected page */
 static bool
 vm_handle_wp (struct page *page UNUSED) {
-	//return page->writable;
 	if(!page->writable){	//Check if write-protected page.
 		return false;
 	}
