@@ -200,7 +200,7 @@ vm_handle_wp (struct page *page UNUSED) {
 		return false;
 	}
 	else{				//Writable is TRUE, so this is a COPY-ON-WRITE!!
-		printf("COW fault @ thread %d, PAGE 0x%X, writable : %d, \n", thread_current()->tid, page->va, page->writable);
+		//printf("COW fault @ thread %d, PAGE 0x%X, writable : %d, \n", thread_current()->tid, page->va, page->writable);
 		void* old_kva = pml4_get_page(thread_current()->pml4, page->va);
 		pml4_clear_page(thread_current()->pml4, page->va);	//Remove mapping.
 		if(!vm_do_claim_page(page)){
@@ -292,6 +292,7 @@ bool page_less (const struct hash_elem *a_, const struct hash_elem *b_, void *au
 /* Initialize new supplemental page table */
 void
 supplemental_page_table_init (struct supplemental_page_table *spt UNUSED) {
+	spt->owner = thread_current();
 	hash_init(&spt->hash, page_hash, page_less, NULL);
 }
 
