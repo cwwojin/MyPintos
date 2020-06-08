@@ -36,7 +36,7 @@ vm_anon_init (void) {
 
 static void swap_init(void){
 	nSlots = ((int) disk_size(swap_disk)) / SECTORS_PER_PAGE;
-	printf("nSlots : %d\n",nSlots);
+	//printf("nSlots : %d\n",nSlots);
 }
 
 /* Initialize the file mapping */
