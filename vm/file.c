@@ -106,13 +106,13 @@ file_map_destroy (struct page *page) {
 	//pml4_clear_page(thread_current()->pml4, page->va);
 }
 
-/* Do the mmap */
+/* UNUSED.
 void *
 do_mmap (void *addr, size_t length, int writable,
 		struct file *file, off_t offset) {
 }
 
-/* Do the munmap */
 void
 do_munmap (void *addr) {
 }
+*/
