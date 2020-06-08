@@ -409,12 +409,12 @@ void munmap (void *addr){
 	lock_acquire(&filesys_lock);
 	while(page != NULL){
 		if(page_get_type(page) == VM_FILE){
-			//printf("ADDR : 0x%X, next page? : %d\n", uaddr, page->file.next_page);
-			next_page = page->file.next_page;
+			//next_page = page->file.next_page;
+			next_page = page->uninit.aux.next_page;
 			spt_remove_page(&thread_current()->spt, page);
 		}
 		else{
-			printf("page addr : 0x%X is not a file-mapped page.\n", uaddr);
+			//printf("page addr : 0x%X is not a file-mapped page.\n", uaddr);
 			break;
 		}
 		if(!next_page){
