@@ -90,7 +90,7 @@ file_map_destroy (struct page *page) {
 	if(pml4_is_dirty(thread_current()->pml4, page->va)){	//Write back contents to file, if DIRTY.
 		off_t written = file_write_at(file_page->file, page->va, file_page->read_bytes, file_page->aux->offset);
 		if(written != file_page->read_bytes){
-			printf("DESTROY page 0x%X -> read_bytes : %d, offset : %d, WRITTEN : %d bytes.\n", page->va, file_page->read_bytes, file_page->aux->offset, written);
+			//printf("DESTROY page 0x%X -> read_bytes : %d, offset : %d, WRITTEN : %d bytes.\n", page->va, file_page->read_bytes, file_page->aux->offset, written);
 		}
 		pml4_set_dirty(thread_current()->pml4, page->va, false);
 	}
