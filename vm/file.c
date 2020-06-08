@@ -38,6 +38,8 @@ file_map_initializer (struct page *page, enum vm_type type, void *kva) {
 	file_page->file = AUX != NULL ? AUX->executable : NULL;
 	file_page->next_page = AUX->next_page;
 	file_page->swapped_out = false;
+	
+	return true;
 }
 
 /* Swap in the page by read contents from the file. */
