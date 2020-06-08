@@ -196,6 +196,11 @@ vm_handle_wp (struct page *page UNUSED) {
 	if(!page->writable){	//Check if write-protected page.
 		return false;
 	}
+	else if(page_get_type(page) == VM_FILE){	//File mapped pages should share physical page.
+		void* KVA = pml4_get_page(thread_current()->pml4, page->va);
+		pml4_clear_page(thread_current()->pml4, page->va);
+		pml4_set_page(thread_current()->pml4, page->va, KVA, true);
+	}
 	else{				//Writable is TRUE, so this is a COPY-ON-WRITE!!
 		//printf("COW fault @ thread %d, PAGE 0x%X, writable : %d, \n", thread_current()->tid, page->va, page->writable);
 		if(page->frame != NULL){
@@ -229,7 +234,6 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 			return vm_stack_growth(addr);
 		}
 		else{		//Not a stack-access, so its a real fault.
-			//printf("fault @ 0x%X -> PAGE %X, user : %d, write : %d, not_present : %d\n",addr,pg_round_down(addr),user,write,not_present);
 			return false;
 		}
 	}
