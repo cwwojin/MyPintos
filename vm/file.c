@@ -49,7 +49,7 @@ file_map_swap_in (struct page *page, void *kva) {
 	if(!file_page->swapped_out){				//This page wasn't swapped out before. Finish here.
 		return true;
 	}
-	uint8_t *kpage = page->frame->kva;
+	uint8_t *kpage = kva;
 	struct lazy_aux* aux = page->uninit.aux;
 	size_t page_read_bytes = aux->page_read_bytes;
 	size_t page_zero_bytes = aux->page_zero_bytes;
