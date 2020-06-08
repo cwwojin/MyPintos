@@ -6,6 +6,7 @@
 #include <string.h>
 #include "threads/malloc.h"
 #include "threads/mmu.h"
+#include "userprog/syscall.h"
 
 static bool file_map_swap_in (struct page *page, void *kva);
 static bool file_map_swap_out (struct page *page);
@@ -73,7 +74,9 @@ static bool
 file_map_swap_out (struct page *page) {
 	struct file_page *file_page = &page->file;
 	if(pml4_is_dirty(thread_current()->pml4, page->va)){	//Write back contents to file, if DIRTY.
+		lock_acquire(&filesys_lock);
 		off_t written = file_write_at(file_page->file, page->va, file_page->read_bytes, file_page->aux->offset);
+		lock_release(&filesys_lock);
 		if((size_t) written != file_page->read_bytes){
 			//printf("SWAP-OUT page 0x%X -> read_bytes : %d, offset : %d, WRITTEN : %d bytes.\n", page->va, file_page->read_bytes, file_page->aux->offset, written);
 			return false;
@@ -90,7 +93,9 @@ static void
 file_map_destroy (struct page *page) {
 	struct file_page *file_page = &page->file;
 	if(pml4_is_dirty(thread_current()->pml4, page->va)){	//Write back contents to file, if DIRTY.
+		lock_acquire(&filesys_lock);
 		file_write_at(file_page->file, page->va, file_page->read_bytes, file_page->aux->offset);
+		lock_release(&filesys_lock);
 		pml4_set_dirty(thread_current()->pml4, page->va, false);
 	}
 	if(file_page->aux != NULL){	//free the LAZY_AUX.
