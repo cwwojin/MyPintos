@@ -163,7 +163,6 @@ vm_get_frame (void) {
 			frame->kva = new;
 			frame->page = NULL;
 			frame->owner = thread_current();
-			frame->cnt = 1;
 			list_push_back(&frame_list, &frame->elem);
 		}
 	}
@@ -172,7 +171,6 @@ vm_get_frame (void) {
 		if(frame != NULL){
 			frame->page = NULL;
 			frame->owner = thread_current();
-			frame->cnt = 1;
 			list_push_back(&frame_list, &frame->elem);
 		}
 	}
@@ -343,7 +341,6 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 			pml4_set_page(thread_current()->pml4, newp->va, p->frame->kva, false);
 			pml4_clear_page(p->frame->owner->pml4, p->va);
 			pml4_set_page(p->frame->owner->pml4, p->va,p->frame->kva,false);
-			p->frame->cnt++;
 		}
 		else if(pml4_get_page(src->owner->pml4, p->va) != NULL){
 			pml4_set_page(thread_current()->pml4, newp->va, pml4_get_page(src->owner->pml4, p->va), false);
