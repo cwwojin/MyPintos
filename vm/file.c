@@ -76,6 +76,7 @@ file_map_swap_out (struct page *page) {
 			//printf("SWAP-OUT page 0x%X -> read_bytes : %d, offset : %d, WRITTEN : %d bytes.\n", page->va, file_page->read_bytes, file_page->aux->offset, written);
 			return false;
 		}
+		pml4_set_dirty(thread_current()->pml4, page->va, false);
 	}
 	file_page->swapped_out = true;				//mark TRUE for later SWAP-IN's.
 	page->frame = NULL;
@@ -88,9 +89,8 @@ file_map_destroy (struct page *page) {
 	struct file_page *file_page = &page->file;
 	if(pml4_is_dirty(thread_current()->pml4, page->va)){	//Write back contents to file, if DIRTY.
 		off_t written = file_write_at(file_page->file, page->va, file_page->read_bytes, file_page->aux->offset);
-		if(written != file_page->read_bytes){
-			//printf("read_bytes : %d, offset : %d, WRITTEN : %d bytes.\n", file_page->read_bytes, file_page->aux->offset, written);
-		}
+		ASSERT(written != file_page->read_bytes);
+		pml4_set_dirty(thread_current()->pml4, page->va, false);
 	}
 	if(file_page->aux != NULL){	//free the LAZY_AUX.
 		free(file_page->aux);
