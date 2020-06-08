@@ -107,6 +107,7 @@ struct page_operations {
  * All designs up to you for this. */
 struct supplemental_page_table {
 	struct hash hash;
+	struct thread* owner;
 };
 
 #include "threads/thread.h"
