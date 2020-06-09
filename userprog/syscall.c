@@ -323,38 +323,8 @@ tid_t fork (const char *thread_name, struct intr_frame* if_){
 }
 
 #ifdef VM
-//lazy-load initializer for file-mapped pages.
-static bool file_lazy_load (struct page *page, void *aux) {
-	uint8_t *kpage = page->frame->kva;
-	size_t page_read_bytes = ((struct lazy_aux*)aux)->page_read_bytes;
-	size_t page_zero_bytes = ((struct lazy_aux*)aux)->page_zero_bytes;
-	off_t ofs = ((struct lazy_aux*)aux)->offset;
-	struct file* file = ((struct lazy_aux*)aux)->executable;
-	//printf("LOADING addr : 0x%X, read_bytes : %d, zero_bytes : %d, ofs : %d\n", page->va, page_read_bytes, page_zero_bytes, ofs);
-	if (kpage == NULL)
-		return false;
-	// Load this page.
-	file_seek(file, ofs);
-	int read = file_read (file, kpage, page_read_bytes);
-	if (read != (int) page_read_bytes) {
-		printf("load failed @ page 0x%X, read %d bytes instead of %d..\n", page->va, read, page_read_bytes);
-		return false;
-	}
-	memset (kpage + page_read_bytes, 0, page_zero_bytes);
-	page->file.read_bytes = page_read_bytes;
-	return true;
-}
-
 //mmap : Maps "length" bytes of the file "fd" starting from "offset", into VA space at "addr".
 void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
-	void* upage = addr;
-	off_t ofs = offset;
-	size_t read_bytes;
-	//1. FAIL if addr isn't page-aligned or is 0, or Length is 0.
-	if(addr == 0 || ((int)addr % PGSIZE) != 0 || !is_user_vaddr(addr) || (int) length <= 0 || ((int)offset % PGSIZE) != 0){
-		//printf("FAIL @ addr : 0x%X, PGSIZE : %d, offset : %d, LENGTH : %d\n",addr, (int)addr % PGSIZE, offset, length);
-		return NULL;
-	}
 	//2. Get the file "FD".
 	struct file* FILE;
 	lock_acquire(&filesys_lock);
@@ -364,66 +334,12 @@ void* mmap (void *addr, size_t length, int writable, int fd, off_t offset){
 		return NULL;
 	}
 	lock_release(&filesys_lock);
-	//3. FAIL if file length is 0.
-	if(file_length(FILE) == 0){
-		return NULL;
-	}
-	//4. Check how many pages needed & where. If any page overlaps with current spt pages, then FAIL.
-	read_bytes = length <= file_length(FILE) ? length : file_length(FILE);
-	int i;
-	for(i=0; i < read_bytes/PGSIZE + (read_bytes % PGSIZE != 0); i++){
-		if(spt_find_page(&thread_current()->spt, addr + i * PGSIZE) != NULL){
-			return NULL;
-		}
-	}
-	//5. Allocate file-mapped pages.
-	while(read_bytes > 0){
-		struct file* target = file_reopen(FILE);	//all PAGES get different file STRUCTS w/ file_reopen().
-		size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
-		size_t page_zero_bytes = PGSIZE - page_read_bytes;
-		/* set up AUX. */
-		void *aux = NULL;
-		struct lazy_aux* AUX = malloc(sizeof(struct lazy_aux));
-		AUX->executable = target;
-		AUX->page_read_bytes = page_read_bytes;
-		AUX->page_zero_bytes = page_zero_bytes;
-		AUX->offset = ofs;
-		AUX->next_page = read_bytes > PGSIZE ? true : false;
-		aux = AUX;
-		if (!vm_alloc_page_with_initializer (VM_FILE, upage, writable, file_lazy_load, aux)){
-			return NULL;
-		}
-		/* Advance. */
-		read_bytes -= page_read_bytes;
-		upage += PGSIZE;
-		ofs += PGSIZE;
-	}
-	return addr;
+	return do_mmap (addr, length, writable, FILE, offset);
 }
 
 //munmap : Unmaps the mapping for the address range "addr".
 void munmap (void *addr){
-	void* uaddr = addr;
-	bool next_page;
-	struct page* page = spt_find_page(&thread_current()->spt, uaddr);
-	lock_acquire(&filesys_lock);
-	while(page != NULL){
-		if(page_get_type(page) == VM_FILE){
-			struct lazy_aux* AUX = page->uninit.aux;
-			next_page = AUX->next_page;
-			spt_remove_page(&thread_current()->spt, page);
-		}
-		else{
-			//printf("page addr : 0x%X is not a file-mapped page.\n", uaddr);
-			break;
-		}
-		if(!next_page){
-			break;
-		}
-		uaddr += PGSIZE;
-		page = spt_find_page(&thread_current()->spt, uaddr);
-	}
-	lock_release(&filesys_lock);
+	return do_munmap(addr);
 }
 #endif
 /* ENDOFNEWCODE*/
