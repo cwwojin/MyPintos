@@ -130,7 +130,6 @@ static bool file_lazy_load (struct page *page, void *aux) {
 	return true;
 }
 
-/* UNUSED. */
 void *
 do_mmap (void *addr, size_t length, int writable,
 		struct file *file, off_t offset) {
@@ -143,11 +142,11 @@ do_mmap (void *addr, size_t length, int writable,
 		//printf("FAIL @ addr : 0x%X, PGSIZE : %d, offset : %d, LENGTH : %d\n",addr, (int)addr % PGSIZE, offset, length);
 		return NULL;
 	}
-	//3. FAIL if file length is 0.
+	//2. FAIL if file length is 0.
 	if(file_length(FILE) == 0){
 		return NULL;
 	}
-	//4. Check how many pages needed & where. If any page overlaps with current spt pages, then FAIL.
+	//3. Check how many pages needed & where. If any page overlaps with current spt pages, then FAIL.
 	read_bytes = length <= file_length(FILE) ? length : file_length(FILE);
 	int i;
 	for(i=0; i < read_bytes/PGSIZE + (read_bytes % PGSIZE != 0); i++){
@@ -155,7 +154,7 @@ do_mmap (void *addr, size_t length, int writable,
 			return NULL;
 		}
 	}
-	//5. Allocate file-mapped pages.
+	//4. Allocate file-mapped pages.
 	while(read_bytes > 0){
 		struct file* target = file_reopen(FILE);	//all PAGES get different file STRUCTS w/ file_reopen().
 		size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
@@ -204,4 +203,3 @@ do_munmap (void *addr) {
 	}
 	lock_release(&filesys_lock);
 }
-/**/
