@@ -27,8 +27,6 @@
 void syscall_entry (void);
 void syscall_handler (struct intr_frame *);
 
-/* lock for filesys. */
-//struct lock filesys_lock;
 
 /* System call.
  *
@@ -46,7 +44,7 @@ void syscall_handler (struct intr_frame *);
 void
 syscall_init (void) {
 	lock_init(&filesys_lock);
-	
+
 	write_msr(MSR_STAR, ((uint64_t)SEL_UCSEG - 0x10) << 48  |
 			((uint64_t)SEL_KCSEG) << 32);
 	write_msr(MSR_LSTAR, (uint64_t) syscall_entry);
@@ -69,7 +67,7 @@ void exit(int status){
 	}
 	struct thread* current = thread_current();
 	current->exit_status = status;
-	
+
 	//print termination message here.
 	printf ("%s: exit(%d)\n", current->name, current->exit_status);
 	thread_exit();
@@ -127,12 +125,12 @@ bool create(const char *file, unsigned initial_size){
 	//USE : bool filesys_create (const char *name, off_t initial_size)
 	bool result;
 	check_address((void*) file);
-	
+
 	//use a lock when accessing filesystem.
 	lock_acquire(&filesys_lock);
 	result = filesys_create(file, initial_size);
 	lock_release(&filesys_lock);
-	
+
 	return result;
 }
 
@@ -141,11 +139,11 @@ bool remove(const char* file){
 	//USE : bool filesys_remove (const char *name)
 	bool result;
 	check_address((void*) file);
-	
+
 	lock_acquire(&filesys_lock);
 	result = filesys_remove(file);
 	lock_release(&filesys_lock);
-	
+
 	return result;
 }
 
@@ -155,17 +153,17 @@ int open(const char* file){
 	int result;
 	struct file* target;
 	check_address((void*) file);
-	
+
 	lock_acquire(&filesys_lock);
 	target = filesys_open(file);
 	if(target == NULL){
 		lock_release(&filesys_lock);
 		return -1;
 	}
-	
+
 	result = process_add_file(target);
 	lock_release(&filesys_lock);
-	
+
 	return result;
 }
 
@@ -175,17 +173,17 @@ int filesize(int fd){
 	//1. find the file using the fd.
 	int result;
 	struct file* target;
-	
+
 	lock_acquire(&filesys_lock);
 	target = process_get_file(fd);
 	if(target == NULL){
 		lock_release(&filesys_lock);
 		return -1;
 	}
-	
+
 	result = file_length(target);
 	lock_release(&filesys_lock);
-	
+
 	return result;
 }
 
@@ -211,7 +209,7 @@ int read (int fd, void *buffer, unsigned size){
 	}
 	int result = -1;
 	struct file* target;
-	
+
 	lock_acquire(&filesys_lock);
 	if(fd == 0){
 		//fd = 0, so get input from keyboard using input_getc()
@@ -245,7 +243,7 @@ int write (int fd, const void *buffer, unsigned size){
 	}
 	int result = -1;
 	struct file* target;
-	
+
 	lock_acquire(&filesys_lock);
 	if(fd == 1){
 		//fd = 1, so write to console at once, using putbuf().
@@ -292,7 +290,7 @@ unsigned tell (int fd){
 	}
 	result = file_tell (target);
 	lock_release(&filesys_lock);
-	
+
 	return result;
 }
 
@@ -317,7 +315,7 @@ int wait (tid_t pid){
 tid_t fork (const char *thread_name, struct intr_frame* if_){
 	check_address((void*) thread_name);
 	tid_t result;
-	
+
 	result = process_fork(thread_name, if_);
 	return result;
 }
@@ -383,7 +381,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			char* thread_name;
 			tid_t result;
 			thread_name = (char*) f->R.rdi;
-			
+
 			result = fork(thread_name, f);
 			//printf("fork result (child pid) : %d\n", result);
 			f->R.rax = (uint64_t) result;
@@ -395,7 +393,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			char* cmd_line;
 			cmd_line = (char*) f->R.rdi;
 			int result;
-			
+
 			//printf("start exec : %s\n", cmd_line);
 			result = exec(cmd_line);
 			f->R.rax = (uint64_t) result;
@@ -408,7 +406,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			tid_t pid;
 			int result;
 			pid = (int) f->R.rdi;
-			
+
 			//printf("parent %d will wait for child : %d\n", thread_current()->tid, pid);
 			result = wait(pid);
 			//printf("wait result : %d\n", result);
@@ -423,7 +421,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			bool result;
 			file = (char*) f->R.rdi;
 			initial_size = (unsigned) f->R.rsi;
-			
+
 			result = create(file, initial_size);
 			//return value -> rax.
 			f->R.rax = (uint64_t) result;
@@ -435,7 +433,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			char* file;
 			bool result;
 			file = (char*) f->R.rdi;
-			
+
 			result = remove(file);
 			f->R.rax = (uint64_t) result;
 			break;
@@ -446,7 +444,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			char* file;
 			int result;
 			file = (char*) f->R.rdi;
-			
+
 			result = open(file);
 			f->R.rax = (uint64_t) result;
 			break;
@@ -457,7 +455,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			int fd;
 			int result;
 			fd = (int) f->R.rdi;
-			
+
 			result = filesize(fd);
 			f->R.rax = (uint64_t) result;
 			break;
@@ -473,7 +471,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			buffer = (void*) f->R.rsi;
 			size = (unsigned) f->R.rdx;
 			//printf("READ -> fd: rdi = %d, buffer: rsi = %d, size: rdx = %d\n", fd, buffer, size);
-			
+
 			result = read(fd, buffer, size);
 			f->R.rax = (uint64_t) result;
 			break;
@@ -489,7 +487,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			buffer = (void*) f->R.rsi;
 			size = (unsigned) f->R.rdx;
 			//printf("WRITE -> fd: rdi = %d, buffer: rsi = %X, size: rdx = %d\n", fd, buffer, size);
-			
+
 			result = write(fd, buffer, size);
 			f->R.rax = (uint64_t) result;
 			break;
@@ -499,7 +497,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			//2 arguments. fd, position.
 			int fd;
 			unsigned position;
-			
+
 			fd = (int) f->R.rdi;
 			position = (unsigned) f->R.rsi;
 			seek(fd, position);
@@ -510,7 +508,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			//one argument. fd.
 			int fd;
 			unsigned result;
-			
+
 			fd = (int) f->R.rdi;
 			result = tell(fd);
 			f->R.rax = (uint64_t) result;
@@ -535,7 +533,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			off_t offset = (off_t) f->R.r8;
 			void* result;
 			//printf("addr : 0x%X, length : %d, writable : %d, fd : %d, offset : %d\n", addr, length, writable, fd, offset);
-			
+
 			result = mmap(addr, length, writable, fd, offset);
 			f->R.rax = (uint64_t) result;
 			break;
