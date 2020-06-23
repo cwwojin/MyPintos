@@ -156,7 +156,7 @@ fat_fs_init (void) {
 	fat_length = fat_fs->bs.total_sectors - fat_fs->bs.fat_sectors - 1;	//How many clusters(sectors) in the FS?
 	data_start = fat_fs->bs.fat_start + fat_fs->bs.fat_sectors;		//Starting sector number of the DATA section.
 	last_clst = 0;
-	//lock_init(&write_lock);
+	lock_init(&write_lock);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -169,6 +169,11 @@ fat_fs_init (void) {
 cluster_t
 fat_create_chain (cluster_t clst) {
 	/* TODO: Your code goes here. */
+	if(clst == 0){
+		
+	}
+	else{
+	}
 }
 
 /* Remove the chain of clusters starting from CLST.
