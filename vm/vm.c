@@ -123,9 +123,9 @@ vm_get_victim (void) {
 	struct frame *victim = NULL;
 	 /* TODO: The policy for eviction is up to you. */
 	//policy : FIFO.
-	lock_acquire(&frame_lock);
+	//lock_acquire(&frame_lock);
 	victim = list_entry(list_pop_front(&frame_list), struct frame, elem);
-	lock_release(&frame_lock);
+	//lock_release(&frame_lock);
 	return victim;
 }
 
@@ -156,6 +156,7 @@ vm_get_frame (void) {
 	struct frame *frame = NULL;
 	/* TODO: Fill this function. */
 	void* new = palloc_get_page(PAL_USER);	//get a page from the user pool. NULL if allocation fails.
+	lock_acquire(&frame_lock);
 	if(new != NULL){
 		//initialize frame.
 		frame = malloc(sizeof(struct frame));
@@ -174,6 +175,7 @@ vm_get_frame (void) {
 			list_push_back(&frame_list, &frame->elem);
 		}
 	}
+	lock_release(&frame_lock);
 	ASSERT (frame != NULL);
 	ASSERT (frame->page == NULL);
 	return frame;
