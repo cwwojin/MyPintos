@@ -156,7 +156,7 @@ fat_fs_init (void) {
 	fat_fs->fat_length = fat_fs->bs.total_sectors - fat_fs->bs.fat_sectors - 1;	//How many clusters(sectors) in the FS?
 	fat_fs->data_start = fat_fs->bs.fat_start + fat_fs->bs.fat_sectors;		//Starting sector number of the DATA section.
 	fat_fs->last_clst = 0;
-	lock_init(&write_lock);
+	lock_init(&fat_fs->write_lock);
 }
 
 /*----------------------------------------------------------------------------*/
