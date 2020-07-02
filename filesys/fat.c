@@ -286,7 +286,7 @@ bool fat_allocate(size_t cnt, cluster_t *clusterp){
 	for(i=0; i<cnt-1; i++){				//Allocate the next (cnt-1) clusters.
 		clst = fat_create_chain(clst);
 		if(clst == 0){				//Failed allocation, so do free().
-			fat_release(start, cnt);
+			fat_remove_chain(start, 0);
 			return false;
 		}
 	}
