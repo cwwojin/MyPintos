@@ -206,9 +206,8 @@ inode_close (struct inode *inode) {
 
 		/* Deallocate blocks if removed. */
 		if (inode->removed) {
-			fat_release (sector_to_cluster (inode->sector), 1);
-			fat_release (inode->data.start,
-					bytes_to_sectors (inode->data.length)); 
+			fat_remove_chain (sector_to_cluster (inode->sector), 0);
+			fat_remove_chain (inode->data.start, 0); 
 		}
 		free (inode); 
 	}
