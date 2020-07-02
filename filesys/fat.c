@@ -257,7 +257,7 @@ cluster_to_sector (cluster_t clst) {
 	return ((disk_sector_t) clst) + data_start;
 }
 
-/* Convert sector# to cluster#. */
+/* Convert sector # to cluster #. */
 cluster_t sector_to_cluster (disk_sector_t sector){
 	disk_sector_t data_start = fat_fs->data_start;
 	return (cluster_t) (sector - data_start);
@@ -276,9 +276,26 @@ disk_sector_t fat_traverse(cluster_t start, unsigned int n){
 	return cluster_to_sector(clst);
 }
 
-/* Allocate a CNT sized Chain of clusters, and save the starting cluster to clusterp. */
+/* Allocate a CNT sized NEW Chain of clusters, and save the starting cluster to clusterp. */
 bool fat_allocate(size_t cnt, cluster_t *clusterp){
+	*clusterp = 0;
+	cluster_t start = fat_create_chain(0);		//Allocate first cluster.
+	if(start == 0) return false;
+	cluster_t clst = start;
+	size_t i;
+	for(i=0; i<cnt-1; i++){				//Allocate the next (cnt-1) clusters.
+		clst = fat_create_chain(clst);
+		if(clst == 0){				//Failed allocation, so do free().
+			fat_release(start, cnt);
+			return false;
+		}
+	}
+	*clusterp = start;
+	return true;
 }
+
+/* Free a CNT sized Chain. */
 void fat_release(cluster_t cluster, size_t cnt){
+	fat_remove_chain(cluster, 0);
 }
 
