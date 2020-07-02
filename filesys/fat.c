@@ -157,7 +157,7 @@ fat_fs_init (void) {
 	fat_fs->bs.{total_sectors, fat_start, fat_sectors}
 	fat_fs->{fat, fat_length, data_start, last_clst, write_lock}
 	*/
-	fat_fs->fat_length = fat_fs->bs.total_sectors - fat_fs->bs.fat_sectors;		//how many clusters in the File system?
+	fat_fs->fat_length = fat_fs->bs.total_sectors - fat_fs->bs.fat_sectors - 1;		//how many clusters in the File system?
 	fat_fs->data_start = fat_fs->bs.fat_start + fat_fs->bs.fat_sectors;		//start of DATA section.
 	fat_fs->last_clst = fat_fs->fat_length - 1;
 	lock_init(&fat_fs->write_lock);
@@ -166,6 +166,22 @@ fat_fs_init (void) {
 /*----------------------------------------------------------------------------*/
 /* FAT handling                                                               */
 /*----------------------------------------------------------------------------*/
+
+/* NEW FUNCTION : Allocate a new cluster -> traverse and find first entry with stored value 0. */
+static unsigned int alloc_cluster (void){
+	unsigned int* fat = fat_fs->fat;	//fat table. index : 1 ~ last_clst.
+	unsigned int last_clst = fat_fs->last_clst;
+	unsigned int idx = 1;
+	while(idx <= last_clst){
+		cluster_t clst = fat[idx];
+		if(clst == 0){		//0 = UNUSED, so allocate this.
+			return idx;	//return the allocated cluster Number!
+		}
+		idx++;
+	}
+	return 0;	//No clusters to allocate, so return 0(UNUSED).
+}
+
 
 /* Add a cluster to the chain.
  * If CLST is 0, start a new chain.
