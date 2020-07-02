@@ -59,14 +59,14 @@ filesys_done (void) {
 #ifdef EFILESYS
 bool
 filesys_create (const char *name, off_t initial_size) {
-	disk_sector_t inode_sector = 0;
+	cluster_t inode_cluster = 0;
 	struct dir *dir = dir_open_root ();
 	bool success = (dir != NULL
-			&& fat_allocate (1, &inode_sector)
-			&& inode_create (inode_sector, initial_size)
-			&& dir_add (dir, name, inode_sector));
-	if (!success && inode_sector != 0)
-		fat_release (inode_sector, 1);
+			&& fat_allocate (1, &inode_cluster)
+			&& inode_create (inode_cluster, initial_size)
+			&& dir_add (dir, name, cluster_to_sector(inode_cluster)));
+	if (!success && inode_cluster != 0)
+		fat_release (inode_cluster, 1);
 	dir_close (dir);
 	return success;
 }
