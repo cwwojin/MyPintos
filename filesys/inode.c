@@ -77,6 +77,35 @@ inode_init (void) {
 	list_init (&open_inodes);
 }
 
+#ifdef EFILESYS
+bool
+inode_create (cluster_t cluster, off_t length) {
+	struct inode_disk *disk_inode = NULL;
+	bool success = false;
+	ASSERT (length >= 0);
+	ASSERT (sizeof *disk_inode == DISK_SECTOR_SIZE);
+
+	disk_inode = calloc (1, sizeof *disk_inode);
+	if (disk_inode != NULL) {
+		size_t sectors = bytes_to_sectors (length);
+		disk_inode->length = length;
+		disk_inode->magic = INODE_MAGIC;
+		if (fat_allocate (sectors, &disk_inode->start)) {
+			disk_write (filesys_disk, cluster_to_sector(cluster), disk_inode);
+			if (sectors > 0) {
+				static char zeros[DISK_SECTOR_SIZE];
+				size_t i;
+
+				for (i = 0; i < sectors; i++) 
+					disk_write (filesys_disk, fat_traverse(disk_inode->start, i), zeros); 
+			}
+			success = true; 
+		} 
+		free (disk_inode);
+	}
+	return success;
+}
+#else
 /* Initializes an inode with LENGTH bytes of data and
  * writes the new inode to sector SECTOR on the file system
  * disk.
@@ -113,6 +142,7 @@ inode_create (disk_sector_t sector, off_t length) {
 	}
 	return success;
 }
+#endif
 
 /* Reads an inode from SECTOR
  * and returns a `struct inode' that contains it.
