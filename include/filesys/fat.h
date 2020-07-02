@@ -37,9 +37,9 @@ disk_sector_t cluster_to_sector (cluster_t clst);
 
 /* NEW FUNCTIONS */
 disk_sector_t fat_traverse(cluster_t start, unsigned int n);    //Replaces : byte_to_sector()
-/*
+
 bool fat_allocate(size_t cnt, disk_sector_t *sectorp);
 void fat_release(disk_sector_t sector, size_t cnt);
-*/
+
 
 #endif /* filesys/fat.h */
