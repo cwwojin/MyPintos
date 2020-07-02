@@ -78,6 +78,7 @@ inode_init (void) {
 }
 
 #ifdef EFILESYS
+/* Create an inode of length LENGTH, but instead of sectors / free-map, use clusters / FAT. */
 bool
 inode_create (cluster_t cluster, off_t length) {
 	struct inode_disk *disk_inode = NULL;
@@ -191,6 +192,28 @@ inode_get_inumber (const struct inode *inode) {
 	return inode->sector;
 }
 
+#ifdef EFILESYS
+void
+inode_close (struct inode *inode) {
+	/* Ignore null pointer. */
+	if (inode == NULL)
+		return;
+
+	/* Release resources if this was the last opener. */
+	if (--inode->open_cnt == 0) {
+		/* Remove from inode list and release lock. */
+		list_remove (&inode->elem);
+
+		/* Deallocate blocks if removed. */
+		if (inode->removed) {
+			fat_release (sector_to_cluster (inode->sector), 1);
+			fat_release (inode->data.start,
+					bytes_to_sectors (inode->data.length)); 
+		}
+		free (inode); 
+	}
+}
+#else
 /* Closes INODE and writes it to disk.
  * If this was the last reference to INODE, frees its memory.
  * If INODE was also a removed inode, frees its blocks. */
@@ -215,6 +238,7 @@ inode_close (struct inode *inode) {
 		free (inode); 
 	}
 }
+#endif
 
 /* Marks INODE to be deleted when it is closed by the last caller who
  * has it open. */
