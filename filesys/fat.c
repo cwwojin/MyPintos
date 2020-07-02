@@ -212,6 +212,15 @@ fat_create_chain (cluster_t clst) {
 void
 fat_remove_chain (cluster_t clst, cluster_t pclst) {
 	/* TODO: Your code goes here. */
+	unsigned int* fat = fat_fs->fat;
+	lock_acquire(&fat_fs->write_lock);
+	if(pclst == 0){
+		
+	}
+	else if(fat[pclst] == clst){
+		
+	}
+	lock_release(&fat_fs->write_lock);
 }
 
 /* Update a value in the FAT table. */
