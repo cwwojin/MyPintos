@@ -256,3 +256,16 @@ cluster_to_sector (cluster_t clst) {
 	disk_sector_t data_start = fat_fs->data_start;
 	return ((disk_sector_t) clst) + data_start;
 }
+
+/* Traverse FAT to retrieve the N-th sector of the file. */
+disk_sector_t fat_traverse(cluster_t start, unsigned int n){
+	unsigned int* fat = fat_fs->fat;
+	cluster_t clst = start;
+	unsigned int i;
+	for(i=0; i<n; i++){
+		clst = fat[clst];
+		if(clst == EOChain || clst == 0)
+			return -1;
+	}
+	return cluster_to_sector(clst);
+}
