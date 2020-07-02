@@ -6,6 +6,9 @@
 #include "filesys/filesys.h"
 #include "filesys/free-map.h"
 #include "threads/malloc.h"
+#ifdef EFILESYS
+#include "filesys/fat.h"
+#endif
 
 /* Identifies an inode. */
 #define INODE_MAGIC 0x494e4f44
@@ -36,6 +39,16 @@ struct inode {
 	struct inode_disk data;             /* Inode content. */
 };
 
+#ifdef EFILESYS
+static disk_sector_t
+byte_to_sector (const struct inode *inode, off_t pos) {
+	ASSERT (inode != NULL);
+	if(pos >= inode->data.length)
+		return -1;
+	unsigned int N = (pos / DISK_SECTOR_SIZE);
+	return fat_traverse(inode->data.start, N);
+}
+#else
 /* Returns the disk sector that contains byte offset POS within
  * INODE.
  * Returns -1 if INODE does not contain data for a byte at offset
@@ -48,6 +61,7 @@ byte_to_sector (const struct inode *inode, off_t pos) {
 	else
 		return -1;
 }
+#endif
 
 /* List of open inodes, so that opening a single inode twice
  * returns the same `struct inode'. */
