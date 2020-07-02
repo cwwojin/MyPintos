@@ -182,18 +182,29 @@ static unsigned int alloc_cluster (void){
 	return 0;	//No clusters to allocate, so return 0(UNUSED).
 }
 
-
 /* Add a cluster to the chain.
  * If CLST is 0, start a new chain.
  * Returns 0 if fails to allocate a new cluster. */
 cluster_t
 fat_create_chain (cluster_t clst) {
 	/* TODO: Your code goes here. */
-	if(clst == 0){
-		
+	unsigned int* fat = fat_fs->fat;
+	lock_acquire(&fat_fs->write_lock);	//use Synchronization when modifying FAT!!
+	unsigned int new_clst = alloc_cluster();
+	if(new_clst == 0){
+		lock_release(&fat_fs->write_lock);
+		return 0;
 	}
-	else{
+	
+	if(clst == 0){				//start a new chain.
+		fat[new_clst] = EOChain;
 	}
+	else{					//extend existing chain.
+		fat[clst] = new_clst;
+		fat[new_clst] = EOChain;
+	}
+	lock_release(&fat_fs->write_lock);
+	return (cluster_t) new_clst;
 }
 
 /* Remove the chain of clusters starting from CLST.
