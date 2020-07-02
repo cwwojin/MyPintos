@@ -257,6 +257,12 @@ cluster_to_sector (cluster_t clst) {
 	return ((disk_sector_t) clst) + data_start;
 }
 
+/* Convert sector# to cluster#. */
+cluster_t sector_to_cluster (disk_sector_t sector){
+	disk_sector_t data_start = fat_fs->data_start;
+	return (cluster_t) (sector - data_start);
+}
+
 /* Traverse FAT to retrieve the N-th sector of the file. */
 disk_sector_t fat_traverse(cluster_t start, unsigned int n){
 	unsigned int* fat = fat_fs->fat;
@@ -270,9 +276,9 @@ disk_sector_t fat_traverse(cluster_t start, unsigned int n){
 	return cluster_to_sector(clst);
 }
 
-/* Allocate a CNT sized Chain of clustered, and save the starting cluster to */
-bool fat_allocate(size_t cnt, disk_sector_t *sectorp){
+/* Allocate a CNT sized Chain of clusters, and save the starting cluster to clusterp. */
+bool fat_allocate(size_t cnt, cluster_t *clusterp){
 }
-void fat_release(disk_sector_t sector, size_t cnt){
+void fat_release(cluster_t cluster, size_t cnt){
 }
 
