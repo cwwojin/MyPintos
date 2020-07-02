@@ -214,11 +214,14 @@ fat_remove_chain (cluster_t clst, cluster_t pclst) {
 	/* TODO: Your code goes here. */
 	unsigned int* fat = fat_fs->fat;
 	lock_acquire(&fat_fs->write_lock);
-	if(pclst == 0){
-		
+	unsigned int cur_clst = clst;
+	while(cur_clst != EOChain){
+		unsigned int next_clst = fat[cur_clst];
+		fat[cur_clst] = 0;		//EMPTY this cluster.
+		cur_clst = next_clst;		//If this is EOC, end.
 	}
-	else if(fat[pclst] == clst){
-		
+	if(pclst != 0 && fat[pclst] == clst){	//set pclst as EOC.
+		fat[pclst] = EOChain;
 	}
 	lock_release(&fat_fs->write_lock);
 }
@@ -227,16 +230,29 @@ fat_remove_chain (cluster_t clst, cluster_t pclst) {
 void
 fat_put (cluster_t clst, cluster_t val) {
 	/* TODO: Your code goes here. */
+	unsigned int* fat = fat_fs->fat;
+	lock_acquire(&fat_fs->write_lock);
+	fat[clst] = val;
+	lock_release(&fat_fs->write_lock);
 }
 
 /* Fetch a value in the FAT table. */
 cluster_t
 fat_get (cluster_t clst) {
 	/* TODO: Your code goes here. */
+	cluster_t result;
+	unsigned int* fat = fat_fs->fat;
+	lock_acquire(&fat_fs->write_lock);
+	result = fat[clst];
+	lock_release(&fat_fs->write_lock);
+	return result;
 }
 
 /* Covert a cluster # to a sector number. */
 disk_sector_t
 cluster_to_sector (cluster_t clst) {
 	/* TODO: Your code goes here. */
+	//Translation : cluster# = disk# - C (constant).
+	disk_sector_t data_start = fat_fs->data_start;
+	return ((disk_sector_t) clst) + data_start;
 }
