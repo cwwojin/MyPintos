@@ -36,8 +36,8 @@ void fat_put (cluster_t clst, cluster_t val);
 disk_sector_t cluster_to_sector (cluster_t clst);
 
 /* NEW FUNCTIONS */
+cluster_t sector_to_cluster (disk_sector_t sector);                    //Reverse of cluster_to_sector().
 disk_sector_t fat_traverse(cluster_t start, unsigned int n);    //Replaces : byte_to_sector()
-
 bool fat_allocate(size_t cnt, cluster_t *sectorp);
 void fat_release(cluster_t sector, size_t cnt);
 
