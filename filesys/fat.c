@@ -261,13 +261,14 @@ cluster_to_sector (cluster_t clst) {
 	//Translation : cluster# = disk# - C (constant).
 	ASSERT(clst > 0);
 	disk_sector_t data_start = fat_fs->data_start;
-	printf("cluster# = %d -> sector# = %d\n", clst, clst + data_start);
+	//printf("cluster# = %d -> sector# = %d\n", clst, clst + data_start);
 	return clst + data_start;
 }
 
 /* Convert sector # to cluster #. */
 cluster_t sector_to_cluster (disk_sector_t sector){
 	disk_sector_t data_start = fat_fs->data_start;
+	//printf("sector# = %d -> cluster# = %d\n", sector, sector - data_start);
 	return (cluster_t) (sector - data_start);
 }
 
