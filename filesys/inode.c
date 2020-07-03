@@ -17,9 +17,9 @@
  * Must be exactly DISK_SECTOR_SIZE bytes long. */
 struct inode_disk {
 #ifdef EFILESYS
+	cluster_t start;		/* First data Cluster. */
+#else	
 	disk_sector_t start;                /* First data sector. */
-#else
-	cluster_t start;		/* First data Cluster. */	
 #endif
 	off_t length;                       /* File size in bytes. */
 	unsigned magic;                     /* Magic number. */
