@@ -296,6 +296,7 @@ disk_sector_t fat_traverse_extended(cluster_t start, unsigned int n){
 			return -1;
 		if(next_clst == EOChain){	//EOF -> extend chain & ZERO the disk region & update file length.
 			next_clst = fat_create_chain(clst);
+			printf("EXTENDED clst : %d -> Next_clst : %d\n", clst, next_clst);
 			if(next_clst == 0)
 				return -1;
 			/* ZERO the disk region. */
