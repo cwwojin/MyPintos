@@ -285,6 +285,30 @@ disk_sector_t fat_traverse(cluster_t start, unsigned int n){
 	return cluster_to_sector(clst);
 }
 
+/* EXTENSIBLE FILES : Traverse FAT. Each time an EOF is reached, extend cluster & ZERO the disk region. */
+disk_sector_t fat_traverse_extended(cluster_t start, unsigned int n){
+	unsigned int* fat = fat_fs->fat;
+	cluster_t clst = start;
+	unsigned int i;
+	for(i=0; i<n; i++){
+		cluster_t next_clst = fat[clst];
+		if(next_clst == 0)
+			return -1;
+		if(next_clst == EOChain){	//EOF -> extend chain & ZERO the disk region & update file length.
+			next_clst = fat_create_chain(clst);
+			if(next_clst == 0)
+				return -1;
+			/* ZERO the disk region. */
+			uint8_t *buf = calloc(1, DISK_SECTOR_SIZE);
+			ASSERT(buf != NULL);
+			disk_write (filesys_disk, cluster_to_sector(next_clst), buf);
+			free (buf);
+		}
+		clst = next_clst;
+	}
+	return cluster_to_sector(clst);
+}
+
 /* Allocate a CNT sized NEW Chain of clusters, and save the starting cluster to clusterp. */
 bool fat_allocate(size_t cnt, cluster_t *clusterp){
 	*clusterp = 0;
