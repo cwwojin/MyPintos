@@ -160,7 +160,9 @@ initd (void *f_name) {
 #ifdef VM
 	supplemental_page_table_init (&thread_current ()->spt);
 #endif
-
+#ifdef EFILESYS
+	thread_current()->current_dir = dir_open_root();	//Set ROOT_DIR as the current directory of the Initial process.
+#endif
 	process_init ();
 
 	if (process_exec (f_name) < 0)
@@ -448,12 +450,10 @@ process_cleanup (void) {
 #ifdef VM
 	supplemental_page_table_kill (&curr->spt);
 #endif
-/*
 #ifdef EFILESYS
 	if(curr->current_dir != NULL)
 		dir_close(curr->current_dir);
 #endif
-*/
 	uint64_t *pml4;
 	/* Destroy the current process's page directory and switch back
 	 * to the kernel-only page directory. */
