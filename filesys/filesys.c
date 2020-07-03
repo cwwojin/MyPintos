@@ -33,6 +33,8 @@ filesys_init (bool format) {
 		do_format ();
 
 	fat_open ();
+	/* Set ROOT_DIR as the current directory of the Initial process. */
+	thread_current()->current_dir = dir_open_root();
 #else
 	/* Original FS */
 	free_map_init ();
