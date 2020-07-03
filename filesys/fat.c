@@ -289,7 +289,6 @@ disk_sector_t fat_traverse(cluster_t start, unsigned int n){
 disk_sector_t fat_traverse_extended(cluster_t start, unsigned int n){
 	unsigned int* fat = fat_fs->fat;
 	cluster_t clst = start;
-	printf("start : %d, N : %d\n",start,n);
 	unsigned int i;
 	for(i=0; i<n; i++){
 		cluster_t next_clst = fat[clst];
@@ -297,7 +296,7 @@ disk_sector_t fat_traverse_extended(cluster_t start, unsigned int n){
 			return -1;
 		if(next_clst == EOChain){	//EOF -> extend chain & ZERO the disk region & update file length.
 			next_clst = fat_create_chain(clst);
-			printf("EXTENDED clst : %d -> Next_clst : %d\n", clst, next_clst);
+			//printf("EXTENDED clst : %d -> Next_clst : %d\n", clst, next_clst);
 			if(next_clst == 0)
 				return -1;
 			/* ZERO the disk region. */
