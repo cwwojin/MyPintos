@@ -293,7 +293,6 @@ disk_sector_t fat_traverse_extended(cluster_t start, unsigned int n){
 	unsigned int i;
 	for(i=0; i<n; i++){
 		cluster_t next_clst = fat[clst];
-		printf("next_clst = 0x%X\n",next_clst);
 		if(next_clst == 0)
 			return -1;
 		if(next_clst == EOChain){	//EOF -> extend chain & ZERO the disk region & update file length.
@@ -320,7 +319,6 @@ bool fat_allocate(size_t cnt, cluster_t *clusterp){
 	if(start == 0) return false;
 	if(cnt == 0){
 		*clusterp = start;
-		printf("making file of size 0, starting cluster : %d\n", *clusterp);
 		return;
 	}
 	cluster_t clst = start;
