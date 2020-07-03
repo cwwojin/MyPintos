@@ -10,6 +10,7 @@
 #ifdef EFILESYS
 #include "filesys/fat.h"
 #endif
+#include "threads/thread.h"
 
 /* The disk that contains the file system. */
 struct disk *filesys_disk;
