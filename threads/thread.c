@@ -263,7 +263,7 @@ thread_create (const char *name, int priority,
 	list_push_back(&current->child_list, &t_pcb->elem);
 #endif
 #ifdef EFILESYS
-	t->current_dir = dir_open_root();	/* Initialize Current-Directory of the thread, with ROOT_DIR. */
+	//t->current_dir = dir_open_root();	/* Initialize Current-Directory of the thread, with ROOT_DIR. */
 #endif
 	
 	/* Add to run queue. */
