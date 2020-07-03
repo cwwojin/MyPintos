@@ -57,7 +57,9 @@ static disk_sector_t
 byte_to_sector_extended (const struct inode *inode, off_t pos){
 	ASSERT (inode != NULL);
 	unsigned int N = (pos / DISK_SECTOR_SIZE);
-	return fat_traverse_extended(inode->data.start, N);
+	disk_sector_t result = fat_traverse_extended(inode->data.start, N);
+	if(result != -1 && pos >= inode->data.length)
+		inode->data.length += (pos - (inode->data.length - 1));
 }
 #else
 /* Returns the disk sector that contains byte offset POS within
