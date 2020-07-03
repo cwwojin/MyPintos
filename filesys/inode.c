@@ -92,6 +92,7 @@ inode_create (cluster_t cluster, off_t length) {
 		disk_inode->length = length;
 		disk_inode->magic = INODE_MAGIC;
 		if (fat_allocate (sectors, &disk_inode->start)) {
+			printf("disk_inode->start : %d\n", disk_inode->start);
 			disk_write (filesys_disk, cluster_to_sector(cluster), disk_inode);
 			if (sectors > 0) {
 				static char zeros[DISK_SECTOR_SIZE];
@@ -129,7 +130,6 @@ inode_create (disk_sector_t sector, off_t length) {
 		disk_inode->length = length;
 		disk_inode->magic = INODE_MAGIC;
 		if (free_map_allocate (sectors, &disk_inode->start)) {
-			printf("disk_inode->start : %d\n", disk_inode->start);
 			disk_write (filesys_disk, sector, disk_inode);
 			if (sectors > 0) {
 				static char zeros[DISK_SECTOR_SIZE];
