@@ -269,6 +269,9 @@ __do_fork (void *aux) {
 	if (!pml4_for_each (parent->pml4, duplicate_pte, parent))
 		goto error;
 #endif
+#ifdef EFILESYS
+	current->current_dir = dir_reopen(parent->current_dir);		//child inherits parent's CURRENT directory.
+#endif
 
 	/* TODO: Your code goes here.
 	 * TODO: Hint) To duplicate the file object, use `file_duplicate`
