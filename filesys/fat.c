@@ -5,6 +5,7 @@
 #include "threads/synch.h"
 #include <stdio.h>
 #include <string.h>
+#include "filesys/inode.h"
 #include "filesys/directory.h"
 
 /* Should be less than DISK_SECTOR_SIZE */
