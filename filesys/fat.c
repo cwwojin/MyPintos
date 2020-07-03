@@ -269,6 +269,7 @@ cluster_t sector_to_cluster (disk_sector_t sector){
 disk_sector_t fat_traverse(cluster_t start, unsigned int n){
 	unsigned int* fat = fat_fs->fat;
 	cluster_t clst = start;
+	printf("start : %d, n : %d\n",start, n);
 	unsigned int i;
 	for(i=0; i<n; i++){
 		clst = fat[clst];
