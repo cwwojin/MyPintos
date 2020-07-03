@@ -288,6 +288,7 @@ disk_sector_t fat_traverse(cluster_t start, unsigned int n){
 /* Allocate a CNT sized NEW Chain of clusters, and save the starting cluster to clusterp. */
 bool fat_allocate(size_t cnt, cluster_t *clusterp){
 	*clusterp = 0;
+	if(cnt == 0)	return true;
 	cluster_t start = fat_create_chain(0);		//Allocate first cluster.
 	if(start == 0) return false;
 	cluster_t clst = start;
