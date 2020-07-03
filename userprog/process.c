@@ -160,9 +160,7 @@ initd (void *f_name) {
 #ifdef VM
 	supplemental_page_table_init (&thread_current ()->spt);
 #endif
-#ifdef EFILESYS
-	thread_current()->current_dir = dir_open_root();	//Set ROOT_DIR as the current directory of the Initial process.
-#endif
+
 	process_init ();
 
 	if (process_exec (f_name) < 0)
