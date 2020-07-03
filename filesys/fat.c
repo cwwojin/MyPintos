@@ -253,6 +253,7 @@ disk_sector_t
 cluster_to_sector (cluster_t clst) {
 	/* TODO: Your code goes here. */
 	//Translation : cluster# = disk# - C (constant).
+	ASSERT(clst > 0);
 	disk_sector_t data_start = fat_fs->data_start;
 	printf("cluster# = %d -> sector# = %d\n", clst, clst + data_start);
 	return clst + data_start;
