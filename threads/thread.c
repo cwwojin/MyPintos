@@ -259,9 +259,6 @@ thread_create (const char *name, int priority,
 	//add t to current thread's child_list.
 	list_push_back(&current->child_list, &t_pcb->elem);
 #endif
-#ifdef EFILESYS
-	t->current_dir = NULL;
-#endif
 	
 	/* Add to run queue. */
 	list_push_back(&all_list, &t->all_elem);
@@ -641,6 +638,9 @@ init_thread (struct thread *t, const char *name, int priority) {
 	t->exec = false;
 	sema_init(&t->exit_sema, 0);
 	sema_init(&t->load_sema, 0);
+#endif
+#ifdef EFILESYS
+	t->current_dir = NULL;
 #endif
 	
 }
