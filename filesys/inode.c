@@ -9,6 +9,7 @@
 #ifdef EFILESYS
 #include "filesys/fat.h"
 #endif
+#include <stdio.h>
 
 /* Identifies an inode. */
 #define INODE_MAGIC 0x494e4f44
@@ -56,8 +57,8 @@ byte_to_sector (const struct inode *inode, off_t pos) {
 static disk_sector_t
 byte_to_sector_extended (const struct inode *inode, off_t pos){
 	ASSERT (inode != NULL);
-	printf("data start = %d, N = %d\n",inode->data.start, N);
 	unsigned int N = (pos / DISK_SECTOR_SIZE);
+	printf("data start = %d, N = %d\n",inode->data.start, N);
 	if (pos < inode->data.length){
 		return fat_traverse(inode->data.start, N);
 	}
