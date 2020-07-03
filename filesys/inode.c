@@ -56,6 +56,7 @@ byte_to_sector (const struct inode *inode, off_t pos) {
 static disk_sector_t
 byte_to_sector_extended (const struct inode *inode, off_t pos){
 	ASSERT (inode != NULL);
+	printf("data start = %d, N = %d\n",inode->data.start, N);
 	unsigned int N = (pos / DISK_SECTOR_SIZE);
 	if (pos < inode->data.length){
 		return fat_traverse(inode->data.start, N);
@@ -328,6 +329,7 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
 	while (size > 0) {
 		/* Sector to write, starting byte offset within sector. */
 #ifdef EFILESYS
+		printf("offset = %d\n", offset);
 		disk_sector_t sector_idx = byte_to_sector_extended (inode, offset);
 #else
 		disk_sector_t sector_idx = byte_to_sector (inode, offset);
