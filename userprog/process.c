@@ -448,6 +448,10 @@ process_cleanup (void) {
 #ifdef VM
 	supplemental_page_table_kill (&curr->spt);
 #endif
+#ifdef EFILESYS
+	if(curr->current_dir != NULL)
+		dir_close(curr->current_dir);
+#endif
 
 	uint64_t *pml4;
 	/* Destroy the current process's page directory and switch back
