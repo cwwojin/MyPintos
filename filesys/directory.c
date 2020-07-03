@@ -88,8 +88,6 @@ lookup (const struct dir *dir, const char *name,
 		struct dir_entry *ep, off_t *ofsp) {
 	struct dir_entry e;
 	size_t ofs;
-	
-	printf("lookup @ dir->inode : %d..", dir->inode.data.start);
 
 	ASSERT (dir != NULL);
 	ASSERT (name != NULL);
