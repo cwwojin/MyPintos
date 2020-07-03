@@ -137,7 +137,7 @@ fat_create (void) {
 	free (buf);
 	
 	// Make a ROOT_DIR inode. inode is stored at ROOT_DIR_CLUSTER! initial size : 16 entries.
-	if (!inode_create(ROOT_DIR_CLUSTER, 16 * sizeof (struct dir_entry)))
+	if (!dir_create (cluster_to_sector (ROOT_DIR_CLUSTER), 16))
 		PANIC ("ROOT_DIR inode creation failed!!");
 }
 
