@@ -270,7 +270,8 @@ __do_fork (void *aux) {
 		goto error;
 #endif
 #ifdef EFILESYS
-	current->current_dir = dir_reopen(parent->current_dir);		//child inherits parent's CURRENT directory.
+	if (parent->current_dir != NULL)
+		current->current_dir = dir_reopen(parent->current_dir);		//child inherits parent's CURRENT directory.
 #endif
 
 	/* TODO: Your code goes here.
