@@ -52,6 +52,13 @@ byte_to_sector (const struct inode *inode, off_t pos) {
 	unsigned int N = (pos / DISK_SECTOR_SIZE);
 	return fat_traverse(inode->data.start, N);
 }
+
+static disk_sector_t
+byte_to_sector_extended (const struct inode *inode, off_t pos){
+	ASSERT (inode != NULL);
+	unsigned int N = (pos / DISK_SECTOR_SIZE);
+	return fat_traverse_extended(inode->data.start, N);
+}
 #else
 /* Returns the disk sector that contains byte offset POS within
  * INODE.
@@ -313,7 +320,11 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
 
 	while (size > 0) {
 		/* Sector to write, starting byte offset within sector. */
+#ifdef EFILESYS
+		disk_sector_t sector_idx = byte_to_sector_extended (inode, offset);
+#else
 		disk_sector_t sector_idx = byte_to_sector (inode, offset);
+#endif
 		int sector_ofs = offset % DISK_SECTOR_SIZE;
 
 		/* Bytes left in inode, bytes left in sector, lesser of the two. */
