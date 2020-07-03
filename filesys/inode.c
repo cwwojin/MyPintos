@@ -256,6 +256,7 @@ inode_read_at (struct inode *inode, void *buffer_, off_t size, off_t offset) {
 	uint8_t *buffer = buffer_;
 	off_t bytes_read = 0;
 	uint8_t *bounce = NULL;
+	debug_backtrace();
 	printf("reading from inode, first cluster : %d\n",inode->data.start);
 
 	while (size > 0) {
