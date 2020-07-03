@@ -133,6 +133,10 @@ fat_create (void) {
 		PANIC ("FAT create failed due to OOM");
 	disk_write (filesys_disk, cluster_to_sector (ROOT_DIR_CLUSTER), buf);
 	free (buf);
+	
+	// Make a ROOT_DIR inode. inode is stored at ROOT_DIR_CLUSTER! initial size : 16 entries.
+	if (!inode_create(ROOT_DIR_CLUSTER, 16 * sizeof (struct dir_entry)))
+		PANIC ("ROOT_DIR inode creation failed!!");
 }
 
 void
