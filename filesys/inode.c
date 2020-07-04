@@ -62,10 +62,13 @@ byte_to_sector_extended (struct inode *inode, off_t pos){
 		return fat_traverse(inode->data.start, N);
 	}
 	else{
-		struct inode_disk* data = &inode->data;
-		data->length += (pos - (data->length - 1));
-		disk_write (filesys_disk, inode->sector, data);
-		return fat_traverse_extended(inode->data.start, N);
+		disk_sector_t result = fat_traverse_extended(inode->data.start, N);
+		if(result != (uint32_t) -1){
+			struct inode_disk* data = &inode->data;
+			data->length += (pos - (data->length - 1));
+			disk_write (filesys_disk, inode->sector, data);
+		}
+		return result;
 	}
 }
 #else
