@@ -161,8 +161,8 @@ struct dir* parse_path (char* path_name, char* file_name) {
 	else{				//Relative path.
 		dir = dir_reopen(thread_current()->current_dir);
 	}
-	token = strtok_r(path_name, "/", &savePtr);
-	nexttoken = strtok_r(NULL, "/", &savePtr);
+	token = strtok_r(path_name, "/", &saveptr);
+	nexttoken = strtok_r(NULL, "/", &saveptr);
 	while(token != NULL && nexttoken!= NULL){
 		/* Lookup token from dir. */
 		struct inode* inode_token;
@@ -176,7 +176,7 @@ struct dir* parse_path (char* path_name, char* file_name) {
 		/* Next name & directory to search. */
 		dir = dir_open(inode_token);
 		token = nexttoken;
-		nexttoken = strtok_r(NULL, "/", &savePtr);
+		nexttoken = strtok_r(NULL, "/", &saveptr);
 	}
 	strlcpy(file_name, token, 14);
 	return dir;
