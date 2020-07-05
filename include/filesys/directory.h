@@ -28,6 +28,7 @@ bool dir_remove (struct dir *, const char *name);
 bool dir_readdir (struct dir *, char name[NAME_MAX + 1]);
 
 #ifdef EFILESYS
+#include "filesys/file.h"
 bool do_isdir (struct file* file);
 #endif
 
