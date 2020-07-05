@@ -23,6 +23,9 @@
 #ifdef VM
 #include "vm/vm.h"
 #endif
+#ifdef EFILESYS
+#include "filesys/directory.h"
+#endif
 
 void syscall_entry (void);
 void syscall_handler (struct intr_frame *);
