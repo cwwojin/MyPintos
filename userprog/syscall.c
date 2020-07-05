@@ -546,6 +546,32 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			break;
 		}/* Remove mapping of file-mapped pages. */
 #endif
+#ifdef EFILESYS
+		case SYS_CHDIR:
+		{
+			break;
+		}/* Change the current directory. */
+		case SYS_MKDIR:
+		{
+			break;
+		}/* Create a directory. */
+		case SYS_READDIR:
+		{
+			break;
+		}/* Reads a directory entry. */
+		case SYS_ISDIR:
+		{
+			break;
+		}/* Tests if a fd represents a directory. */
+		case SYS_INUMBER:
+		{
+			break;
+		}/* Returns the inode number for a fd. */
+		case SYS_SYMLINK:
+		{
+			break;
+		}/* Create a symbolic link. */
+#endif
 		default:
 		{
 			printf("Invalid system call number : %d\n", syscall_num);
