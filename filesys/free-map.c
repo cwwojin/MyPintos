@@ -5,6 +5,8 @@
 #include "filesys/filesys.h"
 #include "filesys/inode.h"
 
+#include "filesys/fat.h"
+
 static struct file *free_map_file;   /* Free map file. */
 static struct bitmap *free_map;      /* Free map, one bit per disk sector. */
 
@@ -60,6 +62,21 @@ free_map_close (void) {
 	file_close (free_map_file);
 }
 
+#ifdef EFILESYS
+void
+free_map_create (void) {
+	/* Create inode. */
+	if (!inode_create (sector_to_cluster(FREE_MAP_SECTOR), bitmap_file_size (free_map), false))
+		PANIC ("free map creation failed");
+
+	/* Write bitmap to file. */
+	free_map_file = file_open (inode_open (FREE_MAP_SECTOR));
+	if (free_map_file == NULL)
+		PANIC ("can't open free map");
+	if (!bitmap_write (free_map, free_map_file))
+		PANIC ("can't write free map");
+}
+#else
 /* Creates a new free map file on disk and writes the free map to
  * it. */
 void
@@ -75,3 +92,4 @@ free_map_create (void) {
 	if (!bitmap_write (free_map, free_map_file))
 		PANIC ("can't write free map");
 }
+#endif
