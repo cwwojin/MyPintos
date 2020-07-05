@@ -13,6 +13,7 @@ void inode_init (void);
 #ifdef EFILESYS
 bool inode_create (cluster_t cluster, off_t length, bool is_dir);
 bool do_isdir (struct file* file);
+bool inode_isdir (struct inode* inode);
 #else
 bool inode_create (disk_sector_t, off_t);
 #endif
