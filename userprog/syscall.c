@@ -24,7 +24,7 @@
 #include "vm/vm.h"
 #endif
 #ifdef EFILESYS
-#include "filesys/directory.h"
+#include "filesys/inode.h"
 #endif
 
 void syscall_entry (void);
