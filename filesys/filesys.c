@@ -34,7 +34,7 @@ filesys_init (bool format) {
 		do_format ();
 
 	fat_open ();
-	printf("size of BOOL : %d\n", sizeof(bool));
+	
 	/* Set ROOT_DIR as the current directory of the Initial process. */
 	thread_current()->current_dir = dir_open_root();
 #else
