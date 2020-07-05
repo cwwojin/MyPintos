@@ -104,7 +104,7 @@ inode_init (void) {
 #ifdef EFILESYS
 /* Create an inode of length LENGTH, but instead of sectors / free-map, use clusters / FAT. */
 bool
-inode_create (cluster_t cluster, off_t length) {
+inode_create (cluster_t cluster, off_t length, bool is_dir) {
 	struct inode_disk *disk_inode = NULL;
 	bool success = false;
 	ASSERT (length >= 0);
@@ -115,6 +115,7 @@ inode_create (cluster_t cluster, off_t length) {
 		size_t sectors = bytes_to_sectors (length);
 		disk_inode->length = length;
 		disk_inode->magic = INODE_MAGIC;
+		disk_inode->isdir = is_dir;
 		if (fat_allocate (sectors, &disk_inode->start)) {
 			disk_write (filesys_disk, cluster_to_sector(cluster), disk_inode);
 			if (sectors > 0) {
