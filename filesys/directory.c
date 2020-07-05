@@ -8,6 +8,7 @@
 #ifdef EFILESYS
 #include "filesys/fat.h"
 #endif
+#include "threads/thread.h"
 
 /* A directory. */
 struct dir {
@@ -29,7 +30,13 @@ dir_create (disk_sector_t sector, size_t entry_cnt) {
 #ifdef EFILESYS
 	bool result = inode_create (sector_to_cluster(sector), entry_cnt * sizeof (struct dir_entry), true);
 	if(result){	//add '.' and '..' to each directory.
-		
+		char cur[1] = ".";
+		char parent[2] = "..";
+		struct dir* new_dir = dir_open(inode_open(sector));
+		struct dir* cur_dir = thread_current()->current_dir;
+		dir_add(new_dir, cur, sector);
+		dir_add(new_dir, parent, inode_get_inumber(cur_dir->inode));
+		dir_close(new_dir);
 	}
 	return result;
 #else
