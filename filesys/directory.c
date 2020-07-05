@@ -27,7 +27,7 @@ struct dir_entry {
 bool
 dir_create (disk_sector_t sector, size_t entry_cnt) {
 #ifdef EFILESYS
-	return inode_create (sector_to_cluster(sector), entry_cnt * sizeof (struct dir_entry));
+	return inode_create (sector_to_cluster(sector), entry_cnt * sizeof (struct dir_entry), true);
 #else
 	return inode_create (sector, entry_cnt * sizeof (struct dir_entry));
 #endif
