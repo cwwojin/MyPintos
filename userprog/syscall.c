@@ -25,6 +25,7 @@
 #endif
 #ifdef EFILESYS
 #include "filesys/inode.h"
+#include "devices/disk.h"
 #endif
 
 void syscall_entry (void);
@@ -368,7 +369,8 @@ int inumber (int fd){
 	}
 	lock_release(&filesys_lock);
 	struct inode* inode = file_get_inode(FILE);
-	return inode_get_inumber(inode);
+	disk_sector_t inumber = inode_get_inumber(inode);
+	return (int) inumber;
 }
 #endif
 /* ENDOFNEWCODE*/
