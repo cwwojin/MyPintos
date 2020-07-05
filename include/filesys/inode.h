@@ -8,7 +8,11 @@
 struct bitmap;
 
 void inode_init (void);
+#ifdef EFILESYS
+bool inode_create (cluster_t, off_t, bool);
+#else
 bool inode_create (disk_sector_t, off_t);
+#endif
 struct inode *inode_open (disk_sector_t);
 struct inode *inode_reopen (struct inode *);
 disk_sector_t inode_get_inumber (const struct inode *);
