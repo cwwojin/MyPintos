@@ -365,7 +365,7 @@ int inumber (int fd){
 	FILE = process_get_file(fd);
 	if(FILE == NULL){
 		lock_release(&filesys_lock);
-		return NULL;
+		return -1;
 	}
 	lock_release(&filesys_lock);
 	struct inode* inode = file_get_inode(FILE);
