@@ -67,7 +67,7 @@ filesys_create (const char *name, off_t initial_size) {
 	struct dir *dir = dir_open_root ();
 	bool success = (dir != NULL
 			&& fat_allocate (1, &inode_cluster)
-			&& inode_create (inode_cluster, initial_size)
+			&& inode_create (inode_cluster, initial_size, true)
 			&& dir_add (dir, name, cluster_to_sector(inode_cluster)));
 	if(!success && inode_cluster != 0)
 		fat_remove_chain (inode_cluster, 0);
