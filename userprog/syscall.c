@@ -357,6 +357,18 @@ bool isdir (int fd){
 	lock_release(&filesys_lock);
 	return do_isdir(FILE);
 }
+//inumber : return fd's inode inumber.
+int inumber (int fd){
+	struct file* FILE;
+	lock_acquire(&filesys_lock);
+	FILE = process_get_file(fd);
+	if(FILE == NULL){
+		lock_release(&filesys_lock);
+		return NULL;
+	}
+	lock_release(&filesys_lock);
+	return ((int) inode_get_inumber(file_get_inode(FILE)));
+}
 #endif
 /* ENDOFNEWCODE*/
 
@@ -589,6 +601,12 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		}/* Tests if a fd represents a directory. */
 		case SYS_INUMBER:
 		{
+			//one argument. fd.
+			int fd;
+			int result;
+			fd = (int) f->R.rdi;
+			result = inumber(fd);
+			f->R.rax = (uint64_t) result;
 			break;
 		}/* Returns the inode number for a fd. */
 		case SYS_SYMLINK:
