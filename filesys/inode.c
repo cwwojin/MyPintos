@@ -24,7 +24,12 @@ struct inode_disk {
 #endif
 	off_t length;                       /* File size in bytes. */
 	unsigned magic;                     /* Magic number. */
+#ifdef EFILESYS
+	bool isdir;			/* TRUE if this is a directory, FALSE if this is a file. */
+	uint32_t unused[124];
+#else
 	uint32_t unused[125];               /* Not used. */
+#endif
 };
 
 /* Returns the number of sectors to allocate for an inode SIZE
