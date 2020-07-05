@@ -154,18 +154,31 @@ struct dir* parse_path (char* path_name, char* file_name) {
 	char *token;
 	char *nexttoken;
 	char *saveptr;
+	/* Set up the Starting directory, depending on absolute/relative path. */
+	if(path_name[0] == "/"){	//Absolute path.
+		dir = dir_open_root();
+	}
+	else{				//Relative path.
+		dir = dir_reopen(thread_current()->current_dir);
+	}
 	token = strtok_r(path_name, "/", &savePtr);
 	nexttoken = strtok_r(NULL, "/", &savePtr);
-	while(token != NULL && nextToken!= NULL){
-		/* dir에서token이름의파일을검색하여inode의정보를저장*/
+	while(token != NULL && nexttoken!= NULL){
+		/* Lookup token from dir. */
 		struct inode* inode_token;
 		dir_lookup (dir, token, &inode_token);
-		/* inode가파일일경우NULL 반환*/
-		/* dir의디렉터리정보를메모리에서해지*/
-		/* inode의디렉터리정보를dir에저장*/
-		/* token에검색할경로이름저장*/
+		/* If inode is a file, return NULL. */
+		if(!inode_isdir(inode_token)){
+			dir = NULL;
+			break;
+		}
+		dir_close(dir);
+		/* Next name & directory to search. */
+		dir = dir_open(inode_token);
+		token = nexttoken;
+		nexttoken = strtok_r(NULL, "/", &savePtr);
 	}
-	/* token의파일이름을file_name에저장
-	/* dir정보반환*/
+	strlcpy(file_name, token, 14);
+	return dir;
 }
 #endif
