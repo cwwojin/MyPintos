@@ -172,7 +172,8 @@ struct dir* parse_path (char* path_name, char* file_name) {
 		}
 		/* If inode is a file, return. */
 		if(!inode_isdir(inode_token)){
-			break;
+			dir_close(dir);
+			return NULL;
 		}
 		dir_close(dir);
 		/* Next name & directory to search. */
