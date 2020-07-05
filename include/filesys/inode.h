@@ -5,12 +5,14 @@
 #include "filesys/off_t.h"
 #include "devices/disk.h"
 #include "filesys/fat.h"
+#include "filesys/file.h"
 
 struct bitmap;
 
 void inode_init (void);
 #ifdef EFILESYS
 bool inode_create (cluster_t cluster, off_t length, bool is_dir);
+bool do_isdir (struct file* file);
 #else
 bool inode_create (disk_sector_t, off_t);
 #endif
