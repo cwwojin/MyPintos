@@ -166,10 +166,12 @@ struct dir* parse_path (char* path_name, char* file_name) {
 	while(token != NULL && nexttoken!= NULL){
 		/* Lookup token from dir. */
 		struct inode* inode_token;
-		dir_lookup (dir, token, &inode_token);
-		/* If inode is a file, return NULL. */
+		if(!dir_lookup (dir, token, &inode_token)){
+			dir_close(dir);
+			return NULL;
+		}
+		/* If inode is a file, return. */
 		if(!inode_isdir(inode_token)){
-			dir = NULL;
 			break;
 		}
 		dir_close(dir);
