@@ -143,3 +143,27 @@ do_format (void) {
 
 	printf ("done.\n");
 }
+
+#ifdef EFILESYS
+struct dir* parse_path (char* path_name, char* file_name) {
+	struct dir* dir;
+	if (path_name== NULL|| file_name== NULL)
+		return NULL;
+	if (strlen(path_name) == 0)
+		return NULL;
+	char *token;
+	char *nexttoken;
+	char *saveptr;
+	token = strtok_r(path_name, "/", &savePtr);
+	nexttoken = strtok_r(NULL, "/", &savePtr);
+	while(token != NULL && nextToken!= NULL){
+		/* dir에서token이름의파일을검색하여inode의정보를저장*/
+		/* inode가파일일경우NULL 반환*/
+		/* dir의디렉터리정보를메모리에서해지*/
+		/* inode의디렉터리정보를dir에저장*/
+		/* token에검색할경로이름저장*/
+	}
+	/* token의파일이름을file_name에저장
+	/* dir정보반환*/
+}
+#endif
