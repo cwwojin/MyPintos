@@ -10,6 +10,7 @@
 #include "filesys/fat.h"
 #endif
 #include <stdio.h>
+#include "filesys/file.h"
 
 /* Identifies an inode. */
 #define INODE_MAGIC 0x494e4f44
@@ -411,3 +412,11 @@ off_t
 inode_length (const struct inode *inode) {
 	return inode->data.length;
 }
+
+#ifdef EFILESYS
+/* Return ISDIR value.*/
+bool do_isdir (struct file* file){
+	struct inode* inode = file_get_inode (struct file *file);
+	return inode->data.isdir;
+}
+#endif
