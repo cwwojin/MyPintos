@@ -417,6 +417,9 @@ inode_length (const struct inode *inode) {
 /* Return ISDIR value.*/
 bool do_isdir (struct file* file){
 	struct inode* inode = file_get_inode (file);
-	return inode->data.isdir;
+	return inode_isdir(inode);
+}
+bool inode_isdir (struct inode* inode){
+	return (inode->data.isdir);
 }
 #endif
