@@ -367,7 +367,8 @@ int inumber (int fd){
 		return NULL;
 	}
 	lock_release(&filesys_lock);
-	return ((int) inode_get_inumber(file_get_inode(FILE)));
+	struct inode* inode = file_get_inode(FILE);
+	return inode_get_inumber(inode);
 }
 #endif
 /* ENDOFNEWCODE*/
