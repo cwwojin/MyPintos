@@ -416,7 +416,7 @@ inode_length (const struct inode *inode) {
 #ifdef EFILESYS
 /* Return ISDIR value.*/
 bool do_isdir (struct file* file){
-	struct inode* inode = file_get_inode (struct file *file);
+	struct inode* inode = file_get_inode (file);
 	return inode->data.isdir;
 }
 #endif
