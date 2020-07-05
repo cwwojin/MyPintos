@@ -8,7 +8,6 @@
 #ifdef EFILESYS
 #include "filesys/fat.h"
 #endif
-#include "filesys/file.h"
 
 /* A directory. */
 struct dir {
@@ -230,12 +229,3 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1]) {
 	}
 	return false;
 }
-
-#ifdef EFILESYS
-/* IS_DIR : return true if file's inode is a directory-inode. */
-bool do_isdir (struct file* file){
-	struct inode* inode = file_get_inode(file);
-	struct inode_disk* inode_disk = &inode->data;
-	return inode_disk->isdir;
-}
-#endif
