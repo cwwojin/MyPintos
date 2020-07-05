@@ -33,9 +33,11 @@ dir_create (disk_sector_t sector, size_t entry_cnt) {
 		char cur[1] = ".";
 		char parent[2] = "..";
 		struct dir* new_dir = dir_open(inode_open(sector));
-		struct dir* cur_dir = thread_current()->current_dir;
 		dir_add(new_dir, cur, sector);
-		dir_add(new_dir, parent, inode_get_inumber(cur_dir->inode));
+		if(sector != cluster_to_sector(ROOT_DIR_CLUSTER)){
+			struct dir* cur_dir = thread_current()->current_dir;
+			dir_add(new_dir, parent, inode_get_inumber(cur_dir->inode));
+		}
 		dir_close(new_dir);
 	}
 	return result;
