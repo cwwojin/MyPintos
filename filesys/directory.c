@@ -267,8 +267,6 @@ bool do_chdir(const char* dir){
 	if(l == 1 && name[0] == '/'){	//SPECIAL CASE : setting cwd to the ROOT.
 		dir_close(thread_current()->current_dir);
 		thread_current()->current_dir = dir_open_root();
-		free(path_name);
-		free(dir_name);
 		return true;
 	}
 	char* path_name = malloc((l + 1) * sizeof(char));
