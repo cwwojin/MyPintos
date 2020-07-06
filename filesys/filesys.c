@@ -182,6 +182,7 @@ struct dir* parse_path (char* path_name, char* file_name) {
 	token = strtok_r(path_name, "/", &saveptr);
 	nexttoken = strtok_r(NULL, "/", &saveptr);
 	while(token != NULL && nexttoken!= NULL){
+		printf("%s!\n",token);
 		/* Lookup token from dir. */
 		struct inode* inode_token;
 		if(!dir_lookup (dir, token, &inode_token)){
