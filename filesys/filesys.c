@@ -175,7 +175,7 @@ struct dir* parse_path (char* path_name, char* file_name) {
 	struct dir* dir;
 	if (path_name == NULL || file_name == NULL)
 		return NULL;
-	if (strlen(path_name) == 0)
+	if (strlen(path_name) == 0 || strlen(path_name) > 128)
 		return NULL;
 	char *token;
 	char *nexttoken;
