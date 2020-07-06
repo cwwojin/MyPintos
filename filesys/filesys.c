@@ -104,13 +104,21 @@ filesys_create (const char *name, off_t initial_size) {
  * or if an internal memory allocation fails. */
 struct file *
 filesys_open (const char *name) {
-	struct dir *dir = dir_open_root ();
 	struct inode *inode = NULL;
-
+#ifdef EFILESYS
+	char path_name[64];
+	char file_name[14];
+	strlcpy(path_name, name, 64);
+	struct dir* dir = parse_path(path_name, file_name);
+	if(dir != NULL)
+		dir_lookup(dir, file_name, &inode);
+	dir_close (dir);
+#else
+	struct dir *dir = dir_open_root ();
 	if (dir != NULL)
 		dir_lookup (dir, name, &inode);
 	dir_close (dir);
-
+#endif
 	return file_open (inode);
 }
 
