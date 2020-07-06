@@ -26,6 +26,7 @@
 #ifdef EFILESYS
 #include "filesys/inode.h"
 #include "devices/disk.h"
+#include "filesys/directory.h"
 #endif
 
 void syscall_entry (void);
