@@ -374,7 +374,7 @@ bool readdir (int fd, char* name){
 		return false;
 	}
 	lock_release(&filesys_lock);
-	return dir_readdir(dir, name);
+	return do_readdir(dir, name);
 }
 //isdir : return TRUE if fd is a file descriptor for a directory.
 bool isdir (int fd){
