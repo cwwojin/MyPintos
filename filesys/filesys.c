@@ -121,6 +121,7 @@ filesys_open (const char *name) {
 	if(l == 1 && name[0] == "/"){	//SPECIAL CASE : opening the root
 		printf("opening ROOT!!\n");
 		inode = inode_open (cluster_to_sector(ROOT_DIR_CLUSTER));
+		return file_open(inode);
 	}
 	char* path_name = malloc((l + 1) * sizeof(char));
 	char* file_name = malloc(15 * sizeof(char));
