@@ -340,6 +340,9 @@ process_exec (void *f_name) {
 	/* Init SPT.*/
 	supplemental_page_table_init(&thread_current()->spt);
 #endif
+#ifdef EFILESYS
+	thread_current()->current_dir = dir_open_root();
+#endif
 
 	/* And then load the binary */
 	success = load (file_name, &_if);
