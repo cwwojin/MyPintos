@@ -371,7 +371,7 @@ bool readdir (int fd, char* name){
 	}
 	if(dir == NULL){
 		lock_release(&filesys_lock);
-		return NULL;
+		return false;
 	}
 	lock_release(&filesys_lock);
 	return dir_readdir(dir, name);
@@ -383,7 +383,7 @@ bool isdir (int fd){
 	FILE = process_get_file(fd);
 	if(FILE == NULL){
 		lock_release(&filesys_lock);
-		return NULL;
+		return false;
 	}
 	lock_release(&filesys_lock);
 	return do_isdir(FILE);
