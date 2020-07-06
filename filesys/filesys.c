@@ -64,7 +64,8 @@ filesys_done (void) {
 bool
 filesys_create (const char *name, off_t initial_size) {
 	cluster_t inode_cluster = 0;
-	struct dir *dir = dir_open_root ();
+	//struct dir *dir = dir_open_root ();
+	struct dir *dir = dir_reopen (thread_current()->current_dir);
 	bool success = (dir != NULL
 			&& fat_allocate (1, &inode_cluster)
 			&& inode_create (inode_cluster, initial_size, false)
