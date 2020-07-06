@@ -47,7 +47,7 @@ int process_add_file(struct file* file){
 	}
 	file_desc->dir = NULL;
 #ifdef EFILESYS
-	struct inode* inode = file_get_inode(file));
+	struct inode* inode = file_get_inode(file);
 	if(inode_isdir(inode)){
 		struct dir* dir = dir_open(inode_reopen(inode));
 		file_desc->dir = dir;
