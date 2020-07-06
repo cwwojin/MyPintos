@@ -31,6 +31,7 @@ bool dir_readdir (struct dir *, char name[NAME_MAX + 1]);
 bool do_chdir(const char* dir);
 bool do_mkdir(const char* dir);
 bool do_readdir(struct inode* inode, char* name);
+bool dir_isempty(struct dir* dir);
 #endif
 
 #endif /* filesys/directory.h */
