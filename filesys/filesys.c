@@ -64,14 +64,25 @@ filesys_done (void) {
 bool
 filesys_create (const char *name, off_t initial_size) {
 	cluster_t inode_cluster = 0;
-	struct dir *dir = dir_reopen (thread_current()->current_dir);
+	//struct dir *dir = dir_reopen (thread_current()->current_dir);
+	
+	int l = strlen(name);
+	char* path_name = malloc((l + 1) * sizeof(char));
+	char* file_name = malloc(15 * sizeof(char));
+	strlcpy(path_name, name, (l + 1));
+	struct dir* dir = parse_path(path_name, file_name);
+	
 	bool success = (dir != NULL
 			&& fat_allocate (1, &inode_cluster)
 			&& inode_create (inode_cluster, initial_size, false)
-			&& dir_add (dir, name, cluster_to_sector(inode_cluster)));
+			&& dir_add (dir, file_name, cluster_to_sector(inode_cluster)));
 	if(!success && inode_cluster != 0)
 		fat_remove_chain (inode_cluster, 0);
 	dir_close (dir);
+	
+	free(path_name);
+	free(file_name);
+	
 	return success;
 }
 #else
