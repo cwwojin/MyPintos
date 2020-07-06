@@ -29,6 +29,7 @@ bool dir_readdir (struct dir *, char name[NAME_MAX + 1]);
 
 #ifdef EFILESYS
 bool do_chdir(const char* dir);
+bool do_mkdir(const char* dir);
 #endif
 
 #endif /* filesys/directory.h */
