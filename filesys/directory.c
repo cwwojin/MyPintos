@@ -39,8 +39,7 @@ dir_create (disk_sector_t sector, size_t entry_cnt) {
 			dir_add(new_dir, parent, inode_get_inumber(cur_dir->inode));
 		}
 		else{	//CREATING : ROOT
-			struct dir* cur_dir = dir_open(inode_open(sector));
-			dir_add(new_dir, parent, inode_get_inumber(cur_dir->inode));
+			dir_add(new_dir, parent, sector);
 		}
 		dir_close(new_dir);
 	}
