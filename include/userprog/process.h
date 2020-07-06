@@ -16,6 +16,7 @@ void process_activate (struct thread *next);
 struct fd{
   int fd_num;
   struct file* file;
+  struct dir* dir;
   struct list_elem elem;
 };
 
