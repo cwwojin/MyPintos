@@ -107,7 +107,7 @@ filesys_open (const char *name) {
 #ifdef EFILESYS
 	int l = strlen(name);
 	char* path_name = malloc((l + 1) * sizeof(char));
-	char* file_name = malloc(14 * sizeof(char));
+	char* file_name = malloc(15 * sizeof(char));
 	strlcpy(path_name, name, (l + 1));
 	struct dir* dir = parse_path(path_name, file_name);
 	if(dir != NULL)
@@ -200,7 +200,7 @@ struct dir* parse_path (char* path_name, char* file_name) {
 		token = nexttoken;
 		nexttoken = strtok_r(NULL, "/", &saveptr);
 	}
-	strlcpy(file_name, token, 14);
+	strlcpy(file_name, token, 15);
 	return dir;
 }
 #endif
