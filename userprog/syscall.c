@@ -607,7 +607,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			bool result;
 			dir = (char*) f->R.rdi;
 			
-			result = chdir(dir);
+			result = mkdir(dir);
 			f->R.rax = (uint64_t) result;
 			break;
 		}/* Create a directory. */
