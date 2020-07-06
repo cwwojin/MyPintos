@@ -172,7 +172,12 @@ struct dir* parse_path (char* path_name, char* file_name) {
 		dir = dir_open_root();
 	}
 	else{				//Relative path.
-		dir = dir_reopen(thread_current()->current_dir);
+		if(thread_current()->current_dir != NULL){
+			dir = dir_reopen(thread_current()->current_dir);
+		}
+		else{
+			dir = dir_open_root();
+		}
 	}
 	token = strtok_r(path_name, "/", &saveptr);
 	nexttoken = strtok_r(NULL, "/", &saveptr);
