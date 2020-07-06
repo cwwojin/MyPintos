@@ -317,7 +317,7 @@ bool do_readdir(struct inode* inode, char* name){
 	struct dir* dir = dir_open(inode);
 	if(dir == NULL)
 		return false;
-	dir->pos += 2 * sizeof(struct dir_entry);
+	dir->pos = 2 * sizeof(struct dir_entry);
 	bool result = dir_readdir (dir, name);
 	return result;
 }
