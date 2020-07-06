@@ -264,7 +264,7 @@ bool do_chdir(const char* dir){
 	struct dir* search_dir;
 	int l = strlen(dir);
 	if(l == 0) return false;
-	if(l == 1 && name[0] == '/'){	//SPECIAL CASE : setting cwd to the ROOT.
+	if(l == 1 && dir[0] == '/'){	//SPECIAL CASE : setting cwd to the ROOT.
 		dir_close(thread_current()->current_dir);
 		thread_current()->current_dir = dir_open_root();
 		return true;
@@ -296,7 +296,6 @@ bool do_mkdir(const char* dir){
 	if(l == 0) return false;
 	char* path_name = malloc((l + 1) * sizeof(char));
 	char* dir_name = malloc(15 * sizeof(char));
-	struct inode* inode;
 	strlcpy(path_name, dir, (l + 1));
 	search_dir = parse_path(path_name, dir_name);
 	if(search_dir == NULL){
