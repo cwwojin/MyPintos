@@ -589,9 +589,9 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			//one argument. dir.
 			char* dir;
 			bool result;
-			file = (char*) f->R.rdi;
+			dir = (char*) f->R.rdi;
 			
-			result = create(file, initial_size);
+			result = chdir(dir);
 			f->R.rax = (uint64_t) result;
 			break;
 		}/* Change the current directory. */
