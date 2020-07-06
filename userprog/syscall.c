@@ -357,16 +357,24 @@ bool mkdir (const char *dir){
 }
 //readdir : read a directory entry and store into NAME.
 bool readdir (int fd, char* name){
-	struct file* FILE;
+	struct dir* dir = NULL;
 	lock_acquire(&filesys_lock);
-	FILE = process_get_file(fd);
-	if(FILE == NULL){
+	//get a file given the fd number.
+	struct thread* current = thread_current();
+	struct list_elem* e;
+	for (e = list_begin (&current->fd_table); e != list_end (&current->fd_table); e = list_next (e)){
+		struct fd* fid = list_entry(e, struct fd, elem);
+		if(fid->fd_num == fd){
+			dir = fid->dir;
+			break;
+		}
+	}
+	if(dir == NULL){
 		lock_release(&filesys_lock);
 		return NULL;
 	}
 	lock_release(&filesys_lock);
-	struct inode* inode = file_get_inode (FILE);
-	return do_readdir(inode, name);
+	return do_readdir(dir, name);
 }
 //isdir : return TRUE if fd is a file descriptor for a directory.
 bool isdir (int fd){
