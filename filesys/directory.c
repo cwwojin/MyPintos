@@ -319,9 +319,6 @@ bool do_readdir(struct inode* inode, char* name){
 		return false;
 	dir->pos += 2 * sizeof(struct dir_entry);
 	bool result = dir_readdir (dir, name);
-	printf("read-dir returned : %s!\n",name);
-	if(strlen(name) == 1 && name[0] == '.')
-		return false;
 	return result;
 }
 #endif
