@@ -246,7 +246,7 @@ bool do_chdir(const char* dir){
 	int l = strlen(dir);
 	if(l == 0) return false;
 	char* path_name = malloc((l + 1) * sizeof(char));
-	char* dir_name = malloc(14 * sizeof(char));
+	char* dir_name = malloc(15 * sizeof(char));
 	struct inode* inode;
 	strlcpy(path_name, dir, (l + 1));
 	search_dir = parse_path(path_name, dir_name);
@@ -271,7 +271,7 @@ bool do_mkdir(const char* dir){
 	int l = strlen(dir);
 	if(l == 0) return false;
 	char* path_name = malloc((l + 1) * sizeof(char));
-	char* dir_name = malloc(14 * sizeof(char));
+	char* dir_name = malloc(15 * sizeof(char));
 	struct inode* inode;
 	strlcpy(path_name, dir, (l + 1));
 	search_dir = parse_path(path_name, dir_name);
