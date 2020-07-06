@@ -105,22 +105,24 @@ filesys_create (const char *name, off_t initial_size) {
 struct file *
 filesys_open (const char *name) {
 	struct inode *inode = NULL;
-/*
+
 #ifdef EFILESYS
-	char path_name[64];
-	char file_name[14];
+	char* path_name = malloc(strlen(name) * sizeof(char));
+	char* file_name = malloc(14 * sizeof(char));
 	strlcpy(path_name, name, 64);
 	struct dir* dir = parse_path(path_name, file_name);
 	if(dir != NULL)
 		dir_lookup(dir, file_name, &inode);
 	dir_close (dir);
+	free(path_name);
+	free(file_name);
 #else
-*/
+
 	struct dir *dir = dir_open_root ();
 	if (dir != NULL)
 		dir_lookup (dir, name, &inode);
 	dir_close (dir);
-//#endif
+#endif
 	return file_open (inode);
 }
 
