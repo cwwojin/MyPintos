@@ -64,8 +64,6 @@ filesys_done (void) {
 bool
 filesys_create (const char *name, off_t initial_size) {
 	cluster_t inode_cluster = 0;
-	//struct dir *dir = dir_open_root ();
-	//printf("current thread : %d\n",thread_current()->tid);
 	struct dir *dir = dir_reopen (thread_current()->current_dir);
 	bool success = (dir != NULL
 			&& fat_allocate (1, &inode_cluster)
@@ -107,9 +105,10 @@ filesys_open (const char *name) {
 	struct inode *inode = NULL;
 
 #ifdef EFILESYS
-	char* path_name = malloc(strlen(name) * sizeof(char));
+	int l = strlen(name);
+	char* path_name = malloc((l + 1) * sizeof(char));
 	char* file_name = malloc(14 * sizeof(char));
-	strlcpy(path_name, name, 64);
+	strlcpy(path_name, name, (l + 1));
 	struct dir* dir = parse_path(path_name, file_name);
 	if(dir != NULL)
 		dir_lookup(dir, file_name, &inode);
