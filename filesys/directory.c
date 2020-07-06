@@ -212,8 +212,9 @@ dir_remove (struct dir *dir, const char *name) {
 	if (inode == NULL)
 		goto done;
 #ifdef EFILESYS
-	if (inode_isdir(inode) && !dir_isempty(dir_open(inode))){	//directory inode but NOT empty!!
-		goto done;
+	if (inode_isdir(inode)){	//directory inode but NOT empty!!
+		if(!dir_isempty(dir_open(inode)) || inode_get_inumber(inode) == inode_get_inumber(dir_get_inode(thread_current()->current_dir)))
+			goto done;
 	}
 #endif
 	/* Erase directory entry. */
