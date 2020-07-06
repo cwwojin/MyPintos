@@ -25,6 +25,7 @@
 #include "threads/synch.h"
 #include "threads/malloc.h"
 #include "userprog/syscall.h"
+#include "filesys/inode.h"
 
 static void process_cleanup (void);
 static bool load (char *file_name, struct intr_frame *if_);
@@ -38,16 +39,20 @@ static void __do_fork (void *);
 int process_add_file(struct file* file){
 	//insert file to thread's fd table.
 	struct thread* current = thread_current();
-	//allocate a page for new file descriptor. when removing a file descriptor, free this page @ resource cleanup.
-	//struct fd* file_desc = palloc_get_page(0);
 	struct fd* file_desc = malloc(sizeof(struct fd));
 	//if memory allocation failed : return -1.
 	if(file_desc == NULL){
-		//printf("Thread [%d] mem allocation failed at fd number : %d\n", current->tid, current->max_fd);
 		file_close(file);
 		return -1;
 	}
-	
+	file_desc->dir = NULL;
+#ifdef EFILESYS
+	struct inode* inode = file_get_inode(file));
+	if(inode_isdir(inode)){
+		struct dir* dir = dir_open(inode_reopen(inode));
+		file_desc->dir = dir;
+	}
+#endif
 	file_desc->file = file;
 	file_desc->fd_num = current->max_fd;
 	list_push_back(&current->fd_table, &file_desc->elem);
@@ -99,6 +104,10 @@ void process_close_file(int fd){
 	struct fd* fid = list_entry(e, struct fd, elem);
 	list_remove(e);
 	file_close(fid->file);
+#ifdef EFILESYS
+	if(fid->dir != NULL)
+		dir_close(fid->dir);
+#endif
 	//palloc_free_page(fid);
 	free(fid);
 }
@@ -419,12 +428,12 @@ process_exit (void) {
 		e = list_pop_front(&current->fd_table);
 		struct fd* fid = list_entry(e, struct fd, elem);
 		file_close(fid->file);
-		//palloc_free_page(fid);
+#ifdef EFILESYS
+		if(fid->dir != NULL)
+			dir_close(fid->dir);
+#endif
 		free(fid);
 	}
-	//child list.
-	//struct list_elem* e;
-	//printf("parent : %d now going into child cleanup.\n", );
 	while(!list_empty(&current->child_list)){
 		e = list_pop_front(&current->child_list);
 		struct pcb* pcb = list_entry(e, struct pcb, elem);
