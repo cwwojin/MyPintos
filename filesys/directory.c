@@ -211,7 +211,11 @@ dir_remove (struct dir *dir, const char *name) {
 	inode = inode_open (e.inode_sector);
 	if (inode == NULL)
 		goto done;
-
+#ifdef EFILESYS
+	if (inode_isdir(inode) && !dir_isempty(dir_open(inode))){	//directory inode but NOT empty!!
+		goto done;
+	}
+#endif
 	/* Erase directory entry. */
 	e.in_use = false;
 	if (inode_write_at (dir->inode, &e, sizeof e, ofs) != sizeof e)
@@ -244,6 +248,16 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1]) {
 }
 
 #ifdef EFILESYS
+bool dir_isempty(struct dir* dir){
+	struct dir_entry e;
+	off_t ofs;
+	for (ofs = 2 * sizeof e; inode_read_at(dir->inode, &e, sizeof e, ofs) == sizeof e; ofs += sizeof e){
+		if (e.in_use){
+			return false;
+		}
+	}
+	return true;
+}
 bool do_chdir(const char* dir){
 	//parse the directory path.
 	struct dir* search_dir;
