@@ -30,8 +30,8 @@ dir_create (disk_sector_t sector, size_t entry_cnt) {
 #ifdef EFILESYS
 	bool result = inode_create (sector_to_cluster(sector), entry_cnt * sizeof (struct dir_entry), true);
 	if(result){	//add '.' and '..' to each directory.
-		char cur[1] = ".";
-		char parent[2] = "..";
+		char cur[2] = ".";
+		char parent[3] = "..";
 		struct dir* new_dir = dir_open(inode_open(sector));
 		dir_add(new_dir, cur, sector);
 		if(sector != cluster_to_sector(ROOT_DIR_CLUSTER)){
