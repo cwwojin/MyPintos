@@ -266,6 +266,25 @@ bool do_chdir(const char* dir){
 	return true;
 }
 bool do_mkdir(const char* dir){
-	return false;
+	//parse the directory path.
+	struct dir* search_dir;
+	int l = strlen(dir);
+	if(l == 0) return false;
+	char* path_name = malloc((l + 1) * sizeof(char));
+	char* dir_name = malloc(14 * sizeof(char));
+	struct inode* inode;
+	strlcpy(path_name, dir, (l + 1));
+	search_dir = parse_path(path_name, dir_name);
+	if(search_dir == NULL){
+		printf("parsing failed!\n");
+		return false;
+	}
+	cluster_t cluster;
+	bool success = (fat_allocate(1, &cluster) 
+			&& dir_create(cluster_to_sector(cluster), 16) 
+			&& dir_add(search_dir, dir_name, cluster_to_sector(cluster)));
+	free(path_name);
+	free(dir_name);
+	return success;
 }
 #endif
