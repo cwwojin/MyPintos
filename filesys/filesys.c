@@ -122,8 +122,12 @@ filesys_open (const char *name) {
 	char* file_name = malloc(15 * sizeof(char));
 	strlcpy(path_name, name, (l + 1));
 	struct dir* dir = parse_path(path_name, file_name);
-	if(dir != NULL)
+	if(dir != NULL){
+		if(strlen(file_name) == 0){
+			printf("filename length : 0\n");
+		}
 		dir_lookup(dir, file_name, &inode);
+	}
 	dir_close (dir);
 	free(path_name);
 	free(file_name);
