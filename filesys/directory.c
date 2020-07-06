@@ -244,10 +244,11 @@ bool do_chdir(const char* dir){
 	//parse the directory path.
 	struct dir* search_dir;
 	int l = strlen(dir);
+	if(l == 0) return false;
 	char* path_name = malloc((l + 1) * sizeof(char));
 	char* dir_name = malloc(14 * sizeof(char));
 	struct inode* inode;
-	strlcpy(path_name, dir, 64);
+	strlcpy(path_name, dir, (l + 1));
 	search_dir = parse_path(path_name, dir_name);
 	if(search_dir == NULL)
 		return false;
