@@ -350,6 +350,10 @@ void munmap (void *addr){
 bool chdir (const char *dir){
 	return do_chdir(dir);
 }
+//mkdir : make a new directory DIR (absolute or relative.)
+bool mkdir (const char *dir){
+	return do_mkdir(dir);
+}
 //isdir : return TRUE if fd is a file descriptor for a directory.
 bool isdir (int fd){
 	struct file* FILE;
@@ -597,6 +601,13 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		}/* Change the current directory. */
 		case SYS_MKDIR:
 		{
+			//one argument. dir.
+			char* dir;
+			bool result;
+			dir = (char*) f->R.rdi;
+			
+			result = chdir(dir);
+			f->R.rax = (uint64_t) result;
 			break;
 		}/* Create a directory. */
 		case SYS_READDIR:
