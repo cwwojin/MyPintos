@@ -346,6 +346,10 @@ void munmap (void *addr){
 #endif
 
 #ifdef EFILESYS
+//chdir : change the current directory to DIR (absolute or relative.)
+bool chdir (const char *dir){
+	return do_chdir(dir);
+}
 //isdir : return TRUE if fd is a file descriptor for a directory.
 bool isdir (int fd){
 	struct file* FILE;
@@ -582,6 +586,13 @@ syscall_handler (struct intr_frame *f UNUSED) {
 #ifdef EFILESYS
 		case SYS_CHDIR:
 		{
+			//one argument. dir.
+			char* dir;
+			bool result;
+			file = (char*) f->R.rdi;
+			
+			result = create(file, initial_size);
+			f->R.rax = (uint64_t) result;
 			break;
 		}/* Change the current directory. */
 		case SYS_MKDIR:
