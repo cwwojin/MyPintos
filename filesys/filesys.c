@@ -119,7 +119,7 @@ filesys_open (const char *name) {
 #ifdef EFILESYS
 	int l = strlen(name);
 	printf("name : %s, length : %d\n", name, l);
-	if(l == 1 && name[0] == "/"){	//SPECIAL CASE : opening the root
+	if(l == 1 && name[0] == '/'){	//SPECIAL CASE : opening the root
 		printf("opening ROOT!!\n");
 		inode = inode_open (cluster_to_sector(ROOT_DIR_CLUSTER));
 		return file_open(inode);
