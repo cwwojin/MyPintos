@@ -71,6 +71,7 @@ filesys_create (const char *name, off_t initial_size) {
 	char* file_name = malloc(15 * sizeof(char));
 	strlcpy(path_name, name, (l + 1));
 	struct dir* dir = parse_path(path_name, file_name);
+	printf("file name : %s\n", file_name);
 	
 	bool success = (dir != NULL
 			&& fat_allocate (1, &inode_cluster)
