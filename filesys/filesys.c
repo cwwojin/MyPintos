@@ -222,7 +222,8 @@ struct dir* parse_path (char* path_name, char* file_name) {
 		token = nexttoken;
 		nexttoken = strtok_r(NULL, "/", &saveptr);
 	}
-	strlcpy(file_name, token, 15);
+	if(token != NULL)
+		strlcpy(file_name, token, 15);
 	return dir;
 }
 #endif
