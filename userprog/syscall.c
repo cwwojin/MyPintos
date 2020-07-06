@@ -355,6 +355,19 @@ bool chdir (const char *dir){
 bool mkdir (const char *dir){
 	return do_mkdir(dir);
 }
+//readdir : read a directory entry and store into NAME.
+bool readdir (int fd, char* name){
+	struct file* FILE;
+	lock_acquire(&filesys_lock);
+	FILE = process_get_file(fd);
+	if(FILE == NULL){
+		lock_release(&filesys_lock);
+		return NULL;
+	}
+	lock_release(&filesys_lock);
+	struct inode* inode = file_get_inode (FILE);
+	return do_readdir(inode, name);
+}
 //isdir : return TRUE if fd is a file descriptor for a directory.
 bool isdir (int fd){
 	struct file* FILE;
@@ -613,6 +626,15 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		}/* Create a directory. */
 		case SYS_READDIR:
 		{
+			//2 arguments. fd, name.
+			int fd;
+			char* name;
+			bool result;
+			fd = (int) f->R.rdi;
+			name = (char*) f->R.rsi;
+			
+			result = readdir(fd, name);
+			f->R.rax = (uint64_t) result;
 			break;
 		}/* Reads a directory entry. */
 		case SYS_ISDIR:
