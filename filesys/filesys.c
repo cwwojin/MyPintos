@@ -168,7 +168,7 @@ struct dir* parse_path (char* path_name, char* file_name) {
 	char *nexttoken;
 	char *saveptr;
 	/* Set up the Starting directory, depending on absolute/relative path. */
-	if(path_name[0] == "/"){	//Absolute path.
+	if(path_name[0] == '/'){	//Absolute path.
 		dir = dir_open_root();
 	}
 	else{				//Relative path.
