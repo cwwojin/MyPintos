@@ -238,3 +238,27 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1]) {
 	}
 	return false;
 }
+
+#ifdef EFILESYS
+bool do_chdir(const char* dir){
+	//parse the directory path.
+	struct dir* search_dir;
+	char path_name[64];
+	char dir_name[14];
+	struct inode* inode;
+	strlcpy(path_name, dir, 64);
+	search_dir = parse_path(path_name, dir_name);
+	if(search_dir == NULL)
+		return false;
+	if(!dir_lookup(search_dir, dir_name, &inode))
+		return false;
+	//check if inode is a directory. if not, fail.
+	if(!inode_isdir(inode))
+		return false;
+	//get the directory. close the current directory & change.
+	struct dir* target = dir_open(inode);
+	dir_close(thread_current()->current_dir);
+	thread_current()->current_dir = target;
+	return true;
+}
+#endif
