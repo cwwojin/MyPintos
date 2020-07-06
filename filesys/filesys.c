@@ -128,9 +128,7 @@ filesys_open (const char *name) {
 	free(path_name);
 	free(file_name);
 #else
-
-	//struct dir *dir = dir_open_root ();
-	struct dir *dir = dir_reopen (thread_current()->current_dir);
+	struct dir *dir = dir_open_root ();
 	if (dir != NULL)
 		dir_lookup (dir, name, &inode);
 	dir_close (dir);
@@ -144,10 +142,22 @@ filesys_open (const char *name) {
  * or if an internal memory allocation fails. */
 bool
 filesys_remove (const char *name) {
+#ifdef EFILESYS
+	int l = strlen(name);
+	char* path_name = malloc((l + 1) * sizeof(char));
+	char* file_name = malloc(15 * sizeof(char));
+	strlcpy(path_name, name, (l + 1));
+	struct dir* dir = parse_path(path_name, file_name);
+	
+	bool success = dir != NULL && dir_remove (dir, file_name);
+	dir_close (dir);
+	free(path_name);
+	free(file_name);
+#else
 	struct dir *dir = dir_open_root ();
 	bool success = dir != NULL && dir_remove (dir, name);
 	dir_close (dir);
-
+#endif
 	return success;
 }
 
