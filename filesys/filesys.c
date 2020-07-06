@@ -103,7 +103,7 @@ filesys_create (const char *name, off_t initial_size) {
 struct file *
 filesys_open (const char *name) {
 	struct inode *inode = NULL;
-
+/*
 #ifdef EFILESYS
 	int l = strlen(name);
 	char* path_name = malloc((l + 1) * sizeof(char));
@@ -116,12 +116,13 @@ filesys_open (const char *name) {
 	free(path_name);
 	free(file_name);
 #else
-
-	struct dir *dir = dir_open_root ();
+*/
+	//struct dir *dir = dir_open_root ();
+	struct dir *dir = dir_reopen (thread_current()->current_dir);
 	if (dir != NULL)
 		dir_lookup (dir, name, &inode);
 	dir_close (dir);
-#endif
+//#endif
 	return file_open (inode);
 }
 
