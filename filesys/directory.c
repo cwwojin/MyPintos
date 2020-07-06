@@ -291,4 +291,12 @@ bool do_mkdir(const char* dir){
 	free(dir_name);
 	return success;
 }
+bool do_readdir(struct inode* inode, char* name){
+	if(inode == NULL || !inode_isdir(inode))
+		return false;
+	struct dir* dir = dir_open(inode);
+	if(dir == NULL)
+		return false;
+	return dir_readdir (dir, name);
+}
 #endif
