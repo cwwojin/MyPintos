@@ -96,6 +96,10 @@ file_read_at (struct file *file, void *buffer, off_t size, off_t file_ofs) {
  * Advances FILE's position by the number of bytes read. */
 off_t
 file_write (struct file *file, const void *buffer, off_t size) {
+#ifdef EFILESYS
+	if (inode_isdir(file->inode))		//CANNOT write to a directory with a WRITE syscall!!
+		return -1;
+#endif
 	off_t bytes_written = inode_write_at (file->inode, buffer, size, file->pos);
 	file->pos += bytes_written;
 	return bytes_written;
@@ -111,6 +115,10 @@ file_write (struct file *file, const void *buffer, off_t size) {
 off_t
 file_write_at (struct file *file, const void *buffer, off_t size,
 		off_t file_ofs) {
+#ifdef EFILESYS
+	if (inode_isdir(file->inode))		//CANNOT write to a directory with a WRITE syscall!!
+		return -1;
+#endif
 	return inode_write_at (file->inode, buffer, size, file_ofs);
 }
 
