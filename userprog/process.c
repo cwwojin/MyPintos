@@ -449,7 +449,7 @@ process_exit (void) {
 	//Allow write to executable.
 	if(current->executable != NULL) {
 		//file_allow_write(current->executable);
-		file_close(current->executable);
+		//file_close(current->executable);
 	}
 	/* ENDOFNEWCODE */
 
@@ -634,6 +634,7 @@ load (char *file_name, struct intr_frame *if_) {
 	/* NEWCODE : Deny Write to Executables */
 	t->executable = file;
 	file_deny_write(file);
+	process_add_file(file);
 
 	/* Read and verify executable header. */
 	if (file_read (file, &ehdr, sizeof ehdr) != sizeof ehdr
