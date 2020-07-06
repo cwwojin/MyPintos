@@ -191,6 +191,10 @@ done:
  * which occurs only if there is no file with the given NAME. */
 bool
 dir_remove (struct dir *dir, const char *name) {
+#ifdef EFILESYS
+	if(strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
+		return false;
+#endif
 	struct dir_entry e;
 	struct inode *inode = NULL;
 	bool success = false;
