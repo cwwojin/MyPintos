@@ -72,11 +72,21 @@ filesys_create (const char *name, off_t initial_size) {
 	strlcpy(path_name, name, (l + 1));
 	struct dir* dir = parse_path(path_name, file_name);
 	printf("thread : %d\nfile name : %s\ndirectory at : %d\n", thread_current()->tid, file_name, sector_to_cluster(inode_get_inumber(dir_get_inode(dir))));
-	
+	bool success = (dir != NULL);
+	if(!success)
+		printf("directory is NULL!\n");
+	success = success && fat_allocate (1, &inode_cluster) && inode_create (inode_cluster, initial_size, false);
+	if(!success)
+		printf("allocation or inode creation failed.\n");
+	success = success && dir_add (dir, file_name, cluster_to_sector(inode_cluster));
+	if(!success)
+		printf("dir_add failed.\n");
+	/*
 	bool success = (dir != NULL
 			&& fat_allocate (1, &inode_cluster)
 			&& inode_create (inode_cluster, initial_size, false)
 			&& dir_add (dir, file_name, cluster_to_sector(inode_cluster)));
+	*/
 	if(!success && inode_cluster != 0)
 		fat_remove_chain (inode_cluster, 0);
 	dir_close (dir);
