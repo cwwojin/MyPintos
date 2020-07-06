@@ -118,14 +118,15 @@ filesys_open (const char *name) {
 
 #ifdef EFILESYS
 	int l = strlen(name);
+	if(l == 1 && name[0] == "/"){	//SPECIAL CASE : opening the root
+		printf("opening ROOT!!\n");
+		inode = inode_open (cluster_to_sector(ROOT_DIR_CLUSTER));
+	}
 	char* path_name = malloc((l + 1) * sizeof(char));
 	char* file_name = malloc(15 * sizeof(char));
 	strlcpy(path_name, name, (l + 1));
 	struct dir* dir = parse_path(path_name, file_name);
 	if(dir != NULL){
-		if(strlen(file_name) == 0){
-			printf("filename length : 0\n");
-		}
 		dir_lookup(dir, file_name, &inode);
 	}
 	dir_close (dir);
