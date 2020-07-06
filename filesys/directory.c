@@ -243,8 +243,9 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1]) {
 bool do_chdir(const char* dir){
 	//parse the directory path.
 	struct dir* search_dir;
-	char path_name[64];
-	char dir_name[14];
+	int l = strlen(dir);
+	char* path_name = malloc((l + 1) * sizeof(char));
+	char* dir_name = malloc(14 * sizeof(char));
 	struct inode* inode;
 	strlcpy(path_name, dir, 64);
 	search_dir = parse_path(path_name, dir_name);
@@ -259,6 +260,11 @@ bool do_chdir(const char* dir){
 	struct dir* target = dir_open(inode);
 	dir_close(thread_current()->current_dir);
 	thread_current()->current_dir = target;
+	free(path_name);
+	free(dir_name);
 	return true;
+}
+bool do_mkdir(const char* dir){
+	return false;
 }
 #endif
