@@ -37,7 +37,6 @@ filesys_init (bool format) {
 	
 	/* Set ROOT_DIR as the current directory of the Initial process. */
 	thread_current()->current_dir = dir_open_root();
-	printf("initial thread : %d\n",thread_current()->tid);
 #else
 	/* Original FS */
 	free_map_init ();
@@ -66,7 +65,7 @@ bool
 filesys_create (const char *name, off_t initial_size) {
 	cluster_t inode_cluster = 0;
 	//struct dir *dir = dir_open_root ();
-	printf("current thread : %d\n",thread_current()->tid);
+	//printf("current thread : %d\n",thread_current()->tid);
 	struct dir *dir = dir_reopen (thread_current()->current_dir);
 	bool success = (dir != NULL
 			&& fat_allocate (1, &inode_cluster)
