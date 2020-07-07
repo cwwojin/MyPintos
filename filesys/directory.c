@@ -320,12 +320,15 @@ bool do_readdir(struct dir* dir, char* name){
 	if(dir->pos < 2 * sizeof(struct dir_entry)){
 		dir->pos = sizeof(struct dir_entry);
 		dir_readdir(dir, name);
+		/*
 		if(strcmp(name, "..") != 0){
 			dir->pos = sizeof(struct dir_entry);
 		}
 		else{
 			dir->pos = 2 * sizeof(struct dir_entry);
 		}
+		*/
+		dir->pos = 2 * sizeof(struct dir_entry);
 	}
 	bool result = dir_readdir (dir, name);
 	return result;
