@@ -448,7 +448,7 @@ process_exit (void) {
 	
 	//Allow write to executable.
 	if(current->executable != NULL) {
-		//file_allow_write(current->executable);
+		file_allow_write(current->executable);
 		file_close(current->executable);
 	}
 	/* ENDOFNEWCODE */
