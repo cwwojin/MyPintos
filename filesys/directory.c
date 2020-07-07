@@ -39,7 +39,7 @@ dir_create (disk_sector_t sector, size_t entry_cnt) {
 			dir_add(new_dir, parent, inode_get_inumber(cur_dir->inode));
 		}
 		else{
-			dir_add(new_dir, parent, sector);
+			//dir_add(new_dir, parent, sector);
 		}
 		dir_close(new_dir);
 	}
@@ -320,8 +320,12 @@ bool do_readdir(struct dir* dir, char* name){
 	if(dir->pos < 2 * sizeof(struct dir_entry)){
 		dir->pos = sizeof(struct dir_entry);
 		dir_readdir(dir, name);
-		printf("first file of ROOT : %s\n", name);
-		dir->pos = 2 * sizeof(struct dir_entry);
+		if(strcmp(name, "..") != 0){
+			dir->pos = sizeof(struct dir_entry);
+		}
+		else{
+			dir->pos = 2 * sizeof(struct dir_entry);
+		}
 	}
 	bool result = dir_readdir (dir, name);
 	return result;
