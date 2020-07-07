@@ -319,11 +319,13 @@ bool do_readdir(struct dir* dir, char* name){
 		return false;
 	if(dir->pos < 2 * sizeof(struct dir_entry)){
 		dir->pos = 2 * sizeof(struct dir_entry);
+		/*
 		if(inode_get_inumber(dir->inode) == cluster_to_sector(ROOT_DIR_CLUSTER)){
 			dir_readdir(dir, name);
 			printf("first file of ROOT directory : %s~\n", name);
 			dir->pos = 2 * sizeof(struct dir_entry);
 		}
+		*/
 	}
 	bool result = dir_readdir (dir, name);
 	return result;
