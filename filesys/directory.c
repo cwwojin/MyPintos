@@ -33,9 +33,9 @@ dir_create (disk_sector_t sector, size_t entry_cnt) {
 		char cur[2] = ".";
 		char parent[3] = "..";
 		struct dir* new_dir = dir_open(inode_open(sector));
-		//dir_add(new_dir, cur, sector);
+		dir_add(new_dir, cur, sector);
 		if(sector != cluster_to_sector(ROOT_DIR_CLUSTER)){
-			dir_add(new_dir, cur, sector);
+			//dir_add(new_dir, cur, sector);
 			struct dir* cur_dir = thread_current()->current_dir;
 			dir_add(new_dir, parent, inode_get_inumber(cur_dir->inode));
 		}
@@ -316,10 +316,7 @@ bool do_readdir(struct dir* dir, char* name){
 	if(dir == NULL)
 		return false;
 	if(dir->pos < 2 * sizeof(struct dir_entry)){
-		if(inode_get_inumber(dir->inode) != cluster_to_sector(ROOT_DIR_CLUSTER)){
-			dir->pos = 2 * sizeof(struct dir_entry);
-		}
-		//dir->pos = 2 * sizeof(struct dir_entry);
+		dir->pos = 2 * sizeof(struct dir_entry);
 	}
 	bool result = dir_readdir (dir, name);
 	return result;
