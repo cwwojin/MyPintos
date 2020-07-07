@@ -315,6 +315,9 @@ bool do_readdir(struct dir* dir, char* name){
 	if(dir == NULL)
 		return false;
 	if(dir->pos < 2 * sizeof(struct dir_entry)){
+		dir->pos = sizeof(struct dir_entry);
+		dir_readdir(dir, name);
+		printf("first file of ROOT : %s\n", name);
 		dir->pos = 2 * sizeof(struct dir_entry);
 	}
 	bool result = dir_readdir (dir, name);
