@@ -13,8 +13,8 @@ Project #3. VM
 vm/cow/??
 
 Project #4. Filesys
-filesys/extended/~-persistence
+filesys/extended/~persistence
 filesys/extended/dir-rm-cwd
-filesys/extended/symlink-~
+filesys/extended/symlink~
 filesys/mount/~
 filesys/journaling/~
